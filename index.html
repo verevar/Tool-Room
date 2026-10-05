@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tool Room HQ</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#17191c;--muted:#6c737d;--line:#e3e6ea;--dark:#17191c;--red:#c53b3b;--amber:#a46b00;--green:#287a4d}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#111316;color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.brand{font-weight:850;letter-spacing:.4px}.brand span{color:#b8bec7;font-weight:600;margin-left:8px}
+nav{display:flex;gap:8px;flex-wrap:wrap}.tab{border:0;background:#262a2f;color:#cfd4db;padding:9px 12px;border-radius:8px;cursor:pointer;font-weight:700}.tab.active{background:#fff;color:#111}
+main{max-width:1180px;margin:auto;padding:22px}.page{display:none}.page.active{display:block}
+h1{font-size:26px;margin:0 0 5px}.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px #00000008}
+.stat{padding:15px}.stat b{display:block;font-size:25px;margin-top:4px}.label{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.card{padding:16px;margin-bottom:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+input,select,button,textarea{font:inherit}textarea{border:1px solid #ccd1d7;border-radius:8px;padding:10px 11px;background:#fff;width:100%;min-height:110px;resize:vertical}input,select{border:1px solid #ccd1d7;border-radius:8px;padding:10px 11px;background:#fff}
+input{min-width:170px}.btn{border:0;border-radius:8px;padding:10px 14px;background:#181b1f;color:white;font-weight:800;cursor:pointer}.btn.light{background:#eef1f4;color:#222}.btn.red{background:#9d3434}
+table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;color:#6b727b;font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding:10px 8px;border-bottom:1px solid var(--line)}td{padding:11px 8px;border-bottom:1px solid #eef0f2}
+.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:12px;font-weight:800}.ok{background:#e7f5ed;color:var(--green)}.low{background:#fff2d6;color:var(--amber)}.out{background:#fde7e7;color:var(--red)}
+.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.check{display:flex;align-items:center;gap:10px;border:1px solid var(--line);padding:11px;border-radius:9px;background:#fafbfc}.check input{min-width:auto;width:18px;height:18px}
+.section-title{font-weight:850;margin:0}.small{font-size:13px;color:var(--muted)}.empty{padding:18px;text-align:center;color:#8a919a;border:1px dashed #ccd1d7;border-radius:9px;margin-top:10px}
+.alert{border-left:4px solid var(--red)}.bar{height:9px;background:#eceff2;border-radius:8px;overflow:hidden;margin-top:6px}.fill{height:100%;background:#30343a;border-radius:8px}
+.employee-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;margin:12px 0}
+.emp-card,.gear-card{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px;cursor:pointer;text-align:left;font-weight:750}
+.emp-card.active,.gear-card.selected{background:#17191c;color:#fff;border-color:#17191c}
+.gear-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:7px;margin:8px 0 14px}.gear-card{padding:9px 10px;font-size:14px;line-height:1.15}.gear-card .small{font-size:11px}
+.checkout-big{width:100%;font-size:18px;padding:15px;margin-top:8px}
+.fast-head{margin:16px 0 6px;font-size:13px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:#6c737d}
+.pillbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.pill{border:1px solid var(--line);background:#fff;padding:8px 11px;border-radius:999px;font-weight:800;cursor:pointer}.pill.active{background:#17191c;color:#fff}.toast{display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17191c;color:#fff;padding:11px 14px;border-radius:10px;z-index:80;box-shadow:0 5px 25px #0005}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:60;padding:18px;overflow:auto}.modalbox{max-width:700px;margin:6vh auto;background:#fff;border-radius:14px;padding:17px}.choice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px;margin-top:12px}.choice{border:1px solid var(--line);background:#fff;border-radius:9px;padding:12px;font-weight:800;cursor:pointer}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.gear-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.gear-card{min-height:48px}#allGear{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:100%;overflow:visible}#allGear .gear-card{min-width:0;width:100%;padding:7px 6px;font-size:12px;line-height:1.1;overflow-wrap:anywhere}#allGear .gear-card .small{font-size:10px}.checklist{grid-template-columns:1fr}header{align-items:flex-start;gap:12px;flex-direction:column}table{font-size:13px}}
+.filter-panel{display:none;margin:10px 0;padding:12px;background:#f4f6f8;border-radius:10px}.inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.inline-edit input,.inline-edit select{width:100%;min-width:80px}.selected-strip{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.selected-chip{border:1px solid #ccd1d7;border-radius:999px;padding:7px 10px;background:#fff;font-weight:750}@media(max-width:800px){.inline-edit input,.inline-edit select{min-width:90px}}
+.cons-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.cons-btn{padding:6px 8px!important;min-width:0;border-radius:7px;font-size:12px;line-height:1.05;white-space:nowrap}.cons-btn.use{padding:7px 9px!important}.variant-modal{display:none;position:fixed;inset:0;background:#0009;z-index:100;padding:18px;align-items:center;justify-content:center}.variant-box{background:#fff;border-radius:18px;padding:18px;width:min(520px,100%);max-height:75vh;overflow:auto}.variant-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}.variant-choice{padding:15px;border:1px solid #d9dde3;background:#fff;border-radius:12px;font-size:17px;font-weight:800;text-align:left}.morePanel{margin-top:18px}.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.order-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}.order-card{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 8px;font-weight:800;cursor:grab;touch-action:none;user-select:none;min-width:0;overflow-wrap:anywhere}.order-card.dragging{opacity:.45}.order-card.over{outline:2px solid #17191c}.order-help{font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
+<nav>
+<button class="tab active" data-page="checkout">Check Out</button>
+<button class="tab" data-page="returns">Return</button>
+<button class="tab" data-page="equipment">Equipment</button>
+<button class="tab" data-page="consumables">Consumables</button>
+<button class="tab" data-page="misc">Misc.</button>
+<button class="tab" data-page="reorder">Reorder <span id="reorderBadge"></span></button>
+<button class="tab" data-page="more">More</button>
+</nav></header>
+
+<main>
+<section id="checkout" class="page active">
+<h1>Checkout</h1><p class="sub">Pick an employee, check what they need, and issue it.</p>
+<div class="card">
+<div id="employeeChooser">
+<input id="employeeSearch" placeholder="Search name, employee #, or monitor #" style="width:100%">
+<div id="employeeGrid" class="employee-grid"></div>
+</div>
+<div id="selectedEmployeeInfo" class="small"></div>
+<div id="gearArea" style="display:none">
+  <button class="btn light" onclick="backToEmployees()" style="margin-bottom:10px">← Back to Employees</button>
+  <div class="fast-head" id="mostUsedTitle">Most Used</div>
+  <div id="mostUsedGear" class="gear-grid"></div>
+  <div class="fast-head">All Available Equipment</div><div id="selectedGearStrip" class="selected-strip"></div><div id="allGear" class="gear-grid"></div>
+  <button id="fastCheckoutBtn" class="btn checkout-big" onclick="fastCheckout()">CHECK OUT</button>
+</div>
+</div>
+<div class="card">
+<div class="between row"><p class="section-title">Checked Out</p><span class="small">Kept separate so nothing gets unchecked by accident.</span></div>
+<div id="checkedOutList"></div>
+</div>
+</section>
+
+
+<section id="returns" class="page">
+<h1>Return</h1><p class="sub">Choose an employee, then return only what they brought back—or Return All.</p>
+<div class="card"><div id="returnChooser"><input id="returnSearch" placeholder="Search employee…" style="width:100%"><div id="returnEmployeeGrid" class="employee-grid"></div></div>
+<div id="returnDetail" style="display:none"><button class="btn light" onclick="backReturn()">← Back to Employees</button><div id="returnPerson" style="font-weight:850;margin:12px 0"></div><div id="returnItemGrid" class="gear-grid"></div><div class="row"><button id="returnSelectedButton" class="btn" onclick="returnSelectedItems()">RETURN SELECTED</button><button class="btn light" onclick="returnAllItems()">RETURN ALL</button></div></div></div>
+</section>
+<section id="reorder" class="page"><h1>Reorder</h1><p class="sub">Low and out-of-stock consumables with suggested reorder quantities.</p><div class="card"><div id="newReorderList"></div></div></section>
+<section id="more" class="page"><h1>More</h1><p class="sub">The supporting records and reports—kept out of your everyday checkout flow.</p>
+<div class="pillbar"><button class="pill active" onclick="showMore('overdue',this)">Overdue</button><button class="pill" onclick="showMore('damaged',this)">Damaged / Missing</button><button class="pill" onclick="showMore('history',this)">History</button><button class="pill" onclick="showMore('analytics',this)">Analytics</button><button class="pill" onclick="showMore('exports',this)">Exports & Backup</button><button class="pill" onclick="showMore('employees',this)">Employees</button></div>
+<div id="more-overdue" class="morePanel"></div><div id="more-damaged" class="morePanel" style="display:none"></div><div id="more-history" class="morePanel" style="display:none"></div><div id="more-analytics" class="morePanel" style="display:none"></div><div id="more-exports" class="morePanel" style="display:none"></div><div id="more-employees" class="morePanel" style="display:none"></div>
+</section>
+<section id="equipment" class="page">
+<h1>Equipment</h1><p class="sub">Add or edit equipment.</p>
+<div class="card">
+<div class="row"><input id="newEquip" placeholder="Equipment name"><input id="newEquipVariant" placeholder="Variant / size"><select id="newEquipCategory"><option value="">Category</option><option>Power Tools</option><option>Hand Tools</option><option>Rigging</option><option>Pipe Fit-Up</option><option>Electrical</option><option>Safety / Confined Space</option><option>Welding</option><option>Material Handling</option><option>Other</option></select><button class="btn" onclick="addEquipment()">Add Equipment</button><button class="btn light" onclick="toggleEquipmentBulk()">Bulk Edit</button><button class="btn light" onclick="toggleEquipmentFilters()">Filter ▾</button><button class="btn light" id="editOrderBtn" onclick="toggleEquipmentOrder()">Edit Order</button></div><div id="equipmentOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Checkout Equipment Order</b><button class="btn" onclick="finishEquipmentOrder()">Done</button></div><div class="order-help">Press and drag a card to move it. This same order is used under All Available Equipment at checkout.</div><div id="equipmentOrderGrid" class="order-grid"></div></div>
+<div id="equipmentFilters" class="filter-panel"><div class="row"><input id="equipmentSearch" placeholder="Search equipment or ID…" oninput="renderEquipment()"><select id="equipmentGroupFilter" onchange="renderEquipment()"><option value="">All categories</option></select><select id="equipmentStatusFilter" onchange="renderEquipment()"><option value="">All statuses</option><option>Available</option><option>Checked Out</option><option>Damaged</option><option>Missing</option></select><button class="btn light" onclick="clearEquipmentFilters()">Clear</button></div></div>
+<div id="equipmentBulkActions" class="inline-actions" style="display:none"><button class="btn" onclick="saveEquipmentBulk()">Save All Changes</button><button class="btn light" onclick="cancelEquipmentBulk()">Cancel</button><span class="small">Only the equipment currently shown by your filters is being edited.</span></div>
+<div id="equipmentTable"></div>
+</div>
+</section>
+
+<section id="consumables" class="page">
+<h1>Consumables</h1><p class="sub">Track stock and reorder levels.</p>
+<div class="grid">
+<div class="stat"><span class="label">In Stock</span><b id="inStockStat">0</b></div>
+<div class="stat"><span class="label">Running Low</span><b id="lowStat">0</b></div>
+<div class="stat"><span class="label">Out</span><b id="outStat">0</b></div>
+<div class="stat"><span class="label">Used This Week</span><b id="usedStat">0</b></div>
+</div>
+<div class="card">
+<div class="row">
+<input id="consName" placeholder="Item">
+<input id="consVariant" placeholder="Variant (1/8, red, XL...)">
+<input id="consQty" type="number" placeholder="Qty" style="width:100px;min-width:90px">
+<input id="consMin" type="number" placeholder="Low at" style="width:100px;min-width:90px">
+<select id="consCategory"><option value="">Category</option><option>Abrasives</option><option>Cutting</option><option>PPE</option><option>Welding</option><option>Batteries</option><option>Tape &amp; Marking</option><option>Cleaning</option><option>Hardware</option><option>Other</option></select>
+<button class="btn" onclick="addConsumable()">Add</button><button class="btn light" onclick="toggleConsumablesBulk()">Bulk Edit</button>
+</div>
+<div class="row" style="margin-top:10px"><button class="btn light" onclick="toggleConsumableFilters()">Filter ▾</button></div><div id="consumableFilters" class="filter-panel"><div class="row"><input id="consumableSearch" placeholder="Search consumables…" oninput="renderConsumables()"><select id="consumableCategoryFilter" onchange="renderConsumables()"><option value="">All categories</option></select><select id="consumableStatusFilter" onchange="renderConsumables()"><option value="">All statuses</option><option>IN STOCK</option><option>LOW</option><option>OUT</option></select><button class="btn light" onclick="clearConsumableFilters()">Clear</button></div></div>
+<div id="consumablesBulkActions" class="inline-actions" style="display:none"><button class="btn" onclick="saveConsumablesBulk()">Save All Changes</button><button class="btn light" onclick="cancelConsumablesBulk()">Cancel</button></div><div id="consumablesTable"></div>
+</div>
+</section>
+
+
+<section id="misc" class="page">
+<h1>Miscellaneous</h1><p class="sub">Keep track of shop items that are not checked out or consumed.</p>
+<div class="card">
+<div class="row"><input id="miscName" placeholder="Item"><input id="miscVariant" placeholder="Variant / description"><input id="miscQty" type="number" min="0" placeholder="Qty" style="width:90px;min-width:80px"><select id="miscCategory"><option value="">Category</option><option>Housekeeping</option><option>Storage</option><option>Safety</option><option>Signs &amp; Barricades</option><option>Office</option><option>General Supplies</option><option>Other</option></select><button class="btn" onclick="addMisc()">Add Item</button><button class="btn light" onclick="toggleMiscBulk()">Bulk Edit</button><button class="btn light" onclick="toggleMiscFilters()">Filter ▾</button></div>
+<div id="miscFilters" class="filter-panel"><div class="row"><input id="miscSearch" placeholder="Search miscellaneous…" oninput="renderMisc()"><select id="miscCategoryFilter" onchange="renderMisc()"><option value="">All categories</option></select><button class="btn light" onclick="clearMiscFilters()">Clear</button></div></div>
+<div id="miscBulkActions" class="inline-actions" style="display:none"><button class="btn" onclick="saveMiscBulk()">Save All Changes</button><button class="btn light" onclick="cancelMiscBulk()">Cancel</button><span class="small">Only the items currently shown by your filters are being edited.</span></div>
+<div id="miscTable"></div></div>
+</section>
+
+<section id="employees" class="page">
+<h1>Employees</h1><p class="sub">Add or edit employees.</p>
+<div class="card">
+<div class="row"><input id="empName" placeholder="Employee name"><input id="empNum" placeholder="Employee #"><input id="monNum" placeholder="Monitor #"><button class="btn" onclick="addEmployee()">Add Employee</button><button class="btn light" onclick="openBulkEditEmployees()">Bulk Edit</button></div>
+<div id="employeesTable"></div>
+</div>
+</section>
+
+<section id="analytics" class="page">
+<h1>Analytics</h1><p class="sub">See what is disappearing fastest and what needs reordered.</p>
+<div class="grid">
+<div class="stat"><span class="label">Consumables Used / Week</span><b id="weeklyTotal">0</b></div>
+<div class="stat"><span class="label">Low / Out Items</span><b id="reorderCount">0</b></div>
+<div class="stat"><span class="label">Equipment Checked Out</span><b id="equipOutStat">0</b></div>
+<div class="stat"><span class="label">Employees</span><b id="empCount">0</b></div>
+</div>
+<div class="card"><p class="section-title">Weekly Consumable Usage</p><div id="usageBars"></div></div>
+<div class="card alert"><p class="section-title">Reorder List</p><div id="reorderList"></div></div>
+</section>
+</main>
+<div id="bulkEditModal" style="display:none;position:fixed;inset:0;background:#0008;z-index:50;padding:18px;overflow:auto">
+  <div style="max-width:900px;margin:25px auto;background:white;border-radius:14px;padding:18px">
+    <div class="row between">
+      <div><h2 id="bulkEditTitle" style="margin:0">Bulk Edit</h2><div class="small">Edit multiple items at once, then save.</div></div>
+      <button class="btn light" onclick="closeBulkEditor()">Close</button>
+    </div>
+    <div id="bulkEditGrid" style="margin-top:14px;overflow:auto"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn" onclick="saveBulkEditor()">Save All Changes</button>
+      <button class="btn light" onclick="closeBulkEditor()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="toast" class="toast"><span id="toastText"></span> <button class="btn light" onclick="undoLast()">UNDO</button></div>
+<div id="variantModal" class="variant-modal" onclick="if(event.target===this)closeVariantPicker()"><div class="variant-box"><div class="row between"><div><div class="small">Choose variant</div><h2 id="variantTitle" style="margin:2px 0 0"></h2></div><button class="btn light" onclick="closeVariantPicker()">Cancel</button></div><div id="variantChoices" class="variant-grid"></div></div></div>
+<script>
+const seed={
+employees:[
+{name:"Johnathan Sanchez",num:"1",monitor:"325"},
+{name:"Johnny Rodriguez",num:"2",monitor:"086"},
+{name:"Randy Pittman",num:"3",monitor:"062"},
+{name:"Jonathan Moussachio",num:"4",monitor:"028"},
+{name:"Alex Gallardo",num:"5",monitor:"419"},
+{name:"Emilio Guillen",num:"6",monitor:"525"},
+{name:"Julio Blanco",num:"7",monitor:"106"},
+{name:"Flaco Cantu",num:"8",monitor:"005"},
+{name:"Erick Cortez",num:"9",monitor:"307"},
+{name:"Blast Dela Rosa",num:"10",monitor:"557"},
+{name:"Pepe Garcia",num:"11",monitor:"529"},
+{name:"Andres Martin",num:"12",monitor:"022"},
+{name:"Josh Cook",num:"13",monitor:"100"},
+{name:"Juan Leal",num:"14",monitor:"103"},
+{name:"Edgar Morfin",num:"15",monitor:"140"},
+{name:"Moises Lewis",num:"16",monitor:"354"},
+{name:"Chino",num:"17",monitor:"042"},
+{name:"William Aleman",num:"18",monitor:"094"},
+{name:"Rudy Vasquez",num:"19",monitor:"071"},
+{name:"Adalberto Alvarez",num:"20",monitor:"012"},
+{name:"Maurice",num:"21",monitor:"030"}
+],
+equipment:[
+{id:1,name:"4½ in Grinder",variant:"Corded",holder:null,checkedOutAt:null},
+{id:2,name:"Face Shield",variant:"Clear",holder:null,checkedOutAt:null},
+{id:3,name:"Harness",variant:"Large",holder:null,checkedOutAt:null},
+{id:4,name:"Monitor",variant:"4-Gas",holder:null,checkedOutAt:null},
+{id:5,name:"Impact Wrench",variant:"½ in",holder:null,checkedOutAt:null},
+{id:6,name:"Extension Cord",variant:"50 ft",holder:null,checkedOutAt:null}
+],
+miscellaneous:[],
+consumables:[
+{id:1,name:"Grinding Disc",variant:"1/8 in",qty:18,min:10,used:26},
+{id:2,name:"Cut-Off Wheel",variant:"1/16 in",qty:7,min:10,used:31},
+{id:3,name:"Sawzall Blade",variant:"6 in Metal",qty:0,min:8,used:14},
+{id:4,name:"Ear Plugs",variant:"Foam",qty:84,min:30,used:52},
+{id:5,name:"Safety Glasses",variant:"Clear",qty:24,min:12,used:18}
+]};
+let data=JSON.parse(localStorage.getItem("toolroomHQ-v4")||"null")||seed;
+// One-time requested reset: start every consumable at zero, including inventories already saved in this browser.
+const ZERO_CONSUMABLES_KEY="toolroomHQ-consumables-zeroed-20261004-v2";
+if(!localStorage.getItem(ZERO_CONSUMABLES_KEY)){data.consumables.forEach(c=>{c.qty=0});localStorage.setItem(ZERO_CONSUMABLES_KEY,"1");localStorage.setItem("toolroomHQ-v4",JSON.stringify(data));}
+if(!data.history)data.history=[];
+if(!data.miscellaneous)data.miscellaneous=[];
+if(!data.undo)data.undo=null;
+data.consumables.forEach(c=>{if(c.target===undefined)c.target=Math.max(c.qty,c.min*3||c.qty)});
+data.equipment.forEach(x=>{if(!x.status)x.status=x.holder!==null?"Checked Out":"Available";if(!x.category)x.category=equipmentGroup(x.name)});
+data.consumables.forEach(c=>{if(!c.category)c.category="Other"});
+const PIPING_EQUIPMENT=[{"id":1000,"name":"Harness","variant":"001","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1001,"name":"Harness","variant":"033","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1002,"name":"Harness","variant":"Green","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1003,"name":"Harness","variant":"Q","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1004,"name":"4\u00bd in Grinder","variant":"88","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1005,"name":"4\u00bd in Grinder","variant":"X7","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1006,"name":"4\u00bd in Grinder","variant":"114","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1007,"name":"4\u00bd in Grinder","variant":"221","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1008,"name":"7 in Grinder","variant":"G7-1","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1009,"name":"7 in Grinder","variant":"G7-2","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1010,"name":"Lock","variant":"74","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1011,"name":"Lock","variant":"431","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1012,"name":"Lock","variant":"88","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1013,"name":"Lock","variant":"112","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1014,"name":"\u00bd in Impact Wrench","variant":"IW-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1015,"name":"\u00bd in Impact Wrench","variant":"IW-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1016,"name":"\u00be in Impact Wrench","variant":"IW75-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1017,"name":"\u00be in Impact Wrench","variant":"IW75-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1018,"name":"Sawzall","variant":"SZ-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1019,"name":"Sawzall","variant":"SZ-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1020,"name":"Portable Band Saw","variant":"PB-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1021,"name":"Portable Band Saw","variant":"PB-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1022,"name":"Mag Drill","variant":"MD-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1023,"name":"Pipe Beveling Machine","variant":"PBM-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1024,"name":"Die Grinder","variant":"DG-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1025,"name":"Needle Scaler","variant":"NS-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1026,"name":"Extension Cord 50 ft","variant":"EC50-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1027,"name":"Extension Cord 100 ft","variant":"EC100-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1028,"name":"Spider Box","variant":"SB-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1029,"name":"Chain Fall 1 Ton","variant":"CF1-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1030,"name":"Chain Fall 1 Ton","variant":"CF1-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1031,"name":"Chain Fall 2 Ton","variant":"CF2-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1032,"name":"Chain Fall 3 Ton","variant":"CF3-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1033,"name":"Come-Along","variant":"CA-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1034,"name":"Come-Along","variant":"CA-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1035,"name":"Lever Hoist","variant":"LH-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1036,"name":"Beam Clamp","variant":"BC-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1037,"name":"Pipe Jack Stand","variant":"PJ-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1038,"name":"Pipe Jack Stand","variant":"PJ-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1039,"name":"Pipe Jack Stand","variant":"PJ-03","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1040,"name":"Pipe Jack Stand","variant":"PJ-04","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1041,"name":"Tri-Stand","variant":"TS-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1042,"name":"Tri-Stand","variant":"TS-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1043,"name":"Flange Spreader","variant":"FS-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1044,"name":"Flange Aligner","variant":"FA-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1045,"name":"Hi-Lo Gauge","variant":"HL-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1046,"name":"Hi-Lo Gauge","variant":"HL-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1047,"name":"Wrap-A-Round","variant":"WR-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1048,"name":"Wrap-A-Round","variant":"WR-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1049,"name":"Torpedo Level","variant":"TL-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1050,"name":"Torpedo Level","variant":"TL-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1051,"name":"24 in Level","variant":"L24-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1052,"name":"48 in Level","variant":"L48-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1053,"name":"Torque Wrench","variant":"TW-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1054,"name":"Torque Wrench","variant":"TW-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1055,"name":"Slugging Wrench Set","variant":"SW-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1056,"name":"Hydraulic Torque Wrench","variant":"HTW-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1057,"name":"Porta Power","variant":"PP-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1058,"name":"Bottle Jack","variant":"BJ-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1059,"name":"Pipe Wrench 24 in","variant":"PW24-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1060,"name":"Pipe Wrench 36 in","variant":"PW36-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1061,"name":"Pipe Wrench 48 in","variant":"PW48-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1062,"name":"Sledge Hammer","variant":"SH-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1063,"name":"Spud Wrench","variant":"SP-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1064,"name":"Spud Wrench","variant":"SP-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1065,"name":"Flange Pins","variant":"FP-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1066,"name":"Flange Pins","variant":"FP-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1067,"name":"4-Gas Monitor","variant":"GM-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1068,"name":"4-Gas Monitor","variant":"GM-02","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1069,"name":"4-Gas Monitor","variant":"GM-03","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1070,"name":"Tripod","variant":"TRI-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1071,"name":"Retrieval Winch","variant":"RW-01","holder":null,"checkedOutAt":null,"status":"Available"},{"id":1072,"name":"Ventilation Blower","variant":"VB-01","holder":null,"checkedOutAt":null,"status":"Available"}];
+const PIPING_CONSUMABLES=[{"id":1000,"name":"Grinding Disc","variant":"1/8 in","qty":0,"min":20,"target":150,"used":0},{"id":1001,"name":"Grinding Disc","variant":"1/4 in","qty":0,"min":15,"target":100,"used":0},{"id":1002,"name":"Cut-Off Wheel","variant":"1/16 in","qty":0,"min":20,"target":150,"used":0},{"id":1003,"name":"Flap Disc","variant":"40 grit","qty":0,"min":10,"target":75,"used":0},{"id":1004,"name":"Flap Disc","variant":"60 grit","qty":0,"min":10,"target":75,"used":0},{"id":1005,"name":"Flap Disc","variant":"80 grit","qty":0,"min":10,"target":60,"used":0},{"id":1006,"name":"Wire Wheel","variant":"4\u00bd in","qty":0,"min":8,"target":45,"used":0},{"id":1007,"name":"Cup Brush","variant":"4\u00bd in","qty":0,"min":6,"target":36,"used":0},{"id":1008,"name":"Sawzall Blade","variant":"6 in metal","qty":0,"min":15,"target":90,"used":0},{"id":1009,"name":"Sawzall Blade","variant":"9 in metal","qty":0,"min":12,"target":75,"used":0},{"id":1010,"name":"Band Saw Blade","variant":"Portable","qty":0,"min":8,"target":45,"used":0},{"id":1011,"name":"Drill Bit","variant":"Assorted","qty":0,"min":10,"target":60,"used":0},{"id":1012,"name":"Annular Cutter","variant":"Assorted","qty":0,"min":5,"target":30,"used":0},{"id":1013,"name":"Soapstone","variant":"Flat","qty":0,"min":20,"target":150,"used":0},{"id":1014,"name":"Paint Marker","variant":"White","qty":0,"min":8,"target":45,"used":0},{"id":1015,"name":"Paint Marker","variant":"Yellow","qty":0,"min":8,"target":45,"used":0},{"id":1016,"name":"Sharpie","variant":"Black","qty":0,"min":10,"target":60,"used":0},{"id":1017,"name":"Anti-Seize","variant":"Standard","qty":0,"min":5,"target":30,"used":0},{"id":1018,"name":"Penetrating Oil","variant":"Aerosol","qty":0,"min":5,"target":24,"used":0},{"id":1019,"name":"Thread Seal Tape","variant":"PTFE","qty":0,"min":8,"target":45,"used":0},{"id":1020,"name":"Pipe Dope","variant":"Standard","qty":0,"min":5,"target":30,"used":0},{"id":1021,"name":"Spiral Wound Gasket","variant":"Assorted","qty":0,"min":10,"target":60,"used":0},{"id":1022,"name":"Stud Bolt Set","variant":"Assorted","qty":0,"min":12,"target":75,"used":0},{"id":1023,"name":"Nuts / Washers","variant":"Assorted","qty":0,"min":25,"target":150,"used":0},{"id":1024,"name":"Zip Ties","variant":"Standard","qty":0,"min":40,"target":225,"used":0},{"id":1025,"name":"Duct Tape","variant":"Standard","qty":0,"min":6,"target":36,"used":0},{"id":1026,"name":"Electrical Tape","variant":"Black","qty":0,"min":8,"target":45,"used":0},{"id":1027,"name":"Flagging Tape","variant":"Assorted","qty":0,"min":6,"target":36,"used":0},{"id":1028,"name":"Shop Rags","variant":"Standard","qty":0,"min":40,"target":225,"used":0},{"id":1029,"name":"Face Shield Lens","variant":"Clear","qty":0,"min":6,"target":36,"used":0}];
+const CATALOG_KEY="toolroomHQ-piping-catalog-v2";
+// Always make sure the full saved catalog exists without deleting user changes/checkouts.
+function mergeCatalog(){
+ const ek=new Set(data.equipment.map(x=>String(x.name).toLowerCase()+"|"+String(x.variant).toLowerCase()));
+ PIPING_EQUIPMENT.forEach(x=>{let k=String(x.name).toLowerCase()+"|"+String(x.variant).toLowerCase();if(!ek.has(k)){data.equipment.push({...x});ek.add(k)}});
+ const ck=new Set(data.consumables.map(x=>String(x.name).toLowerCase()+"|"+String(x.variant).toLowerCase()));
+ PIPING_CONSUMABLES.forEach(x=>{let k=String(x.name).toLowerCase()+"|"+String(x.variant).toLowerCase();if(!ck.has(k)){data.consumables.push({...x});ck.add(k)}});
+ localStorage.setItem(CATALOG_KEY,"1");localStorage.setItem("toolroomHQ-v4",JSON.stringify(data));
+}
+mergeCatalog();
+// Give any catalog items added during this load a starting category; users can change it anytime.
+data.equipment.forEach(x=>{if(!x.category)x.category=equipmentGroup(x.name)});
+data.consumables.forEach(c=>{if(!c.category)c.category="Other"});
+localStorage.setItem("toolroomHQ-v4",JSON.stringify(data));
+let migrated=false;
+data.equipment.forEach(x=>{
+  if(!("checkedOutAt" in x)){x.checkedOutAt=x.holder!==null?Date.now():null;migrated=true}
+});
+if(migrated)localStorage.setItem("toolroomHQ-v4",JSON.stringify(data));
+function save(){localStorage.setItem("toolroomHQ-v4",JSON.stringify(data));renderAll()}
+function logEvent(action,obj={}){data.history.unshift({time:new Date().toISOString(),action,...obj});if(data.history.length>5000)data.history.length=5000}
+function toastMsg(msg,canUndo=true){toastText.textContent=msg;toast.querySelector("button").style.display=canUndo?"inline-block":"none";toast.style.display="block";clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>toast.style.display="none",3000)}
+function setUndo(u){data.undo=u}
+function undoLast(){let u=data.undo;if(!u)return;if(u.kind==="equipment")u.before.forEach(b=>{let x=data.equipment.find(v=>v.id===b.id);if(x){x.holder=b.holder;x.checkedOutAt=b.checkedOutAt;x.status=b.status}});if(u.kind==="consumable"){let c=data.consumables.find(v=>v.id===u.id);if(c){c.qty=u.qty;c.used=u.used}if(Number.isInteger(u.historyLen))data.history=data.history.slice(0,u.historyLen)};data.undo=null;logEvent("UNDO");toast.style.display="none";save()}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab,.page").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.page).classList.add("active");if(b.dataset.page==="returns")renderReturn();if(b.dataset.page==="consumables")renderConsumables();if(b.dataset.page==="equipment")renderEquipment();if(b.dataset.page==="misc")renderMisc();if(b.dataset.page==="more")renderMore()});
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function renderEmployees(){
+employeesTable.innerHTML=`<table><tr><th>Name</th><th>Employee #</th><th>Monitor #</th><th></th></tr>${data.employees.map((e,i)=>`<tr><td><b>${esc(e.name)}</b></td><td>${esc(e.num)}</td><td>${esc(e.monitor)}</td><td><button class="btn light" onclick="editEmployee(${i})">Edit</button></td></tr>`).join("")}</table>`;
+empCount.textContent=data.employees.length}
+let selectedEmployee=null;
+let selectedGear=new Set();
+if(!data.usage) data.usage={};
+
+function renderFastEmployees(){
+ let q=(document.getElementById("employeeSearch")?.value||"").toLowerCase().trim();
+ let matches=data.employees.map((e,i)=>({e,i})).filter(({e})=>(e.name+" "+e.num+" "+e.monitor).toLowerCase().includes(q));
+ employeeGrid.innerHTML=matches.map(({e,i})=>`<button class="emp-card ${selectedEmployee===i?"active":""}" onclick="selectEmployee(${i})"><b>#${esc(e.num)} ${esc(e.name)}</b><br><span class="small" style="${selectedEmployee===i?"color:#ddd":""}">Monitor ${esc(e.monitor)}</span></button>`).join("");
+}
+function selectEmployee(i){
+ selectedEmployee=i;selectedGear.clear();employeeChooser.style.display="none";renderFastEmployees();renderFastGear();
+ let e=data.employees[i];selectedEmployeeInfo.innerHTML=`Selected: <b>#${esc(e.num)} ${esc(e.name)}</b> · Monitor ${esc(e.monitor)}`;
+ gearArea.style.display="block";
+}
+function backToEmployees(){
+ selectedEmployee=null;selectedGear.clear();
+ employeeChooser.style.display="block";
+ selectedEmployeeInfo.textContent="";
+ gearArea.style.display="none";
+ employeeSearch.value="";
+ renderFastEmployees();
+}
+function typeGearButton(name,count){return `<button class="gear-card" onclick='openPicker(${JSON.stringify(name)})'><b>${esc(name)}</b><br><span class="small">${count} available</span></button>`}
+function openPicker(name){let choices=data.equipment.filter(x=>x.name===name&&x.holder===null&&x.status!=="Damaged"&&x.status!=="Missing"&&!selectedGear.has(x.id));if(!choices.length){toastMsg("That item is not available.",false);return}variantTitle.textContent=name;variantChoices.innerHTML=choices.map(x=>`<button class="variant-choice" onclick="chooseVariant(${x.id})">${esc(x.variant||x.id)}</button>`).join("");variantModal.style.display="flex"}
+function chooseVariant(id){let x=data.equipment.find(v=>v.id===id);if(!x||x.holder!==null||x.status==="Damaged"||x.status==="Missing"){closeVariantPicker();toastMsg("That item is not available.",false);return}selectedGear.add(x.id);closeVariantPicker();renderFastGear()}
+function closeVariantPicker(){variantModal.style.display="none";variantChoices.innerHTML=""}
+function removeSelectedGear(id){selectedGear.delete(id);renderFastGear()}
+function renderFastGear(){if(selectedEmployee===null){gearArea.style.display="none";return}let avail=data.equipment.filter(x=>x.holder===null&&x.status!=="Damaged"&&x.status!=="Missing"&&!selectedGear.has(x.id)),groups={};avail.forEach(x=>(groups[x.name]??=[]).push(x));let u=data.usage[selectedEmployee]||{},ranked=Object.keys(groups).map(n=>[n,groups[n].reduce((a,x)=>a+(u[x.id]||0),0)]).sort((a,b)=>b[1]-a[1]),most=ranked.filter(x=>x[1]>0).slice(0,6).map(x=>x[0]);mostUsedTitle.textContent="Most Used by "+data.employees[selectedEmployee].name.split(" ")[0];mostUsedGear.innerHTML=most.length?most.map(n=>typeGearButton(n,groups[n].length)).join(""):`<div class="small">This will fill automatically as they check out equipment.</div>`;allGear.innerHTML=orderedEquipmentNames(Object.keys(groups)).map(n=>typeGearButton(n,groups[n].length)).join("");selectedGearStrip.innerHTML=[...selectedGear].map(id=>{let x=data.equipment.find(v=>v.id===id);return x?`<button class="selected-chip" onclick="removeSelectedGear(${id})">✓ ${esc(x.name)} · ${esc(x.variant)} ×</button>`:""}).join("");fastCheckoutBtn.textContent=`CHECK OUT${selectedGear.size?` (${selectedGear.size})`:""}`}
+function fastCheckout(){
+ if(selectedEmployee===null||!selectedGear.size)return;
+ if(!data.usage[selectedEmployee])data.usage[selectedEmployee]={};
+ let before=[];data.equipment.forEach(x=>{if(selectedGear.has(x.id)){before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});x.holder=selectedEmployee;x.checkedOutAt=Date.now();x.status="Checked Out";data.usage[selectedEmployee][x.id]=(data.usage[selectedEmployee][x.id]||0)+1;logEvent("CHECK OUT",{employee:selectedEmployee,equipmentId:x.id,equipment:x.name,variant:x.variant})}});
+ let who=data.employees[selectedEmployee]?.name||"employee",count=selectedGear.size;setUndo({kind:"equipment",before});
+ selectedEmployee=null;selectedGear.clear();selectedEmployeeInfo.textContent="";gearArea.style.display="none";employeeChooser.style.display="block";employeeSearch.value="";save();toastMsg(`${count} item${count===1?"":"s"} checked out to ${who}`);
+}
+employeeSearch.oninput=renderFastEmployees;
+function renderCheckout(){
+ renderFastEmployees();
+ let out=data.equipment.filter(x=>x.holder!==null);
+ checkedOutList.innerHTML=out.length?`<table><tr><th>Equipment</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[x.holder];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${e?esc(e.name)+" · #"+esc(e.num):"Unknown"}</td><td><button class="btn light" onclick="returnEquip(${x.id})">Return</button></td></tr>`}).join("")}</table>`:`<div class="empty">Nothing is checked out.</div>`;
+ equipOutStat.textContent=out.length;
+}
+function returnEquip(id){let x=data.equipment.find(x=>x.id===id);if(!x)return;let before=[{id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status}];logEvent("RETURN",{employee:x.holder,equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available";setUndo({kind:"equipment",before});save();toastMsg(`${x.name} returned`)}
+let equipmentBulkMode=false, consumablesBulkMode=false, editingConsumableId=null, analyticsDays=7;
+let editingEquipmentId=null;
+function equipmentGroup(name){let n=String(name||"").toLowerCase();if(/grinder|impact|sawzall|band saw|mag drill|bevel|die grinder|needle scaler/.test(n))return "Power Tools";if(/chain fall|come-along|lever hoist|beam clamp/.test(n))return "Rigging";if(/pipe jack|tri-stand|flange|hi-lo|wrap-a-round|level|porta power|bottle jack/.test(n))return "Pipe Fit-Up";if(/pipe wrench|sledge|spud|wrench set|torque wrench/.test(n))return "Hand Tools";if(/extension cord|spider box/.test(n))return "Electrical";if(/harness|monitor|tripod|retrieval|blower|lock/.test(n))return "Safety / Confined Space";return "Other"}
+const EQUIPMENT_CATEGORIES=["Power Tools","Hand Tools","Rigging","Pipe Fit-Up","Electrical","Safety / Confined Space","Welding","Material Handling","Other"];
+const CONSUMABLE_CATEGORIES=["Abrasives","Cutting","PPE","Welding","Batteries","Tape & Marking","Cleaning","Hardware","Other"];
+const MISC_CATEGORIES=["Housekeeping","Storage","Safety","Signs & Barricades","Office","General Supplies","Other"];
+if(!Array.isArray(data.equipmentOrder))data.equipmentOrder=[];
+if(!data.equipmentDuplicateVariants||typeof data.equipmentDuplicateVariants!=="object")data.equipmentDuplicateVariants={};
+function duplicateVariantsAllowed(name){return data.equipmentDuplicateVariants[String(name||"").trim().toLowerCase()]!==false}
+function setDuplicateVariantsAllowed(name,allowed){let k=String(name||"").trim().toLowerCase();if(k)data.equipmentDuplicateVariants[k]=!!allowed}
+function hasDuplicateEquipmentVariant(name,variant,excludeId=null,rows=null){let n=String(name||"").trim().toLowerCase(),v=String(variant||"").trim().toLowerCase();if(!n)return false;let pool=rows||data.equipment;return pool.some(x=>x.id!==excludeId&&String(x.name||"").trim().toLowerCase()===n&&String(x.variant||"").trim().toLowerCase()===v)}
+function equipmentNames(){return [...new Set(data.equipment.map(x=>x.name))]}
+function syncEquipmentOrder(){let names=equipmentNames(),seen=new Set(names);data.equipmentOrder=(data.equipmentOrder||[]).filter(n=>seen.has(n));names.forEach(n=>{if(!data.equipmentOrder.includes(n))data.equipmentOrder.push(n)})}
+function orderedEquipmentNames(names){syncEquipmentOrder();let set=new Set(names);return data.equipmentOrder.filter(n=>set.has(n))}
+let orderDragName=null;
+function toggleEquipmentOrder(){let p=document.getElementById("equipmentOrderPanel");p.style.display=p.style.display==="none"?"block":"none";document.getElementById("editOrderBtn").textContent=p.style.display==="block"?"Close Order":"Edit Order";if(p.style.display==="block")renderEquipmentOrder()}
+function finishEquipmentOrder(){document.getElementById("equipmentOrderPanel").style.display="none";document.getElementById("editOrderBtn").textContent="Edit Order";save()}
+function moveOrderName(fromName,toName){syncEquipmentOrder();let a=data.equipmentOrder.indexOf(fromName),b=data.equipmentOrder.indexOf(toName);if(a<0||b<0||a===b)return;let [v]=data.equipmentOrder.splice(a,1);data.equipmentOrder.splice(b,0,v);save();renderEquipmentOrder();renderFastGear()}
+function renderEquipmentOrder(){syncEquipmentOrder();let g=document.getElementById("equipmentOrderGrid");if(!g)return;g.innerHTML=data.equipmentOrder.map(n=>`<div class="order-card" draggable="true" data-order-name="${esc(n)}">${esc(n)}</div>`).join("");g.querySelectorAll(".order-card").forEach(el=>{el.addEventListener("dragstart",()=>{orderDragName=el.dataset.orderName;el.classList.add("dragging")});el.addEventListener("dragend",()=>{orderDragName=null;el.classList.remove("dragging");g.querySelectorAll(".order-card").forEach(x=>x.classList.remove("over"))});el.addEventListener("dragover",e=>{e.preventDefault();el.classList.add("over")});el.addEventListener("dragleave",()=>el.classList.remove("over"));el.addEventListener("drop",e=>{e.preventDefault();el.classList.remove("over");if(orderDragName)moveOrderName(orderDragName,el.dataset.orderName)});el.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse")return;orderDragName=el.dataset.orderName;el.setPointerCapture?.(e.pointerId);el.classList.add("dragging")});el.addEventListener("pointermove",e=>{if(!orderDragName||e.pointerType==="mouse")return;let target=document.elementFromPoint(e.clientX,e.clientY)?.closest?.(".order-card");g.querySelectorAll(".order-card").forEach(x=>x.classList.toggle("over",x===target&&x!==el))});el.addEventListener("pointerup",e=>{if(e.pointerType==="mouse")return;let target=document.elementFromPoint(e.clientX,e.clientY)?.closest?.(".order-card");let from=orderDragName;orderDragName=null;el.classList.remove("dragging");g.querySelectorAll(".order-card").forEach(x=>x.classList.remove("over"));if(from&&target&&target.dataset.orderName!==from)moveOrderName(from,target.dataset.orderName)})})}
+
+function categorySelectHtml(categories,current){return `<select data-f="category">${categories.map(c=>`<option value="${esc(c)}" ${c===current?"selected":""}>${esc(c)}</option>`).join("")}</select>`}
+function categoryOptions(items,selectId){let sel=document.getElementById(selectId);if(!sel)return;let old=sel.value,cats=[...new Set(items.map(x=>x.category||"Other"))].sort();sel.innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('');sel.value=cats.includes(old)?old:""}
+function filteredEquipment(){categoryOptions(data.equipment,"equipmentGroupFilter");let q=(document.getElementById("equipmentSearch")?.value||"").toLowerCase(),g=document.getElementById("equipmentGroupFilter")?.value||"",st=document.getElementById("equipmentStatusFilter")?.value||"";return data.equipment.filter(x=>{let actual=x.status==="Damaged"||x.status==="Missing"?x.status:(x.holder===null?"Available":"Checked Out");return(!q||(x.name+" "+x.variant+" "+(x.category||"")).toLowerCase().includes(q))&&(!g||(x.category||"Other")===g)&&(!st||actual===st)})}
+function toggleEquipmentFilters(){let p=document.getElementById("equipmentFilters");p.style.display=p.style.display==="block"?"none":"block"}
+function clearEquipmentFilters(){equipmentSearch.value="";equipmentGroupFilter.value="";equipmentStatusFilter.value="";renderEquipment()}
+function toggleEquipmentBulk(){equipmentBulkMode=!equipmentBulkMode;equipmentBulkActions.style.display=equipmentBulkMode?"flex":"none";renderEquipment()}
+function cancelEquipmentBulk(){equipmentBulkMode=false;equipmentBulkActions.style.display="none";renderEquipment()}
+function saveEquipmentBulk(){let rows=[...document.querySelectorAll("#equipmentTable [data-eqid]")],draft=data.equipment.map(x=>({...x})),policy={...data.equipmentDuplicateVariants};for(let r of rows){let x=draft.find(v=>String(v.id)===r.dataset.eqid);if(!x)continue;let oldName=x.name;x.name=r.querySelector("[data-f=name]").value.trim()||x.name;x.variant=r.querySelector("[data-f=variant]").value.trim();x.category=r.querySelector("[data-f=category]").value.trim()||"Other";let st=r.querySelector("[data-f=status]").value;x.status=st;if(st!=="Checked Out"){x.holder=null;x.checkedOutAt=null}let cb=r.querySelector("[data-f=allowdup]");if(cb)policy[String(x.name).trim().toLowerCase()]=cb.checked;if(String(oldName).trim().toLowerCase()!==String(x.name).trim().toLowerCase()&&policy[String(x.name).trim().toLowerCase()]===undefined)policy[String(x.name).trim().toLowerCase()]=cb?cb.checked:true}for(let x of draft){let key=String(x.name||"").trim().toLowerCase();if(policy[key]===false&&hasDuplicateEquipmentVariant(x.name,x.variant,x.id,draft)){toastMsg(`Duplicate variant not allowed for ${x.name}: ${x.variant||"(blank)"}`,false);return}}data.equipment=draft;data.equipmentDuplicateVariants=policy;equipmentBulkMode=false;equipmentBulkActions.style.display="none";save()}
+function renderEquipment(){let items=filteredEquipment();equipmentTable.innerHTML=`<div class="table-wrap"><table><tr><th>Equipment</th><th>Variant</th><th>Category</th><th>Status</th><th>Allow Duplicate Variants</th><th></th></tr>${items.map(x=>{let actual=x.status==="Damaged"||x.status==="Missing"?x.status:(x.holder===null?"Available":"Checked Out");if(equipmentBulkMode||editingEquipmentId===x.id)return `<tr class="inline-edit" data-eqid="${x.id}"><td><input data-f="name" value="${esc(x.name)}"></td><td><input data-f="variant" value="${esc(x.variant)}"></td><td>${categorySelectHtml(EQUIPMENT_CATEGORIES,x.category||"Other")}</td><td><select data-f="status"><option ${actual==="Available"?"selected":""}>Available</option><option ${actual==="Checked Out"?"selected":""}>Checked Out</option><option ${actual==="Damaged"?"selected":""}>Damaged</option><option ${actual==="Missing"?"selected":""}>Missing</option></select></td><td style="text-align:center"><input data-f="allowdup" type="checkbox" style="min-width:auto;width:20px;height:20px" ${duplicateVariantsAllowed(x.name)?"checked":""}></td><td>${equipmentBulkMode?"":`<button class="btn" onclick="saveOneEquipment(${x.id})">Save</button> <button class="btn light" onclick="cancelOneEquipment()">Cancel</button>`}</td></tr>`;return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(x.category||"Other")}</td><td><span class="badge ${actual==="Available"?"ok":actual==="Checked Out"?"low":"out"}">${actual}</span></td><td style="text-align:center">${duplicateVariantsAllowed(x.name)?"Yes":"No"}</td><td><button class="btn light" onclick="editEquipment(${x.id})">Edit</button></td></tr>`}).join("")}</table></div>`}
+function addEquipment(){let name=newEquip.value.trim(),variant=newEquipVariant.value.trim();if(!name)return;if(!duplicateVariantsAllowed(name)&&hasDuplicateEquipmentVariant(name,variant)){toastMsg(`Duplicate variant not allowed for ${name}: ${variant||"(blank)"}`,false);return}data.equipment.push({id:Date.now(),name,variant,category:newEquipCategory.value.trim()||"Other",holder:null,checkedOutAt:null,status:"Available"});newEquip.value="";newEquipVariant.value="";newEquipCategory.value="";save()}
+function status(c){return c.qty<=0?["OUT","out"]:c.qty<=c.min?["LOW","low"]:["IN STOCK","ok"]}
+function consumableUsageCounts(days){let cutoff=Date.now()-days*86400000,counts={};data.history.forEach(x=>{if(x.action!=="CONSUMABLE USE"||new Date(x.time).getTime()<cutoff)return;let c=data.consumables.find(c=>c.name===x.item&&String(c.variant||"")===String(x.variant||""));if(c)counts[c.id]=(counts[c.id]||0)+Math.abs(Number(x.qty)||1)});return counts}
+function toggleConsumablesBulk(){consumablesBulkMode=!consumablesBulkMode;editingConsumableId=null;consumablesBulkActions.style.display=consumablesBulkMode?"flex":"none";renderConsumables()}
+function cancelConsumablesBulk(){consumablesBulkMode=false;consumablesBulkActions.style.display="none";renderConsumables()}
+function saveConsumablesBulk(){document.querySelectorAll("#consumablesTable [data-cid]").forEach(r=>{let c=data.consumables.find(v=>String(v.id)===r.dataset.cid);if(!c)return;let old=c.qty;c.name=r.querySelector("[data-f=name]").value.trim()||c.name;c.variant=r.querySelector("[data-f=variant]").value.trim();c.category=r.querySelector("[data-f=category]").value.trim()||"Other";c.qty=Math.max(0,+r.querySelector("[data-f=qty]").value||0);c.min=Math.max(0,+r.querySelector("[data-f=min]").value||0);c.target=Math.max(c.min,+r.querySelector("[data-f=target]").value||0)});consumablesBulkMode=false;consumablesBulkActions.style.display="none";save()}
+function toggleConsumableFilters(){let p=document.getElementById("consumableFilters");p.style.display=p.style.display==="block"?"none":"block"}
+function clearConsumableFilters(){consumableSearch.value="";consumableCategoryFilter.value="";consumableStatusFilter.value="";renderConsumables()}
+function filteredConsumables(){categoryOptions(data.consumables,"consumableCategoryFilter");let q=(document.getElementById("consumableSearch")?.value||"").toLowerCase(),cat=document.getElementById("consumableCategoryFilter")?.value||"",st=document.getElementById("consumableStatusFilter")?.value||"";return data.consumables.filter(c=>(!q||(c.name+" "+c.variant+" "+(c.category||"")).toLowerCase().includes(q))&&(!cat||(c.category||"Other")===cat)&&(!st||status(c)[0]===st))}
+function renderConsumables(){let low=0,out=0,good=0,used=Object.values(consumableUsageCounts(7)).reduce((a,b)=>a+b,0);let shown=filteredConsumables();consumablesTable.innerHTML=`<div class="table-wrap"><table><tr><th>Stock</th><th>Item</th><th>Variant</th><th>Qty</th><th>Status</th><th>Category</th><th>Count</th><th></th></tr>${shown.map(c=>{if(c.target===undefined)c.target=Math.max(c.qty,c.min*3);let s=status(c);if(c.qty<=0)out++;else if(c.qty<=c.min)low++;else good++;if(consumablesBulkMode||editingConsumableId===c.id)return `<tr class="inline-edit" data-cid="${c.id}"><td></td><td><input data-f="name" value="${esc(c.name)}"></td><td><input data-f="variant" value="${esc(c.variant)}"></td><td><input data-f="qty" type="number" min="0" value="${c.qty}"></td><td><div class="small">Low at</div><input data-f="min" type="number" min="0" value="${c.min}"><div class="small">Target</div><input data-f="target" type="number" min="0" value="${c.target}"></td><td>${categorySelectHtml(CONSUMABLE_CATEGORIES,c.category||"Other")}</td><td></td><td>${consumablesBulkMode?"":`<button class="btn" onclick="saveOneConsumable(${c.id})">Save</button> <button class="btn light" onclick="cancelOneConsumable()">Cancel</button>`}</td></tr>`;return `<tr><td><div class="cons-actions"><button class="btn cons-btn use" onclick="useCons(${c.id})">− USE 1</button><button class="btn light cons-btn" onclick="useConsQty(${c.id})">USE QTY</button></div></td><td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td><b>${c.qty}</b></td><td><span class="badge ${s[1]}">${s[0]}</span></td><td>${esc(c.category||"Other")}</td><td><div class="cons-actions"><button class="btn light cons-btn" onclick="restock(${c.id})">+ Stock</button><button class="btn light cons-btn" onclick="quickCount(${c.id})">Set Count</button></div></td><td><button class="btn light cons-btn" onclick="editConsumable(${c.id})">Edit</button></td></tr>`}).join("")}</table></div>`;inStockStat.textContent=good;lowStat.textContent=low;outStat.textContent=out;usedStat.textContent=used}
+function addConsumable(){if(!consName.value.trim())return;data.consumables.push({id:Date.now(),name:consName.value.trim(),variant:consVariant.value.trim(),category:consCategory.value.trim()||"Other",qty:+consQty.value||0,min:+consMin.value||0,used:0});consName.value=consVariant.value=consQty.value=consMin.value=consCategory.value="";save()}
+function useCons(id){let c=data.consumables.find(c=>c.id===id);if(c&&c.qty>0){if(!(data.undo&&data.undo.kind==="consumable"&&data.undo.id===id))setUndo({kind:"consumable",id,qty:c.qty,used:c.used,historyLen:data.history.length});c.qty--;c.used++;logEvent("CONSUMABLE USE",{item:c.name,variant:c.variant,qty:-1});save();toastMsg(`${c.name}: ${c.qty} left`)}}
+function useConsQty(id){let c=data.consumables.find(c=>c.id===id);if(!c||c.qty<=0){toastMsg("That item is out of stock.",false);return}let n=prompt(`How many ${c.name}${c.variant?" · "+c.variant:""} are being used?`,"2");if(n===null)return;n=Math.floor(Number(n));if(!Number.isFinite(n)||n<1)return;if(n>c.qty){toastMsg(`Only ${c.qty} in stock.`,false);return}if(!(data.undo&&data.undo.kind==="consumable"&&data.undo.id===id))setUndo({kind:"consumable",id,qty:c.qty,used:c.used,historyLen:data.history.length});c.qty-=n;c.used=(c.used||0)+n;logEvent("CONSUMABLE USE",{item:c.name,variant:c.variant,qty:-n});save();toastMsg(`Used ${n} ${c.name} · ${c.qty} left`)}
+function restock(id){let n=prompt("How many are you adding?");if(n===null)return;let c=data.consumables.find(c=>c.id===id);setUndo({kind:"consumable",id,qty:c.qty,used:c.used});let add=Math.max(0,+n||0);c.qty+=add;logEvent("RESTOCK",{item:c.name,variant:c.variant,qty:add});save();toastMsg(`${c.name}: ${c.qty} in stock`)}
+function quickCount(id){let c=data.consumables.find(c=>c.id===id);let n=prompt(`Physical count for ${c.name} ${c.variant}:`,c.qty);if(n===null)return;setUndo({kind:"consumable",id,qty:c.qty,used:c.used});let old=c.qty;c.qty=Math.max(0,+n||0);save();toastMsg(`Count updated to ${c.qty}`)}
+function renderAnalytics(){let total=data.consumables.reduce((a,c)=>a+c.used,0);weeklyTotal.textContent=total;let reorder=data.consumables.filter(c=>c.qty<=c.min);reorderCount.textContent=reorder.length;let max=Math.max(1,...data.consumables.map(c=>c.used));usageBars.innerHTML=data.consumables.map(c=>`<div style="margin:14px 0"><div class="between row"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${c.used}/week</span></div><div class="bar"><div class="fill" style="width:${c.used/max*100}%"></div></div></div>`).join("");reorderList.innerHTML=reorder.length?`<table><tr><th>Item</th><th>Variant</th><th>On Hand</th><th>Low At</th></tr>${reorder.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td>${c.qty}</td><td>${c.min}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing needs reordered.</div>`}
+function addEmployee(){if(!empName.value.trim())return;data.employees.push({name:empName.value.trim(),num:empNum.value.trim(),monitor:monNum.value.trim()});empName.value=empNum.value=monNum.value="";save()}
+
+function toggleBulk(id){let el=document.getElementById(id);el.style.display=el.style.display==="none"?"block":"none"}
+function rows(id){return document.getElementById(id).value.split(/\n/).map(x=>x.trim()).filter(Boolean).map(x=>x.split("|").map(v=>v.trim()))}
+function bulkEquipment(){rows("bulkEquipText").forEach(r=>{if(r[0])data.equipment.push({id:Date.now()+Math.random(),name:r[0],variant:r[1]||"",category:r[2]||"Other",holder:null,checkedOutAt:null,status:"Available"})});bulkEquipText.value="";save()}
+function bulkConsumables(){rows("bulkConsText").forEach(r=>{if(r[0])data.consumables.push({id:Date.now()+Math.random(),name:r[0],variant:r[1]||"",qty:+r[2]||0,min:+r[3]||0,category:r[4]||"Other",used:0})});bulkConsText.value="";save()}
+function bulkEmployees(){rows("bulkEmpText").forEach(r=>{if(r[0])data.employees.push({name:r[0],num:r[1]||"",monitor:r[2]||""})});bulkEmpText.value="";save()}
+function editEquipment(id){editingEquipmentId=id;equipmentBulkMode=false;equipmentBulkActions.style.display="none";renderEquipment()}
+function cancelOneEquipment(){editingEquipmentId=null;renderEquipment()}
+function saveOneEquipment(id){let r=document.querySelector(`#equipmentTable [data-eqid="${id}"]`),x=data.equipment.find(v=>v.id===id);if(!r||!x)return;let name=r.querySelector("[data-f=name]").value.trim()||x.name,variant=r.querySelector("[data-f=variant]").value.trim(),allow=r.querySelector("[data-f=allowdup]")?.checked??true;if(!allow&&hasDuplicateEquipmentVariant(name,variant,id)){toastMsg(`Duplicate variant not allowed for ${name}: ${variant||"(blank)"}`,false);return}x.name=name;x.variant=variant;x.category=r.querySelector("[data-f=category]").value.trim()||"Other";setDuplicateVariantsAllowed(name,allow);let st=r.querySelector("[data-f=status]").value;x.status=st;if(st!=="Checked Out"){x.holder=null;x.checkedOutAt=null}editingEquipmentId=null;save()}
+function editConsumable(id){editingConsumableId=id;consumablesBulkMode=false;consumablesBulkActions.style.display="none";renderConsumables()}
+function cancelOneConsumable(){editingConsumableId=null;renderConsumables()}
+function saveOneConsumable(id){let r=document.querySelector(`#consumablesTable [data-cid="${id}"]`),c=data.consumables.find(v=>v.id===id);if(!r||!c)return;let old=c.qty;c.name=r.querySelector("[data-f=name]").value.trim()||c.name;c.variant=r.querySelector("[data-f=variant]").value.trim();c.category=r.querySelector("[data-f=category]").value.trim()||"Other";c.qty=Math.max(0,+r.querySelector("[data-f=qty]").value||0);c.min=Math.max(0,+r.querySelector("[data-f=min]").value||0);c.target=Math.max(c.min,+r.querySelector("[data-f=target]").value||0);editingConsumableId=null;save()}
+
+let miscBulkMode=false,editingMiscId=null;
+function toggleMiscFilters(){let p=document.getElementById("miscFilters");p.style.display=p.style.display==="block"?"none":"block"}
+function clearMiscFilters(){miscSearch.value="";miscCategoryFilter.value="";renderMisc()}
+function filteredMisc(){categoryOptions(data.miscellaneous,"miscCategoryFilter");let q=(document.getElementById("miscSearch")?.value||"").toLowerCase(),cat=document.getElementById("miscCategoryFilter")?.value||"";return data.miscellaneous.filter(x=>(!q||(x.name+" "+(x.variant||"")+" "+(x.category||"")).toLowerCase().includes(q))&&(!cat||(x.category||"Other")===cat))}
+function renderMisc(){let items=filteredMisc();miscTable.innerHTML=`<div class="table-wrap"><table><tr><th>Item</th><th>Variant / Description</th><th>Category</th><th>Qty</th><th></th></tr>${items.map(x=>{if(miscBulkMode||editingMiscId===x.id)return `<tr class="inline-edit" data-mid="${x.id}"><td><input data-f="name" value="${esc(x.name)}"></td><td><input data-f="variant" value="${esc(x.variant||"")}"></td><td>${categorySelectHtml(MISC_CATEGORIES,x.category||"Other")}</td><td><input data-f="qty" type="number" min="0" value="${x.qty||0}"></td><td>${miscBulkMode?"":`<button class="btn" onclick="saveOneMisc(${x.id})">Save</button> <button class="btn light" onclick="cancelOneMisc()">Cancel</button>`}</td></tr>`;return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant||"")}</td><td>${esc(x.category||"Other")}</td><td><b>${x.qty||0}</b></td><td><button class="btn light" onclick="editMisc(${x.id})">Edit</button></td></tr>`}).join("")}</table></div>`}
+function addMisc(){if(!miscName.value.trim())return;data.miscellaneous.push({id:Date.now(),name:miscName.value.trim(),variant:miscVariant.value.trim(),category:miscCategory.value.trim()||"Other",qty:Math.max(0,+miscQty.value||0)});miscName.value=miscVariant.value=miscCategory.value=miscQty.value="";save()}
+function toggleMiscBulk(){miscBulkMode=!miscBulkMode;editingMiscId=null;miscBulkActions.style.display=miscBulkMode?"flex":"none";renderMisc()}
+function cancelMiscBulk(){miscBulkMode=false;miscBulkActions.style.display="none";renderMisc()}
+function saveMiscBulk(){document.querySelectorAll("#miscTable [data-mid]").forEach(r=>{let x=data.miscellaneous.find(v=>String(v.id)===r.dataset.mid);if(!x)return;x.name=r.querySelector("[data-f=name]").value.trim()||x.name;x.variant=r.querySelector("[data-f=variant]").value.trim();x.category=r.querySelector("[data-f=category]").value.trim()||"Other";x.qty=Math.max(0,+r.querySelector("[data-f=qty]").value||0)});miscBulkMode=false;miscBulkActions.style.display="none";save()}
+function editMisc(id){editingMiscId=id;miscBulkMode=false;miscBulkActions.style.display="none";renderMisc()}
+function cancelOneMisc(){editingMiscId=null;renderMisc()}
+function saveOneMisc(id){let r=document.querySelector(`#miscTable [data-mid="${id}"]`),x=data.miscellaneous.find(v=>v.id===id);if(!r||!x)return;x.name=r.querySelector("[data-f=name]").value.trim()||x.name;x.variant=r.querySelector("[data-f=variant]").value.trim();x.category=r.querySelector("[data-f=category]").value.trim()||"Other";x.qty=Math.max(0,+r.querySelector("[data-f=qty]").value||0);editingMiscId=null;save()}
+
+function editEmployee(i){let e=data.employees[i];if(!e)return;let n=prompt("Employee name:",e.name);if(n===null)return;let num=prompt("Employee #:",e.num);if(num===null)return;let mon=prompt("Monitor #:",e.monitor);if(mon===null)return;e.name=n.trim()||e.name;e.num=num.trim();e.monitor=mon.trim();save()}
+
+
+let bulkEditType=null;
+function closeBulkEditor(){document.getElementById("bulkEditModal").style.display="none";bulkEditType=null}
+function bulkInput(v,field,i,type="text"){return `<input type="${type}" data-i="${i}" data-field="${field}" value="${esc(v)}" style="min-width:110px;width:100%">`}
+function openBulkEditEmployees(){
+ bulkEditType="employees";bulkEditTitle.textContent="Bulk Edit Employees";
+ bulkEditGrid.innerHTML=`<table><tr><th>Name</th><th>Employee #</th><th>Monitor #</th></tr>${data.employees.map((e,i)=>`<tr><td>${bulkInput(e.name,"name",i)}</td><td>${bulkInput(e.num,"num",i)}</td><td>${bulkInput(e.monitor,"monitor",i)}</td></tr>`).join("")}</table>`;
+ bulkEditModal.style.display="block";
+}
+function openBulkEditEquipment(){
+ bulkEditType="equipment";bulkEditTitle.textContent="Bulk Edit Equipment";
+ bulkEditGrid.innerHTML=`<table><tr><th>Equipment</th><th>Variant / Size</th></tr>${data.equipment.map((e,i)=>`<tr><td>${bulkInput(e.name,"name",i)}</td><td>${bulkInput(e.variant,"variant",i)}</td></tr>`).join("")}</table>`;
+ bulkEditModal.style.display="block";
+}
+function openBulkEditConsumables(){
+ bulkEditType="consumables";bulkEditTitle.textContent="Bulk Edit Consumables";
+ bulkEditGrid.innerHTML=`<table><tr><th>Item</th><th>Variant</th><th>Qty</th><th>Low At</th></tr>${data.consumables.map((e,i)=>`<tr><td>${bulkInput(e.name,"name",i)}</td><td>${bulkInput(e.variant,"variant",i)}</td><td>${bulkInput(e.qty,"qty",i,"number")}</td><td>${bulkInput(e.min,"min",i,"number")}</td></tr>`).join("")}</table>`;
+ bulkEditModal.style.display="block";
+}
+function saveBulkEditor(){
+ if(!bulkEditType)return;
+ document.querySelectorAll("#bulkEditGrid input").forEach(inp=>{
+   let obj=data[bulkEditType][+inp.dataset.i], f=inp.dataset.field;
+   if(!obj)return;
+   if(f==="qty"||f==="min") obj[f]=Math.max(0,+inp.value||0);
+   else obj[f]=inp.value.trim();
+ });
+ closeBulkEditor();save();
+}
+
+
+function elapsedText(ms){
+  let mins=Math.max(0,Math.floor(ms/60000));
+  let hrs=Math.floor(mins/60), days=Math.floor(hrs/24);
+  hrs=hrs%24;
+  if(days>0)return `${days}d ${hrs}h`;
+  if(hrs>0)return `${hrs}h ${mins%60}m`;
+  return `${mins}m`;
+}
+function renderOverdue(){
+  let now=Date.now(), limit=24*60*60*1000;
+  let overdue=data.equipment.filter(x=>x.holder!==null && x.checkedOutAt && now-x.checkedOutAt>=limit)
+    .sort((a,b)=>a.checkedOutAt-b.checkedOutAt);
+  let people=new Set(overdue.map(x=>x.holder));
+  overdueCount.textContent=overdue.length;
+  overduePeople.textContent=people.size;
+  overdueTabCount.textContent=overdue.length?`(${overdue.length})`:"";
+  overdueTab.style.background=overdue.length?"#7d2525":"";
+  overdueTab.style.color=overdue.length?"#fff":"";
+  overdueList.innerHTML=overdue.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th><th></th></tr>${overdue.map(x=>{
+    let e=data.employees[x.holder];
+    return `<tr><td><b>${e?esc(e.name):"Unknown"}</b><br><span class="small">${e?"#"+esc(e.num)+" · Monitor "+esc(e.monitor):""}</span></td><td><b>${esc(x.name)}</b><br><span class="small">${esc(x.variant)}</span></td><td><span class="badge out">${elapsedText(now-x.checkedOutAt)}</span></td><td><button class="btn light" onclick="returnEquip(${x.id})">Return</button></td></tr>`
+  }).join("")}</table>`:`<div class="empty">Nothing is overdue.</div>`;
+}
+
+
+let returnEmployee=null,returnSelected=new Set();
+function renderReturn(){let input=document.getElementById("returnSearch"),q=(input?.value||"").toLowerCase();let assigned=new Map();data.equipment.forEach(x=>{if(x.holder!==null&&x.holder!==undefined)assigned.set(Number(x.holder),(assigned.get(Number(x.holder))||0)+1)});let rows=[...assigned.entries()].map(([i,n])=>({e:data.employees[i],i,n})).filter(x=>x.e&&(`${x.e.name} ${x.e.num} ${x.e.monitor}`).toLowerCase().includes(q));let grid=document.getElementById("returnEmployeeGrid");grid.innerHTML=rows.length?rows.map(x=>`<button class="emp-card" onclick="pickReturnEmployee(${x.i})"><b>#${esc(x.e.num)} ${esc(x.e.name)}</b><br><span class="small">${x.n} OUT</span></button>`).join(""):`<div class="empty">Nobody currently has equipment out.</div>`}
+function pickReturnEmployee(i){returnEmployee=i;returnSelected.clear();returnChooser.style.display="none";returnDetail.style.display="block";returnPerson.textContent=`#${data.employees[i].num} ${data.employees[i].name}`;renderReturnItems()}
+function backReturn(){returnEmployee=null;returnSelected.clear();returnChooser.style.display="block";returnDetail.style.display="none";returnSearch.value="";renderReturn()}
+function renderReturnItems(){if(returnEmployee===null)return;let items=data.equipment.filter(x=>x.holder===returnEmployee);returnItemGrid.innerHTML=items.map(x=>`<button class="gear-card ${returnSelected.has(x.id)?"selected":""}" onclick="toggleReturnNew(${x.id})"><b>${returnSelected.has(x.id)?"✓ ":""}${esc(x.name)}</b><br><span class="small">${esc(x.variant)}</span></button>`).join("");returnSelectedButton.textContent=`RETURN SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`}
+function toggleReturnNew(id){returnSelected.has(id)?returnSelected.delete(id):returnSelected.add(id);renderReturnItems()}
+function doReturns(ids){if(!ids.length)return;let before=[];ids.forEach(id=>{let x=data.equipment.find(v=>v.id===id);if(!x)return;before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});logEvent("RETURN",{employee:x.holder,equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available"});setUndo({kind:"equipment",before});save();toastMsg(`${ids.length} item${ids.length===1?"":"s"} returned`)}
+function returnSelectedItems(){let ids=[...returnSelected];doReturns(ids);returnSelected.clear();if(returnEmployee!==null&&data.equipment.some(x=>x.holder===returnEmployee))renderReturnItems();else backReturn()}
+function returnAllItems(){let ids=data.equipment.filter(x=>x.holder===returnEmployee).map(x=>x.id);doReturns(ids);backReturn()}
+returnSearch.oninput=renderReturn;
+
+function renderReorderNew(){let r=data.consumables.filter(c=>c.qty<=c.min);reorderBadge.textContent=r.length?`(${r.length})`:"";newReorderList.innerHTML=r.length?`<table><tr><th>Item</th><th>Variant</th><th>On Hand</th><th>Suggested Order</th></tr>${r.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td>${c.qty}</td><td><b>${Math.max(0,c.target-c.qty)}</b></td></tr>`).join("")}</table>`:`<div class="empty">Nothing needs reordered.</div>`}
+
+function showMore(name,btn){document.querySelectorAll(".morePanel").forEach(x=>x.style.display="none");document.querySelectorAll(".pill").forEach(x=>x.classList.remove("active"));let p=document.getElementById("more-"+name);if(p)p.style.display="block";if(btn)btn.classList.add("active");renderMore()}
+function elapsed(ms){let h=Math.floor(ms/3600000),d=Math.floor(h/24);return d?`${d}d ${h%24}h`:`${h}h ${Math.floor(ms/60000)%60}m`}
+function historyDetail(h){let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;return [e?`#${e.num} ${e.name}`:"",h.equipment,h.variant,h.item].filter(Boolean).join(" · ")}
+function setAnalyticsDays(days){analyticsDays=days;renderMore()}
+function deleteHistoryEntry(i){if(!Number.isInteger(i)||i<0||i>=data.history.length)return;if(!confirm("Delete this history entry?"))return;data.history.splice(i,1);save();renderMore()}
+function renderMore(){let now=Date.now(),over=data.equipment.filter(x=>x.holder!==null&&x.checkedOutAt&&now-x.checkedOutAt>=86400000),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>o.x.action==="CHECK OUT"||o.x.action==="RETURN"),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Over 24 Hours (${over.length})</h3>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${elapsed(now-x.checkedOutAt)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<table><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td><button class="btn light" onclick="restoreService(${x.id})">Return to Service</button></td></tr>`).join("")}</table>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML=`<div class="card"><div class="row between"><h3>Activity History</h3><button class="btn light" onclick="exportHistory()">Export Full History</button></div><table><tr><th>Time</th><th>Action</th><th>Details</th><th style="width:36px"></th></tr>${visible.slice(0,500).map(o=>`<tr><td>${new Date(o.x.time).toLocaleString()}</td><td><b>${esc(o.x.action)}</b></td><td>${esc(historyDetail(o.x))}</td><td style="text-align:right"><button type="button" aria-label="Delete history entry" title="Delete" onclick="deleteHistoryEntry(${o.i})" style="border:0;background:transparent;color:#9d3434;font-size:22px;font-weight:900;line-height:1;padding:4px 6px;cursor:pointer">×</button></td></tr>`).join("")}</table></div>`;document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Turnaround Reports & Backup</h3><div class="row"><button class="btn" onclick="exportHistory()">Full Activity History CSV</button><button class="btn" onclick="exportInventory()">Complete Inventory CSV</button><button class="btn light" onclick="exportBackup()">Backup JSON</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="row"><input id="moreEmpName" placeholder="Employee name"><input id="moreEmpNum" placeholder="Employee #"><input id="moreMonNum" placeholder="Monitor #"><button class="btn" onclick="addEmployeeFromMore()">Add Employee</button></div><div style="margin-top:12px">${data.employees.map((e,i)=>`<div class="row between" style="padding:10px 0;border-bottom:1px solid #eef0f2"><b>#${esc(e.num)} ${esc(e.name)}</b><span class="small">Monitor ${esc(e.monitor)}</span><button class="btn light" onclick="editEmployee(${i})">Edit</button></div>`).join("")}</div></div>`}
+function addEmployeeFromMore(){let n=document.getElementById("moreEmpName"),num=document.getElementById("moreEmpNum"),mon=document.getElementById("moreMonNum");if(!n.value.trim())return;data.employees.push({name:n.value.trim(),num:num.value.trim(),monitor:mon.value.trim()});save()}
+function restoreService(id){let x=data.equipment.find(v=>v.id===id);x.status="Available";x.holder=null;x.checkedOutAt=null;logEvent("RETURN TO SERVICE",{equipment:x.name,variant:x.variant});save()}
+function csv(v){return `"${String(v??"").replaceAll('"','""')}"`}
+function downloadFile(name,text,type="text/csv"){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportHistory(){let rows=[["Time","Action","Employee #","Employee","Item","Variant / Label","Quantity","Category","Details"]];[...data.history].reverse().forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let item=h.equipment||h.item||"",variant=h.variant||"",cat="";let eq=data.equipment.find(x=>x.name===item&&String(x.variant||"")===String(variant));let co=data.consumables.find(x=>x.name===item&&String(x.variant||"")===String(variant));cat=(eq||co)?.category||"";rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||"",e?.name||"",item,variant,h.qty||"",cat,historyDetail(h)])});downloadFile("tool-room-full-activity-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
+function exportInventory(){let rows=[["Inventory Type","Category","Item","Variant / Label","Quantity","Status","Assigned Employee #","Assigned Employee","Low At"]];data.equipment.forEach(x=>{let e=x.holder!==null&&x.holder!==undefined?data.employees[x.holder]:null;rows.push(["Equipment",x.category||"Other",x.name,x.variant,"",x.status|| (x.holder===null?"Available":"Checked Out"),e?.num||"",e?.name||"",""])});data.consumables.forEach(c=>rows.push(["Consumable",c.category||"Other",c.name,c.variant,c.qty,status(c)[0],"","",c.min]));data.miscellaneous.forEach(x=>rows.push(["Miscellaneous",x.category||"Other",x.name,x.variant||"",x.qty||0,"In Inventory","","",""]));downloadFile("tool-room-complete-inventory.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
+function exportBackup(){downloadFile("tool-room-backup.json",JSON.stringify(data,null,2),"application/json")}
+function restoreBackup(ev){let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!d.employees||!d.equipment||!d.consumables)throw 0;data=d;if(!data.history)data.history=[];if(!data.miscellaneous)data.miscellaneous=[];
+if(!data.miscellaneous)data.miscellaneous=[];data.consumables.forEach(c=>{if(c.target===undefined)c.target=Math.max(c.qty,c.min*3)});save();alert("Backup restored.")}catch{alert("That backup file is not valid.")}};r.readAsText(f)}
+ 
+function renderAll(){[renderEmployees,renderCheckout,renderEquipment,renderConsumables,renderMisc,renderAnalytics,renderReturn,renderReorderNew,renderMore].forEach(fn=>{try{fn()}catch(e){console.error(fn.name,e)}})}
+renderAll();
+setInterval(renderMore,60000);
+</script>
+</body></html>
