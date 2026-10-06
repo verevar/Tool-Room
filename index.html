@@ -808,7 +808,7 @@ body.editing-active{padding-bottom:62px!important}
  height:42px!important;min-height:42px!important;margin:0!important;box-sizing:border-box!important
 }
 #equipment .equipment-second-row{
- display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+ display:grid!important;grid-template-columns:minmax(0,0.85fr) minmax(0,1.15fr)!important;
  gap:8px!important;width:100%!important;margin-top:8px!important;box-sizing:border-box!important
 }
 #equipment .equipment-second-row>select,#equipment .equipment-dup-check{
@@ -829,6 +829,19 @@ body.editing-active{padding-bottom:62px!important}
  margin:0!important;padding:7px 3px!important;font-size:11.5px!important;
  line-height:1!important;white-space:nowrap!important;box-sizing:border-box!important
 }
+</style>
+
+
+<style id="equipment-entry-grid-final">
+#equipment .equipment-controls{display:block!important;width:100%!important}
+#equipment .equipment-entry-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:42px 42px!important;gap:8px!important;width:100%!important}
+#equipment .equipment-entry-grid>input,#equipment .equipment-entry-grid>select,#equipment .equipment-entry-grid>.equipment-dup-check{width:100%!important;min-width:0!important;max-width:none!important;height:42px!important;min-height:42px!important;margin:0!important;box-sizing:border-box!important}
+#equipment .equipment-entry-grid>.equipment-dup-check{display:flex!important;align-items:center!important;justify-content:flex-start!important;padding:7px 10px!important;white-space:nowrap!important}
+#equipment .equipment-entry-grid>.equipment-dup-check input{flex:0 0 auto!important;width:auto!important;height:auto!important}
+#equipment .equipment-entry-grid>.equipment-dup-check span{white-space:nowrap!important;font-size:12px!important}
+#equipment .equipment-entry-grid>.equipment-dup-check input{width:17px!important;height:17px!important;min-width:17px!important;margin:0 4px 0 0!important}
+#equipment .equipment-entry-grid>input,#equipment .equipment-entry-grid>select,#equipment .equipment-entry-grid>.equipment-dup-check{grid-column:auto!important;grid-row:auto!important}
+@media(max-width:520px){#equipment .equipment-entry-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}}
 </style>
 
 </head>
@@ -882,12 +895,10 @@ body.editing-active{padding-bottom:62px!important}
 <section id="equipment" class="page">
 <h1>Equipment</h1><p class="sub">Add or edit equipment.</p>
 <div class="card">
-<div class="row inventory-controls equipment-controls">
-  <div class="equipment-add-row">
+<div class="inventory-controls equipment-controls">
+  <div class="equipment-entry-grid">
     <input id="newEquip" placeholder="Item" oninput="refreshAddSuggestions('equipment')"><datalist id="equipmentNameSuggestions"></datalist>
     <input id="newEquipVariant" placeholder="Variant" oninput="refreshAddSuggestions('equipment')"><datalist id="equipmentVariantSuggestions"></datalist>
-  </div>
-  <div class="equipment-second-row">
     <select id="newEquipCategory"><option value="">Category</option><option>Power Tools</option><option>Hand Tools</option><option>Rigging</option><option>Pipe Fit-Up</option><option>Electrical</option><option>Safety / Confined Space</option><option>Welding</option><option>Material Handling</option><option>Other</option></select>
     <label class="check equipment-dup-check"><input id="newEquipAllowDup" type="checkbox" checked><span>Allow Duplicates</span></label>
   </div>
@@ -1138,9 +1149,10 @@ function backToEmployees(){
  employeeSearch.value="";
  renderFastEmployees();
 }
+function equipmentKey(name){return String(name||"").trim().toLowerCase()}
 function equipmentMax(name){return 1}
-function employeeOutstandingFor(name,employee=selectedEmployee){return data.equipment.filter(x=>x.name===name&&x.holder!==null&&x.holder!==undefined&&String(x.holder)===String(employee)).length}
-function selectedOutstandingFor(name){return [...selectedGear].map(id=>data.equipment.find(x=>x.id===id)).filter(x=>x&&x.name===name).length}
+function employeeOutstandingFor(name,employee=selectedEmployee){let key=equipmentKey(name);return data.equipment.filter(x=>equipmentKey(x.name)===key&&x.holder!==null&&x.holder!==undefined&&String(x.holder)===String(employee)).length}
+function selectedOutstandingFor(name){let key=equipmentKey(name);return [...selectedGear].map(id=>data.equipment.find(x=>x.id===id)).filter(x=>x&&equipmentKey(x.name)===key).length}
 function remainingEquipmentAllowance(name){let max=equipmentMax(name);return max===Infinity?Infinity:Math.max(0,max-employeeOutstandingFor(name)-selectedOutstandingFor(name))}
 function typeGearButton(name,count){let remain=remainingEquipmentAllowance(name);if(remain<=0)return "";return `<button class="gear-card" onclick='openPicker(${JSON.stringify(name)},false)'><b>${esc(name)}</b><br><span class="small">${count} available</span></button>`}
 function overrideGearButton(name,count){return `<button class="gear-card override-max-card" onclick='confirmMaxOverride(${JSON.stringify(name)})'><b>${esc(name)}</b><br><span class="small">Override</span></button>`}
@@ -1152,7 +1164,7 @@ function openPicker(name,override=false){let choices=data.equipment.filter(x=>x.
 function chooseVariant(id,override=false){let x=data.equipment.find(v=>v.id===id);if(!x||String(x.status||"").trim().toLowerCase()!=="available"){closeVariantPicker();toastMsg("That item is not available.",false);return}if(!override&&remainingEquipmentAllowance(x.name)<=0){closeVariantPicker();toastMsg(`${x.name} has reached its checkout max.`,false);return}selectedGear.add(x.id);closeVariantPicker();renderFastGear()}
 function closeVariantPicker(){variantModal.style.display="none";variantChoices.innerHTML=""}
 function removeSelectedGear(id){selectedGear.delete(id);renderFastGear()}
-function renderFastGear(){if(selectedEmployee===null){gearArea.style.display="none";return}let avail=data.equipment.filter(x=>!x.hidden&&String(x.status||"").trim().toLowerCase()==="available"&&!selectedGear.has(x.id)),groups={};avail.forEach(x=>(groups[x.name]??=[]).push(x));let u=data.usage[selectedEmployee]||{},ranked=Object.keys(groups).map(n=>[n,groups[n].reduce((a,x)=>a+(u[x.id]||0),0)]).sort((a,b)=>b[1]-a[1]),most=ranked.filter(x=>x[1]>0).slice(0,6).map(x=>x[0]);mostUsedTitle.textContent="Most Used by "+data.employees[selectedEmployee].name.split(" ")[0];mostUsedGear.innerHTML=most.length?most.map(n=>typeGearButton(n,groups[n].length)).join(""):`<div class="small">This will fill automatically as they check out equipment.</div>`;let ordered=orderedEquipmentNames(Object.keys(groups)),normalNames=ordered.filter(n=>remainingEquipmentAllowance(n)>0),capped=ordered.filter(n=>remainingEquipmentAllowance(n)<=0&&groups[n]&&groups[n].length>0),normal=normalNames.map(n=>typeGearButton(n,groups[n].length)).join("");allGear.innerHTML=normal+(capped.length?`<div class="checkout-override-section"><div class="gear-grid checkout-override-grid">${capped.map(n=>overrideGearButton(n,groups[n].length)).join("")}</div></div>`:"");selectedGearStrip.innerHTML=[...selectedGear].map(id=>{let x=data.equipment.find(v=>v.id===id);return x?`<button class="selected-chip" onclick="removeSelectedGear(${id})">✓ ${esc(x.name)} · ${esc(x.variant)} ×</button>`:""}).join("");fastCheckoutBtn.textContent=`Check Out${selectedGear.size?` (${selectedGear.size})`:""}`;renderCheckoutConsumables()}
+function renderFastGear(){if(selectedEmployee===null){gearArea.style.display="none";return}let avail=data.equipment.filter(x=>!x.hidden&&String(x.status||"").trim().toLowerCase()==="available"&&!selectedGear.has(x.id)),groups={},displayNames={};avail.forEach(x=>{let k=equipmentKey(x.name);if(!groups[k])groups[k]=[];groups[k].push(x);if(!displayNames[k])displayNames[k]=String(x.name||"").trim()});let normalizedGroups={};Object.keys(groups).forEach(k=>normalizedGroups[displayNames[k]]=groups[k]);groups=normalizedGroups;let u=data.usage[selectedEmployee]||{},ranked=Object.keys(groups).map(n=>[n,groups[n].reduce((a,x)=>a+(u[x.id]||0),0)]).sort((a,b)=>b[1]-a[1]),most=ranked.filter(x=>x[1]>0).slice(0,6).map(x=>x[0]);mostUsedTitle.textContent="Most Used by "+data.employees[selectedEmployee].name.split(" ")[0];mostUsedGear.innerHTML=most.length?most.map(n=>typeGearButton(n,groups[n].length)).join(""):`<div class="small">This will fill automatically as they check out equipment.</div>`;let ordered=orderedEquipmentNames(Object.keys(groups)),normalNames=ordered.filter(n=>remainingEquipmentAllowance(n)>0),capped=ordered.filter(n=>remainingEquipmentAllowance(n)<=0&&groups[n]&&groups[n].length>0),normal=normalNames.map(n=>typeGearButton(n,groups[n].length)).join("");allGear.innerHTML=normal+(capped.length?`<div class="checkout-override-section"><div class="gear-grid checkout-override-grid">${capped.map(n=>overrideGearButton(n,groups[n].length)).join("")}</div></div>`:"");selectedGearStrip.innerHTML=[...selectedGear].map(id=>{let x=data.equipment.find(v=>v.id===id);return x?`<button class="selected-chip" onclick="removeSelectedGear(${id})">✓ ${esc(x.name)} · ${esc(x.variant)} ×</button>`:""}).join("");fastCheckoutBtn.textContent=`Check Out${selectedGear.size?` (${selectedGear.size})`:""}`;renderCheckoutConsumables()}
 function renderCheckoutConsumables(){let box=document.getElementById("checkoutConsumables");if(!box||selectedEmployee===null)return;let rows=orderInventoryRows("consumable",data.consumables.filter(c=>!c.hidden&&c.qty>0));box.innerHTML=rows.length?`<div class="table-wrap"><table><tr><th>Use</th><th>Item</th><th>Variant</th><th>Stock</th></tr>${rows.map(c=>`<tr class="${c.hidden?"hidden-inventory-row":""}"><td><div class="use-inline"><input id="checkoutUse-${c.id}" type="number" min="1" max="${c.qty}" value="1" inputmode="numeric"><button class="btn" onclick="useCheckoutConsumable(${c.id})">Use</button></div></td><td><b>${esc(c.name)}</b></td><td>${esc(c.variant||"")}</td><td><b>${c.qty}</b></td></tr>`).join("")}</table></div>`:`<div class="empty">No consumables in stock.</div>`}
 function useCheckoutConsumable(id){if(selectedEmployee===null)return;let c=data.consumables.find(x=>x.id===id),el=document.getElementById(`checkoutUse-${id}`);if(!c||c.qty<=0){toastMsg("That item is out of stock.",false);return}let n=Math.floor(Number(el?.value||1));if(!Number.isFinite(n)||n<1){toastMsg("Enter a valid quantity.",false);return}if(n>c.qty){toastMsg(`Only ${c.qty} in stock.`,false);return}let emp=selectedEmployee;c.qty-=n;c.used=(c.used||0)+n;logEvent("CONSUMABLE USE",{employee:emp,item:c.name,variant:c.variant,qty:-n});save();renderCheckoutConsumables();toastMsg(`Used ${n} ${c.name} for ${data.employees[emp]?.name||"employee"} · ${c.qty} left`)}
 function fastCheckout(){
