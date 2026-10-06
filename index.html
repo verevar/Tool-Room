@@ -403,6 +403,148 @@ button[onclick*="duplicate"],button[onclick*="Duplicate"]{
 }
 </style>
 
+
+<style id="actual-ui-fix-v3">
+/* ACTUAL header elements */
+@media(max-width:800px){
+  header{padding:10px 12px!important}
+  nav{gap:4px!important}
+  nav .tab{
+    font-size:10.5px!important;
+    padding:8px 2px!important;
+    letter-spacing:-.25px!important;
+    line-height:1!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+  }
+  .brand{font-size:14px!important}
+  .global-tools{gap:5px!important}
+  .global-search{padding:8px 9px!important;font-size:13px!important}
+  .undo-global{padding:8px 8px!important;font-size:11px!important}
+}
+
+/* ACTUAL analytics cards */
+#more-analytics>.grid{
+  gap:6px!important;
+  margin:0 0 8px!important;
+}
+#more-analytics>.grid>.stat{
+  padding:8px 9px!important;
+  min-height:62px!important;
+  border-radius:10px!important;
+}
+#more-analytics>.grid>.stat .label{
+  font-size:9px!important;
+  line-height:1.05!important;
+  letter-spacing:.25px!important;
+}
+#more-analytics>.grid>.stat b{
+  font-size:21px!important;
+  line-height:1!important;
+  margin-top:3px!important;
+}
+#more-analytics .card{padding:11px!important}
+#more-analytics .card .btn{padding:7px 9px!important;font-size:11px!important}
+
+/* ACTUAL employee bulk rows */
+#more-employees .card{padding:10px!important}
+.employee-actions{gap:6px!important;margin-bottom:7px!important}
+.employee-actions .btn{padding:7px 9px!important;font-size:11px!important}
+.employee-bulk-grid{
+  grid-template-columns:minmax(0,1fr) 48px 62px!important;
+  gap:4px!important;
+  padding:3px 0!important;
+}
+.employee-bulk-grid input{
+  width:100%!important;
+  min-width:0!important;
+  height:32px!important;
+  min-height:32px!important;
+  padding:3px 5px!important;
+  font-size:11px!important;
+  border-radius:7px!important;
+}
+.employee-inline-edit{
+  grid-template-columns:minmax(0,1fr) 48px 62px!important;
+  gap:4px!important;
+}
+.employee-inline-edit input{
+  height:32px!important;
+  min-height:32px!important;
+  padding:3px 5px!important;
+  font-size:11px!important;
+}
+
+/* ACTUAL checkout history filter: From | To | Apply | Clear */
+.history-filter{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px 42px!important;
+  gap:4px!important;
+  align-items:end!important;
+  margin:2px 0 6px!important;
+}
+.history-filter label{display:block!important;min-width:0!important;margin:0!important}
+.history-filter label span{
+  display:block!important;
+  font-size:9px!important;
+  line-height:1!important;
+  margin:0 0 2px 2px!important;
+  color:#6b7280!important;
+  font-weight:800!important;
+}
+.history-filter input{
+  width:100%!important;
+  min-width:0!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:2px 3px!important;
+  font-size:10px!important;
+  border-radius:7px!important;
+}
+.history-filter>.btn{
+  width:100%!important;
+  min-width:0!important;
+  height:30px!important;
+  min-height:30px!important;
+  padding:2px 3px!important;
+  font-size:9px!important;
+  border-radius:7px!important;
+  line-height:1!important;
+}
+
+/* ACTUAL export buttons */
+#more-exports .card{padding:10px!important}
+#more-exports .card h3{margin:0 0 7px!important;font-size:17px!important}
+#more-exports .export-stack{gap:5px!important;margin-top:5px!important;max-width:none!important}
+#more-exports .export-stack .btn,
+#more-exports .export-stack label.btn{
+  padding:7px 6px!important;
+  min-height:31px!important;
+  font-size:10.5px!important;
+  line-height:1!important;
+  border-radius:8px!important;
+}
+
+/* ACTUAL floating save controls */
+.floating-editbar{
+  padding:4px!important;
+  gap:5px!important;
+  border-radius:11px!important;
+}
+.floating-editbar .btn{
+  padding:7px 9px!important;
+  min-height:34px!important;
+  font-size:11px!important;
+}
+body.editing-active{padding-bottom:62px!important}
+.edit-spacer.show{height:58px!important}
+
+/* Tighten real table labels/rows */
+.card table{margin-top:5px!important}
+.card table th{padding:6px 5px!important;font-size:10px!important;line-height:1!important}
+.card table td{padding:7px 5px!important}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -968,7 +1110,7 @@ let checkoutHistoryFrom="",checkoutHistoryTo="";
 function historyDatePass(t){let d=new Date(t);if(Number.isNaN(d.getTime()))return false;if(checkoutHistoryFrom&&d<new Date(checkoutHistoryFrom+"T00:00:00"))return false;if(checkoutHistoryTo&&d>new Date(checkoutHistoryTo+"T23:59:59.999"))return false;return true}
 function applyCheckoutHistoryFilter(){checkoutHistoryFrom=document.getElementById("checkoutHistoryFrom")?.value||"";checkoutHistoryTo=document.getElementById("checkoutHistoryTo")?.value||"";renderMore()}
 function clearCheckoutHistoryFilter(){checkoutHistoryFrom="";checkoutHistoryTo="";renderMore()}
-function checkoutHistoryFilterHtml(){return `<div class="history-filter"><label>From<input type="date" id="checkoutHistoryFrom" value="${checkoutHistoryFrom}"></label><label>To<input type="date" id="checkoutHistoryTo" value="${checkoutHistoryTo}"></label><div class="history-filter-actions"><button class="btn" onclick="applyCheckoutHistoryFilter()">Apply</button><button class="btn light" onclick="clearCheckoutHistoryFilter()">Clear</button></div></div>`}
+function checkoutHistoryFilterHtml(){return `<div class="history-filter"><label><span>From</span><input type="date" id="checkoutHistoryFrom" value="${checkoutHistoryFrom}"></label><label><span>To</span><input type="date" id="checkoutHistoryTo" value="${checkoutHistoryTo}"></label><button class="btn history-apply" onclick="applyCheckoutHistoryFilter()">Apply</button><button class="btn light history-clear" onclick="clearCheckoutHistoryFilter()">Clear</button></div>`}
 function renderMore(){let now=Date.now(),over=data.equipment.filter(x=>x.holder!==null&&x.checkedOutAt&&now-x.checkedOutAt>=86400000),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>(o.x.action==="CHECK OUT"||o.x.action==="RETURN")&&historyDatePass(o.x.time)),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
 let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${checkoutHistoryFilterHtml()}${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().reverse().map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):"");let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");return `<tr><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${who}${who&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out or return history yet.</div>`}</div>`;
 document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Over 24 Hours (${over.length})</h3>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${elapsed(now-x.checkedOutAt)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<table><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td><button class="btn light" onclick="restoreService(${x.id})">Return to Service</button></td></tr>`).join("")}</table>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>${analyticsHistoryHtml()}`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn" onclick="exportHistory()">Export Full Activity History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="employee-actions"><button class="btn" onclick="openAddEmployeeModal()">Add Employee</button><button class="btn light" onclick="toggleEmployeeBulk()">${employeeBulkMode?"Cancel Bulk Edit":"Bulk Edit"}</button></div><div>${employeeBulkMode?employeeBulkRows():data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
