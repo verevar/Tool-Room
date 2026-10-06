@@ -843,6 +843,24 @@ body.editing-active{padding-bottom:62px!important}
 }
 </style>
 
+<style id="equipment-controls-final-fix">
+.equipment-controls{display:block!important}
+.equipment-add-row{display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) 62px!important;gap:8px!important;width:100%!important}
+.equipment-second-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important;gap:8px!important;width:100%!important;margin-top:8px!important}
+.equipment-second-row>select,.equipment-dup-check{width:100%!important;min-width:0!important}
+.equipment-dup-check{box-sizing:border-box!important;padding:8px 10px!important;display:flex!important;align-items:center!important;gap:10px!important;overflow:hidden!important}
+.equipment-dup-check span{display:block!important;min-width:0!important;white-space:nowrap!important;font-size:14px!important}
+.equipment-dup-check input{flex:0 0 auto!important}
+.equipment-action-row{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;width:100%!important;margin-top:8px!important}
+.equipment-action-row .btn{width:100%!important;min-width:0!important;padding:10px 4px!important;font-size:12px!important;white-space:nowrap!important}
+.equipment-max-input{text-align:center!important;padding-left:4px!important;padding-right:4px!important}
+@media(max-width:430px){
+ .equipment-add-row{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) 58px!important}
+ .equipment-second-row{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important}
+ .equipment-action-row{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .equipment-action-row .btn{font-size:11.5px!important}
+}
+</style>
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -894,7 +912,23 @@ body.editing-active{padding-bottom:62px!important}
 <section id="equipment" class="page">
 <h1>Equipment</h1><p class="sub">Add or edit equipment.</p>
 <div class="card">
-<div class="row inventory-controls equipment-controls"><input id="newEquip" placeholder="Item" oninput="refreshAddSuggestions('equipment')"><datalist id="equipmentNameSuggestions"></datalist><input id="newEquipVariant" placeholder="Variant" oninput="refreshAddSuggestions('equipment')"><datalist id="equipmentVariantSuggestions"></datalist><input id="newEquipMax" class="equipment-max-input" type="number" min="1" max="99" inputmode="numeric" placeholder="Max"><select id="newEquipCategory"><option value="">Category</option><option>Power Tools</option><option>Hand Tools</option><option>Rigging</option><option>Pipe Fit-Up</option><option>Electrical</option><option>Safety / Confined Space</option><option>Welding</option><option>Material Handling</option><option>Other</option></select><label class="check" style="padding:8px 10px"><input id="newEquipAllowDup" type="checkbox" checked><span>Allow Duplicates</span></label><button class="btn" onclick="addEquipment()">Add</button><button class="btn light" onclick="toggleEquipmentBulk()">Bulk Edit</button><button class="btn light" onclick="toggleEquipmentFilters()">Filter ▾</button><button class="btn light" id="editOrderBtn" onclick="toggleEquipmentOrder()">Edit Order</button></div><div id="equipmentOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Checkout Equipment Order</b><button class="btn" onclick="finishEquipmentOrder()">Done</button></div><div class="order-toolbar"><span class="small">Drag manually or organize automatically.</span><select id="equipmentAutoOrder" onchange="applyEquipmentAutoOrder(this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="equipmentOrderGrid" class="order-grid"></div></div>
+<div class="row inventory-controls equipment-controls">
+  <div class="equipment-add-row">
+    <input id="newEquip" placeholder="Item" oninput="refreshAddSuggestions('equipment')"><datalist id="equipmentNameSuggestions"></datalist>
+    <input id="newEquipVariant" placeholder="Variant" oninput="refreshAddSuggestions('equipment')"><datalist id="equipmentVariantSuggestions"></datalist>
+    <input id="newEquipMax" class="equipment-max-input" type="number" min="1" max="99" inputmode="numeric" placeholder="Max">
+  </div>
+  <div class="equipment-second-row">
+    <select id="newEquipCategory"><option value="">Category</option><option>Power Tools</option><option>Hand Tools</option><option>Rigging</option><option>Pipe Fit-Up</option><option>Electrical</option><option>Safety / Confined Space</option><option>Welding</option><option>Material Handling</option><option>Other</option></select>
+    <label class="check equipment-dup-check"><input id="newEquipAllowDup" type="checkbox" checked><span>Allow Duplicates</span></label>
+  </div>
+  <div class="equipment-action-row">
+    <button class="btn" onclick="addEquipment()">Add</button>
+    <button class="btn light" onclick="toggleEquipmentBulk()">Bulk Edit</button>
+    <button class="btn light" onclick="toggleEquipmentFilters()">Filter ▾</button>
+    <button class="btn light" id="editOrderBtn" onclick="toggleEquipmentOrder()">Edit Order</button>
+  </div>
+</div><div id="equipmentOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Checkout Equipment Order</b><button class="btn" onclick="finishEquipmentOrder()">Done</button></div><div class="order-toolbar"><span class="small">Drag manually or organize automatically.</span><select id="equipmentAutoOrder" onchange="applyEquipmentAutoOrder(this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="equipmentOrderGrid" class="order-grid"></div></div>
 <div id="equipmentFilters" class="filter-panel sticky-filter"><div class="row"><input id="equipmentSearch" placeholder="Search" oninput="renderEquipment()"><select id="equipmentGroupFilter" onchange="renderEquipment()"><option value="">All categories</option></select><select id="equipmentStatusFilter" onchange="renderEquipment()"><option value="">All statuses</option><option>Available</option><option>Checked Out</option><option>Damaged</option><option>Missing</option></select><button id="equipmentHiddenBtn" class="btn light" onclick="toggleEquipmentHidden()">Show Hidden</button><button class="btn light" onclick="clearEquipmentFilters()">Clear</button></div></div>
 <div id="equipmentBulkActions" style="display:none"></div>
 <div id="equipmentTable"></div>
