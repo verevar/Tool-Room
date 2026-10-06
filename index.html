@@ -842,6 +842,41 @@ body.editing-active{padding-bottom:62px!important}
 }
 </style>
 
+
+<style id="override-separate-section-fix">
+/* Max override is its own full-width section below normal equipment */
+#allGear > .checkout-override-section{
+  grid-column:1 / -1!important;
+  width:100%!important;
+  min-width:100%!important;
+  max-width:100%!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  margin:12px 0 0!important;
+  padding:10px 0 0!important;
+  border-top:1px solid #ddd!important;
+}
+#allGear > .checkout-override-section > .checkout-override-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+  width:100%!important;
+  margin:0!important;
+}
+#allGear > .checkout-override-section .override-max-card{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+}
+#allGear > .checkout-override-section .override-max-card .small{
+  display:block!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  font-size:11px!important;
+}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
