@@ -27,7 +27,7 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;col
 .emp-card.active,.gear-card.selected{background:#17191c;color:#fff;border-color:#17191c}
 .gear-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:7px;margin:8px 0 14px}.gear-card{padding:9px 10px;font-size:14px;line-height:1.15}.gear-card .small{font-size:11px}
 .checkout-big{width:auto;min-width:0;font-size:14px;padding:10px 14px;margin:0;position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(34px,calc(env(safe-area-inset-bottom) + 26px));z-index:950;box-shadow:0 8px 24px rgba(0,0,0,.22);border-radius:10px;white-space:nowrap}
-@media(max-width:760px){.checkout-big{right:14px;bottom:24vh;min-width:0;max-width:none;padding:10px 14px;font-size:14px}}
+@media(max-width:760px){.checkout-big{right:max(14px,env(safe-area-inset-right))!important;bottom:max(32px,calc(env(safe-area-inset-bottom) + 24px))!important;top:auto!important;left:auto!important;min-width:0;max-width:none;padding:10px 14px;font-size:14px}}
 .fast-head{margin:16px 0 6px;font-size:13px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:#6c737d}
 .pillbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.pill{border:1px solid var(--line);background:#fff;padding:8px 11px;border-radius:999px;font-weight:800;cursor:pointer}.pill.active{background:#17191c;color:#fff}.toast{display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17191c;color:#fff;padding:11px 14px;border-radius:10px;z-index:80;box-shadow:0 5px 25px #0005}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:60;padding:18px;overflow:auto}.modalbox{max-width:700px;margin:6vh auto;background:#fff;border-radius:14px;padding:17px}.choice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:8px;margin-top:12px}.choice{border:1px solid var(--line);background:#fff;border-radius:9px;padding:12px;font-weight:800;cursor:pointer}
 @media(max-width:800px){header{padding:12px 14px;gap:8px}.brand{font-size:15px;white-space:nowrap}.brand span{margin-left:5px}nav{width:100%;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;overflow:visible;padding-bottom:0}nav .tab{width:100%;min-width:0;padding:8px 5px;font-size:12px;white-space:nowrap}nav .tab:nth-child(-n+3){grid-column:span 4}nav .tab:nth-child(n+4){grid-column:span 3}.global-tools{margin-top:0;flex-wrap:nowrap;gap:6px}.global-search{min-width:0;max-width:none;padding:9px 10px}.undo-global{flex:0 0 auto;padding:9px 10px;font-size:13px;white-space:nowrap}.grid{grid-template-columns:repeat(2,1fr)}.gear-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.gear-card{min-height:48px}#allGear{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:100%;overflow:visible}#allGear .gear-card{min-width:0;width:100%;padding:7px 6px;font-size:12px;line-height:1.1;overflow-wrap:anywhere}#allGear .gear-card .small{font-size:10px}.checklist{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}table{font-size:13px}}
@@ -181,6 +181,10 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;col
   margin:0 !important;
 }
 
+
+/* Keep checkout action fixed low on the viewport, including mobile */
+#fastCheckoutBtn.checkout-big{position:fixed!important;right:max(18px,env(safe-area-inset-right))!important;bottom:max(32px,calc(env(safe-area-inset-bottom) + 24px))!important;top:auto!important;left:auto!important;z-index:950!important;width:auto!important;min-width:0!important}
+@media(max-width:760px){#fastCheckoutBtn.checkout-big{right:max(14px,env(safe-area-inset-right))!important;bottom:max(32px,calc(env(safe-area-inset-bottom) + 24px))!important;top:auto!important;left:auto!important}}
 </style>
 
 <style id="ios-no-form-zoom">
@@ -844,6 +848,19 @@ body.editing-active{padding-bottom:62px!important}
 @media(max-width:520px){#equipment .equipment-entry-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}}
 </style>
 
+
+<style id="equipment-entry-final-layout">
+#equipment .equipment-entry-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;grid-template-rows:42px 42px!important;gap:8px!important;width:100%!important}
+#equipment #newEquip{grid-column:1!important;grid-row:1!important}
+#equipment #newEquipVariant{grid-column:2!important;grid-row:1!important}
+#equipment #newEquipCategory{grid-column:1!important;grid-row:2!important}
+#equipment .equipment-entry-grid>.equipment-dup-check{grid-column:2!important;grid-row:2!important}
+#equipment .equipment-entry-grid>input,#equipment .equipment-entry-grid>select,#equipment .equipment-entry-grid>.equipment-dup-check{width:100%!important;min-width:0!important;max-width:none!important;height:42px!important;min-height:42px!important;margin:0!important;box-sizing:border-box!important}
+#equipment .equipment-entry-grid>datalist{display:none!important}
+#equipment .equipment-entry-grid>.equipment-dup-check{display:flex!important;align-items:center!important;justify-content:flex-start!important;padding:7px 10px!important;white-space:nowrap!important;overflow:hidden!important}
+#equipment .equipment-entry-grid>.equipment-dup-check input{width:17px!important;height:17px!important;min-width:17px!important;margin:0 6px 0 0!important}
+#equipment .equipment-entry-grid>.equipment-dup-check span{font-size:12px!important;white-space:nowrap!important}
+</style>
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1151,7 +1168,7 @@ function backToEmployees(){
 }
 function equipmentKey(name){return String(name||"").trim().toLowerCase()}
 function equipmentMax(name){return 1}
-function employeeOutstandingFor(name,employee=selectedEmployee){let key=equipmentKey(name);return data.equipment.filter(x=>equipmentKey(x.name)===key&&x.holder!==null&&x.holder!==undefined&&String(x.holder)===String(employee)).length}
+function employeeOutstandingFor(name,employee=selectedEmployee){let key=equipmentKey(name);return data.equipment.filter(x=>equipmentKey(x.name)===key&&String(x.status||"").trim().toLowerCase()==="checked out"&&x.holder!==null&&x.holder!==undefined&&String(x.holder)===String(employee)).length}
 function selectedOutstandingFor(name){let key=equipmentKey(name);return [...selectedGear].map(id=>data.equipment.find(x=>x.id===id)).filter(x=>x&&equipmentKey(x.name)===key).length}
 function remainingEquipmentAllowance(name){let max=equipmentMax(name);return max===Infinity?Infinity:Math.max(0,max-employeeOutstandingFor(name)-selectedOutstandingFor(name))}
 function typeGearButton(name,count){let remain=remainingEquipmentAllowance(name);if(remain<=0)return "";return `<button class="gear-card" onclick='openPicker(${JSON.stringify(name)},false)'><b>${esc(name)}</b><br><span class="small">${count} available</span></button>`}
@@ -1160,7 +1177,7 @@ let pendingMaxOverride=null;
 function confirmMaxOverride(name){pendingMaxOverride=name;document.getElementById("maxOverrideItem").textContent=name;document.getElementById("maxOverrideModal").style.display="flex"}
 function closeMaxOverride(){pendingMaxOverride=null;document.getElementById("maxOverrideModal").style.display="none"}
 function acceptMaxOverride(){let name=pendingMaxOverride;closeMaxOverride();if(name)openPicker(name,true)}
-function openPicker(name,override=false){let choices=data.equipment.filter(x=>x.name===name&&!x.hidden&&String(x.status||"").trim().toLowerCase()==="available"&&!selectedGear.has(x.id));if(!choices.length){toastMsg("No available variants for that item.",false);return}variantTitle.textContent=override?name+" · Override Max":name;variantChoices.innerHTML=choices.map(x=>`<button class="variant-choice" onclick="chooseVariant(${x.id},${override?"true":"false"})">${esc(x.variant||x.id)}</button>`).join("");variantModal.style.display="flex"}
+function openPicker(name,override=false){let key=equipmentKey(name),choices=data.equipment.filter(x=>equipmentKey(x.name)===key&&!x.hidden&&String(x.status||"").trim().toLowerCase()==="available"&&!selectedGear.has(x.id));if(!choices.length){toastMsg("No available variants for that item.",false);return}variantTitle.textContent=override?name+" · Override Max":name;variantChoices.innerHTML=choices.map(x=>`<button class="variant-choice" onclick="chooseVariant(${x.id},${override?"true":"false"})">${esc(x.variant||x.id)}</button>`).join("");variantModal.style.display="flex"}
 function chooseVariant(id,override=false){let x=data.equipment.find(v=>v.id===id);if(!x||String(x.status||"").trim().toLowerCase()!=="available"){closeVariantPicker();toastMsg("That item is not available.",false);return}if(!override&&remainingEquipmentAllowance(x.name)<=0){closeVariantPicker();toastMsg(`${x.name} has reached its checkout max.`,false);return}selectedGear.add(x.id);closeVariantPicker();renderFastGear()}
 function closeVariantPicker(){variantModal.style.display="none";variantChoices.innerHTML=""}
 function removeSelectedGear(id){selectedGear.delete(id);renderFastGear()}
@@ -1176,7 +1193,7 @@ function fastCheckout(){
 }
 employeeSearch.oninput=renderFastEmployees;
 function renderCheckoutCheckedOut(){
- let allOut=data.equipment.filter(x=>x.holder!==null&&x.holder!==undefined);
+ let allOut=data.equipment.filter(x=>String(x.status||"").trim().toLowerCase()==="checked out"&&x.holder!==null&&x.holder!==undefined);
  let out=selectedEmployee===null?allOut:allOut.filter(x=>String(x.holder)===String(selectedEmployee));
  checkedOutList.innerHTML=out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[Number(x.holder)];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${e?esc(e.name)+" · #"+esc(e.num):"Unknown"}</td><td><button class="btn light" onclick="returnEquip(${x.id})">Return</button></td></tr>`}).join("")}</table>`:`<div class="empty">Nothing is checked out${selectedEmployee===null?"":" to this employee"}.</div>`;
  equipOutStat.textContent=allOut.length;
