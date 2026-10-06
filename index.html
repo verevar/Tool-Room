@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Tool Room HQ</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17191c;--muted:#6c737d;--line:#e3e6ea;--dark:#17191c;--red:#c53b3b;--amber:#a46b00;--green:#287a4d}
@@ -153,8 +153,7 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;col
 
 /* Reorder: compact headings and status highlighting */
 #newReorderList table th{
-  padding:8px 8px !important;
-  line-height:1.05;
+  padding:14px 8px !important;
 }
 #newReorderList table td{
   padding:10px 8px !important;
@@ -172,11 +171,69 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;col
   box-shadow:inset 4px 0 0 #d6a700;
 }
 
+
+/* Reorder page: tighten the outer white list box, not the table headings */
+#newReorderList.card{
+  padding:10px 12px !important;
+}
+#newReorderList .table-wrap{
+  margin:0 !important;
+}
+
 </style>
 
 <style id="ios-no-form-zoom">
 @media screen and (max-width: 900px) {
   input, select, textarea, button { font-size: 16px !important; }
+}
+</style>
+
+
+<style id="requested-compact-ui">
+/* Reports / backup: compact exports, backup actions share one row */
+#more-exports .card{padding:14px}
+#more-exports .card h3{margin:0 0 10px}
+#more-exports .export-stack{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+#more-exports .export-stack > :nth-child(-n+3){grid-column:1/-1}
+#more-exports .export-stack .btn,
+#more-exports .export-stack label.btn{min-height:0!important;padding:10px 12px!important;font-size:14px!important;line-height:1.15!important;border-radius:10px!important;margin:0!important}
+
+/* Analytics summary cards: less empty space */
+#more-analytics .grid{gap:8px!important;margin-bottom:10px}
+#more-analytics .stat{padding:12px 14px!important;min-height:0!important}
+#more-analytics .stat .label{font-size:11px!important;line-height:1.15!important}
+#more-analytics .stat b{font-size:25px!important;margin-top:4px!important}
+
+/* Make Allow Duplicates and Duplicate a matched pair */
+.inline-edit td:last-child .check,
+.inline-edit td:last-child .cons-btn{
+  width:128px!important;
+  min-width:128px!important;
+  max-width:128px!important;
+  min-height:38px!important;
+  box-sizing:border-box!important;
+  margin:3px 0!important;
+  padding:7px 8px!important;
+  justify-content:center!important;
+  font-size:12px!important;
+  line-height:1.05!important;
+}
+.inline-edit td:last-child .check input{width:18px!important;height:18px!important;flex:0 0 18px!important}
+.inline-edit td:last-child .check span{font-size:12px!important}
+
+/* Employee controls */
+.employee-actions{display:flex;gap:8px;margin-bottom:10px}
+.employee-actions .btn{padding:9px 12px!important;font-size:14px!important}
+.employee-inline-edit{padding:5px 0!important;gap:5px!important}
+.employee-inline-edit input{padding:8px!important;min-height:38px!important}
+.employee-bulk-grid{display:grid;grid-template-columns:minmax(150px,1fr) 82px 92px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid #eef0f2}
+.employee-add-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.employee-add-fields input:first-child{grid-column:1/-1}
+.employee-add-fields input{min-width:0}
+#employeeAddModal .modal-box{max-width:420px}
+@media(max-width:600px){
+  #more-exports .export-stack .btn,#more-exports .export-stack label.btn{font-size:12px!important;padding:9px 7px!important}
+  .employee-bulk-grid{grid-template-columns:minmax(130px,1fr) 70px 78px}
 }
 </style>
 
@@ -400,12 +457,44 @@ function renderGlobalSearch(){let box=document.getElementById("globalSearchResul
 function openSearchHit(page,equipmentId=""){document.getElementById("globalSearchResults").style.display="none";document.getElementById("globalSearch").value="";if(page==="returns"&&equipmentId){let x=data.equipment.find(v=>String(v.id)===String(equipmentId));if(x&&x.holder!==null&&x.holder!==undefined){activatePage("returns");returnEmployee=null;returnSelected.clear();returnChooser.style.display="block";returnDetail.style.display="none";returnSearch.value="";renderReturn();setTimeout(()=>{let card=document.querySelector(`#returnEmployeeGrid .emp-card[data-employee-index="${Number(x.holder)}"]`);if(card){card.classList.add("search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>card.classList.remove("search-highlight"),3500)}},60);return}}openPage(page)}
 document.addEventListener("click",e=>{if(!e.target.closest("#globalSearch")&&!e.target.closest("#globalSearchResults")){let b=document.getElementById("globalSearchResults");if(b)b.style.display="none"}});
 let editingEmployeeIndex=null;
+
+let employeeBulkMode=false;
+
+function openAddEmployeeModal(){
+ let old=document.getElementById("employeeAddModal"); if(old)old.remove();
+ let m=document.createElement("div");
+ m.id="employeeAddModal"; m.className="modal"; m.style.display="flex";
+ m.innerHTML=`<div class="modal-box"><h3 style="margin-top:0">Add Employee</h3>
+   <div class="employee-add-fields">
+    <input id="modalEmpName" placeholder="Employee name">
+    <input id="modalEmpNum" placeholder="Employee #">
+    <input id="modalMonNum" placeholder="Monitor #">
+   </div>
+   <div class="row" style="margin-top:10px"><button class="btn" style="flex:1" onclick="confirmAddEmployee()">Add Employee</button><button class="btn light" onclick="closeAddEmployeeModal()">Cancel</button></div>
+ </div>`;
+ document.body.appendChild(m);
+ setTimeout(()=>document.getElementById("modalEmpName")?.focus(),30);
+}
+function closeAddEmployeeModal(){document.getElementById("employeeAddModal")?.remove()}
+function confirmAddEmployee(){
+ let n=document.getElementById("modalEmpName")?.value.trim(),num=document.getElementById("modalEmpNum")?.value.trim()||"",mon=document.getElementById("modalMonNum")?.value.trim()||"";
+ if(!n){toastMsg("Enter an employee name.",false);return}
+ data.employees.push({name:n,num,monitor:mon});closeAddEmployeeModal();save();toastMsg("Employee added")}
+function toggleEmployeeBulk(){editingEmployeeIndex=null;employeeBulkMode=!employeeBulkMode;renderEmployees();renderMore();updateFloatingEditBar()}
+function employeeBulkRows(){return data.employees.map((e,i)=>`<div class="employee-bulk-grid" data-employee-bulk="${i}"><input data-f="name" value="${esc(e.name)}"><input data-f="num" value="${esc(e.num)}"><input data-f="monitor" value="${esc(e.monitor)}"></div>`).join("")}
+function saveEmployeeBulk(){
+ document.querySelectorAll(".page.active [data-employee-bulk]").forEach(r=>{let e=data.employees[+r.dataset.employeeBulk];if(!e)return;e.name=r.querySelector('[data-f="name"]').value.trim()||e.name;e.num=r.querySelector('[data-f="num"]').value.trim();e.monitor=r.querySelector('[data-f="monitor"]').value.trim()});
+ employeeBulkMode=false;save();toastMsg("Employees updated")}
+function cancelEmployeeBulk(){employeeBulkMode=false;renderEmployees();renderMore();updateFloatingEditBar()}
+
 function employeeRowHtml(e,i,compact=false){
  if(editingEmployeeIndex===i)return `<div class="employee-inline-edit" data-employee-edit="${i}" style="display:grid;grid-template-columns:1fr 100px 110px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #eef0f2"><input data-f="name" value="${esc(e.name)}" placeholder="Employee name"><input data-f="num" value="${esc(e.num)}" placeholder="Employee #"><input data-f="monitor" value="${esc(e.monitor)}" placeholder="Monitor #"></div>`;
  return compact?`<div class="row between" style="padding:10px 0;border-bottom:1px solid #eef0f2"><b>#${esc(e.num)} ${esc(e.name)}</b><span class="small">Monitor ${esc(e.monitor)}</span><button class="btn light" onclick="editEmployee(${i})">Edit</button></div>`:`<tr><td><b>${esc(e.name)}</b></td><td>${esc(e.num)}</td><td>${esc(e.monitor)}</td><td><button class="btn light" onclick="editEmployee(${i})">Edit</button></td></tr>`;
 }
 function renderEmployees(){
- if(editingEmployeeIndex!==null){employeesTable.innerHTML=`<div class="employee-inline-edit" data-employee-edit="${editingEmployeeIndex}" style="display:grid;grid-template-columns:1fr 100px 110px;gap:8px;align-items:center;padding:10px 0">${(()=>{let e=data.employees[editingEmployeeIndex];return `<input data-f="name" value="${esc(e.name)}" placeholder="Employee name"><input data-f="num" value="${esc(e.num)}" placeholder="Employee #"><input data-f="monitor" value="${esc(e.monitor)}" placeholder="Monitor #">`})()}</div>`}else{employeesTable.innerHTML=`<table><tr><th>Name</th><th>Employee #</th><th>Monitor #</th><th></th></tr>${data.employees.map((e,i)=>employeeRowHtml(e,i)).join("")}</table>`}
+ if(employeeBulkMode){employeesTable.innerHTML=employeeBulkRows()}
+ else if(editingEmployeeIndex!==null){employeesTable.innerHTML=`<div class="employee-inline-edit" data-employee-edit="${editingEmployeeIndex}" style="display:grid;grid-template-columns:1fr 82px 92px;align-items:center">${(()=>{let e=data.employees[editingEmployeeIndex];return `<input data-f="name" value="${esc(e.name)}" placeholder="Employee name"><input data-f="num" value="${esc(e.num)}" placeholder="Employee #"><input data-f="monitor" value="${esc(e.monitor)}" placeholder="Monitor #">`})()}</div>`}
+ else{employeesTable.innerHTML=`<table><tr><th>Name</th><th>Employee #</th><th>Monitor #</th><th></th></tr>${data.employees.map((e,i)=>employeeRowHtml(e,i)).join("")}</table>`}
  empCount.textContent=data.employees.length;updateFloatingEditBar()}
 let selectedEmployee=null;
 let selectedGear=new Set();
@@ -494,9 +583,9 @@ function orderedEquipmentNames(names){syncEquipmentOrder();let set=new Set(names
 let orderDragName=null;
 function equipmentNameUseCount(name){let ids=new Set(data.equipment.filter(x=>x.name===name).map(x=>String(x.id))),total=0;Object.values(data.usage||{}).forEach(u=>Object.entries(u||{}).forEach(([id,n])=>{if(ids.has(String(id)))total+=Number(n)||0}));return total}
 function applyEquipmentAutoOrder(mode){if(!mode)return;syncEquipmentOrder();let a=[...data.equipmentOrder];if(mode==="az")a.sort((x,y)=>x.localeCompare(y,undefined,{numeric:true,sensitivity:"base"}));if(mode==="za")a.sort((x,y)=>y.localeCompare(x,undefined,{numeric:true,sensitivity:"base"}));if(mode==="most")a.sort((x,y)=>equipmentNameUseCount(y)-equipmentNameUseCount(x)||x.localeCompare(y,undefined,{numeric:true,sensitivity:"base"}));if(mode==="least")a.sort((x,y)=>equipmentNameUseCount(x)-equipmentNameUseCount(y)||x.localeCompare(y,undefined,{numeric:true,sensitivity:"base"}));data.equipmentOrder=a;save();renderEquipmentOrder();renderFastGear();renderEquipment();toastMsg("Equipment order updated")}
-function updateFloatingEditBar(){let page=document.querySelector(".page.active")?.id||"",active=(page==="equipment"&&(equipmentBulkMode||editingEquipmentId!==null))||(page==="consumables"&&(consumablesBulkMode||editingConsumableId!==null))||(page==="misc"&&(miscBulkMode||editingMiscId!==null))||((page==="employees"||page==="more")&&editingEmployeeIndex!==null);let bar=document.getElementById("floatingEditBar"),sp=document.getElementById("editSpacer"),btn=document.getElementById("floatingSaveBtn");if(!bar)return;bar.classList.toggle("show",active);sp?.classList.toggle("show",active);document.body.classList.toggle("editing-active",active);if(btn)btn.textContent=(equipmentBulkMode||consumablesBulkMode||miscBulkMode)?"Save All Changes":"Save Changes"}
-function floatingSave(){let page=document.querySelector(".page.active")?.id;if(page==="equipment"){if(equipmentBulkMode)return saveEquipmentBulk();if(editingEquipmentId!==null)return saveOneEquipment(editingEquipmentId)}if(page==="consumables"){if(consumablesBulkMode)return saveConsumablesBulk();if(editingConsumableId!==null)return saveOneConsumable(editingConsumableId)}if(page==="misc"){if(miscBulkMode)return saveMiscBulk();if(editingMiscId!==null)return saveOneMisc(editingMiscId)}if((page==="employees"||page==="more")&&editingEmployeeIndex!==null)return saveEmployeeEdit()}
-function floatingCancel(){let page=document.querySelector(".page.active")?.id;if(page==="equipment")return equipmentBulkMode?cancelEquipmentBulk():cancelOneEquipment();if(page==="consumables")return consumablesBulkMode?cancelConsumablesBulk():cancelOneConsumable();if(page==="misc")return miscBulkMode?cancelMiscBulk():cancelOneMisc();if((page==="employees"||page==="more")&&editingEmployeeIndex!==null)return cancelEmployeeEdit()}
+function updateFloatingEditBar(){let page=document.querySelector(".page.active")?.id||"",active=(page==="equipment"&&(equipmentBulkMode||editingEquipmentId!==null))||(page==="consumables"&&(consumablesBulkMode||editingConsumableId!==null))||(page==="misc"&&(miscBulkMode||editingMiscId!==null))||((page==="employees"||page==="more")&&(editingEmployeeIndex!==null||employeeBulkMode));let bar=document.getElementById("floatingEditBar"),sp=document.getElementById("editSpacer"),btn=document.getElementById("floatingSaveBtn");if(!bar)return;bar.classList.toggle("show",active);sp?.classList.toggle("show",active);document.body.classList.toggle("editing-active",active);if(btn)btn.textContent=(equipmentBulkMode||consumablesBulkMode||miscBulkMode||employeeBulkMode)?"Save All Changes":"Save Changes"}
+function floatingSave(){let page=document.querySelector(".page.active")?.id;if(page==="equipment"){if(equipmentBulkMode)return saveEquipmentBulk();if(editingEquipmentId!==null)return saveOneEquipment(editingEquipmentId)}if(page==="consumables"){if(consumablesBulkMode)return saveConsumablesBulk();if(editingConsumableId!==null)return saveOneConsumable(editingConsumableId)}if(page==="misc"){if(miscBulkMode)return saveMiscBulk();if(editingMiscId!==null)return saveOneMisc(editingMiscId)}if((page==="employees"||page==="more")&&employeeBulkMode)return saveEmployeeBulk();if((page==="employees"||page==="more")&&editingEmployeeIndex!==null)return saveEmployeeEdit()}
+function floatingCancel(){let page=document.querySelector(".page.active")?.id;if(page==="equipment")return equipmentBulkMode?cancelEquipmentBulk():cancelOneEquipment();if(page==="consumables")return consumablesBulkMode?cancelConsumablesBulk():cancelOneConsumable();if(page==="misc")return miscBulkMode?cancelMiscBulk():cancelOneMisc();if((page==="employees"||page==="more")&&employeeBulkMode)return cancelEmployeeBulk();if((page==="employees"||page==="more")&&editingEmployeeIndex!==null)return cancelEmployeeEdit()}
 function toggleEquipmentOrder(){let p=document.getElementById("equipmentOrderPanel");p.style.display=p.style.display==="none"?"block":"none";document.getElementById("editOrderBtn").textContent=p.style.display==="block"?"Close Order":"Edit Order";if(p.style.display==="block")renderEquipmentOrder()}
 function finishEquipmentOrder(){syncEquipmentOrder();save();document.getElementById("equipmentOrderPanel").style.display="none";document.getElementById("editOrderBtn").textContent="Edit Order";renderFastGear();renderEquipment();toastMsg("Equipment order saved")}
 function moveOrderName(fromName,toName){syncEquipmentOrder();let a=data.equipmentOrder.indexOf(fromName),b=data.equipmentOrder.indexOf(toName);if(a<0||b<0||a===b)return;let [v]=data.equipmentOrder.splice(a,1);data.equipmentOrder.splice(b,0,v);save();renderEquipmentOrder();renderFastGear();renderEquipment()}
@@ -686,10 +775,30 @@ function elapsed(ms){let h=Math.floor(ms/3600000),d=Math.floor(h/24);return d?`$
 function historyDetail(h){let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;return [e?`#${e.num} ${e.name}`:"",h.equipment,h.variant,h.item].filter(Boolean).join(" · ")}
 function setAnalyticsDays(days){analyticsDays=days;renderMore()}
 function deleteHistoryEntry(i){if(!Number.isInteger(i)||i<0||i>=data.history.length)return;if(!confirm("Delete this history entry permanently? You can use Undo Last Action immediately afterward if needed."))return;data.history.splice(i,1);save();renderMore()}
+
+function weeklyAnalyticsHistory(){
+ let buckets={};
+ data.history.forEach(h=>{
+   if(h.action!=="CONSUMABLE USE")return;
+   let d=new Date(h.time); if(Number.isNaN(d.getTime()))return;
+   let day=(d.getDay()+6)%7, start=new Date(d); start.setHours(0,0,0,0); start.setDate(start.getDate()-day);
+   let key=start.toISOString().slice(0,10);
+   if(!buckets[key])buckets[key]={start,total:0,items:{}};
+   let q=Math.abs(Number(h.qty)||1), label=`${h.item||"Unknown"}${h.variant?` · ${h.variant}`:""}`;
+   buckets[key].total+=q;buckets[key].items[label]=(buckets[key].items[label]||0)+q;
+ });
+ return Object.values(buckets).sort((a,b)=>b.start-a.start);
+}
+function analyticsHistoryHtml(){
+ let weeks=weeklyAnalyticsHistory();
+ if(!weeks.length)return `<div class="card"><p class="section-title">Weekly Usage History</p><div class="empty">No saved usage history yet.</div></div>`;
+ return `<div class="card"><p class="section-title">Weekly Usage History</p><div class="small" style="margin-bottom:8px">Saved from your consumable usage records.</div>${weeks.map(w=>{let end=new Date(w.start);end.setDate(end.getDate()+6);let range=`${w.start.toLocaleDateString(undefined,{month:"short",day:"numeric"})} – ${end.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}`;return `<details style="border-top:1px solid #eef0f2;padding:9px 0"><summary style="cursor:pointer"><b>${range}</b> · ${w.total} used</summary><div style="padding-top:7px">${Object.entries(w.items).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row between" style="margin:5px 0"><span>${esc(k)}</span><b>${v}</b></div>`).join("")}</div></details>`}).join("")}</div>`;
+}
+
 function renderMore(){let now=Date.now(),over=data.equipment.filter(x=>x.holder!==null&&x.checkedOutAt&&now-x.checkedOutAt>=86400000),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>o.x.action==="CHECK OUT"||o.x.action==="RETURN"),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
 let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().reverse().map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):"");let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");return `<tr><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${who}${who&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out or return history yet.</div>`}</div>`;
-document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Over 24 Hours (${over.length})</h3>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${elapsed(now-x.checkedOutAt)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<table><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td><button class="btn light" onclick="restoreService(${x.id})">Return to Service</button></td></tr>`).join("")}</table>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn" onclick="exportHistory()">Export Full Activity History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="row"><input id="moreEmpName" placeholder="Employee name"><input id="moreEmpNum" placeholder="Employee #"><input id="moreMonNum" placeholder="Monitor #"><button class="btn" onclick="addEmployeeFromMore()">Add Employee</button></div><div style="margin-top:12px">${data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
-function addEmployeeFromMore(){let n=document.getElementById("moreEmpName"),num=document.getElementById("moreEmpNum"),mon=document.getElementById("moreMonNum");if(!n.value.trim())return;data.employees.push({name:n.value.trim(),num:num.value.trim(),monitor:mon.value.trim()});save()}
+document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Over 24 Hours (${over.length})</h3>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${elapsed(now-x.checkedOutAt)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<table><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td><button class="btn light" onclick="restoreService(${x.id})">Return to Service</button></td></tr>`).join("")}</table>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>${analyticsHistoryHtml()}`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn" onclick="exportHistory()">Export Full Activity History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="employee-actions"><button class="btn" onclick="openAddEmployeeModal()">Add Employee</button><button class="btn light" onclick="toggleEmployeeBulk()">${employeeBulkMode?"Cancel Bulk Edit":"Bulk Edit"}</button></div><div>${employeeBulkMode?employeeBulkRows():data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
+function addEmployeeFromMore(){openAddEmployeeModal()}
 function restoreService(id){let x=data.equipment.find(v=>v.id===id);x.status="Available";x.holder=null;x.checkedOutAt=null;logEvent("RETURN TO SERVICE",{equipment:x.name,variant:x.variant});save()}
 function csv(v){return `"${String(v??"").replaceAll('"','""')}"`}
 function downloadFile(name,text,type="text/csv"){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
@@ -708,4 +817,26 @@ setInterval(()=>{if(editingEmployeeIndex===null)renderMore()},60000);
 
 bindAddAutofillFix();
 </script>
+
+<script id="ios-hard-disable-zoom">
+(function () {
+  function stopZoom(e) { e.preventDefault(); }
+
+  document.addEventListener("gesturestart", stopZoom, { passive: false });
+  document.addEventListener("gesturechange", stopZoom, { passive: false });
+  document.addEventListener("gestureend", stopZoom, { passive: false });
+
+  document.addEventListener("touchmove", function (e) {
+    if (e.touches && e.touches.length > 1) e.preventDefault();
+  }, { passive: false });
+
+  let lastTouchEnd = 0;
+  document.addEventListener("touchend", function (e) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) e.preventDefault();
+    lastTouchEnd = now;
+  }, { passive: false });
+})();
+</script>
+
 </body></html>
