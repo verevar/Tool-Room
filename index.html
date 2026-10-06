@@ -759,119 +759,52 @@ body.editing-active{padding-bottom:62px!important}
 
 
 
-<style id="equipment-controls-clean">
-#equipment .equipment-controls{
-  display:block!important;
-  width:100%!important;
-  box-sizing:border-box!important;
-}
+
+<style id="equipment-controls-drawing-match">
+#equipment .equipment-controls{display:block!important;width:100%!important;box-sizing:border-box!important}
+
+/* Drawing proportions: Item ~49%, Variant ~32%, Max ~19% */
 #equipment .equipment-add-row{
-  display:grid!important;
-  grid-template-columns:minmax(0,1.45fr) minmax(0,1fr) 58px!important;
-  gap:8px!important;
-  width:100%!important;
-  box-sizing:border-box!important;
+ display:grid!important;
+ grid-template-columns:minmax(0,1.55fr) minmax(0,1fr) minmax(88px,.58fr)!important;
+ gap:8px!important;width:100%!important;box-sizing:border-box!important
 }
 #equipment .equipment-add-row>input{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-#equipment .equipment-second-row{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1.18fr)!important;
-  gap:8px!important;
-  width:100%!important;
-  margin-top:8px!important;
-  box-sizing:border-box!important;
-}
-#equipment .equipment-second-row>select{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-#equipment .equipment-dup-check{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:9px!important;
-  padding:8px 10px!important;
-  overflow:hidden!important;
-  white-space:nowrap!important;
-}
-#equipment .equipment-dup-check input{
-  flex:0 0 auto!important;
-  margin:0!important;
-}
-#equipment .equipment-dup-check span{
-  display:inline!important;
-  flex:0 1 auto!important;
-  min-width:0!important;
-  overflow:hidden!important;
-  text-overflow:clip!important;
-  white-space:nowrap!important;
-  font-size:13px!important;
-}
-#equipment .equipment-action-row{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:8px!important;
-  width:100%!important;
-  margin-top:8px!important;
-  box-sizing:border-box!important;
-}
-#equipment .equipment-action-row>.btn{
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  min-height:42px!important;
-  padding:8px 3px!important;
-  margin:0!important;
-  font-size:11.5px!important;
-  line-height:1!important;
-  white-space:nowrap!important;
-  box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ box-sizing:border-box!important
 }
 #equipment .equipment-max-input{
-  text-align:center!important;
-  padding-left:3px!important;
-  padding-right:3px!important;
-}
-#equipment .max-col{
-  width:54px!important;
-  min-width:54px!important;
-  max-width:54px!important;
-  text-align:center!important;
-}
-#equipment .equipment-max-edit{
-  width:48px!important;
-  min-width:48px!important;
-  max-width:48px!important;
-  text-align:center!important;
-  padding-left:3px!important;
-  padding-right:3px!important;
+ text-align:left!important;
+ padding-left:14px!important;
+ padding-right:8px!important;
+ font-size:14px!important
 }
 
-/* Maxed items stay available at bottom, without a title/description. */
-.checkout-override-section{
-  grid-column:1/-1!important;
-  margin-top:8px!important;
-  padding-top:8px!important;
-  border-top:1px solid #ddd!important;
+/* Keep the rows below exactly compact and contained */
+#equipment .equipment-second-row{
+ display:grid!important;grid-template-columns:1fr 1.25fr!important;
+ gap:8px!important;width:100%!important;margin-top:8px!important
 }
-.checkout-override-grid{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:7px!important;
-  margin:0!important;
+#equipment .equipment-second-row>select,
+#equipment .equipment-dup-check{width:100%!important;min-width:0!important;box-sizing:border-box!important}
+#equipment .equipment-dup-check{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ padding:8px 10px!important;overflow:hidden!important;white-space:nowrap!important
 }
-.override-max-card .small{font-size:11px!important}
+#equipment .equipment-dup-check span{display:inline!important;white-space:nowrap!important;font-size:13px!important}
+#equipment .equipment-action-row{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:8px!important;width:100%!important;margin-top:8px!important
+}
+#equipment .equipment-action-row>.btn{
+ width:100%!important;min-width:0!important;margin:0!important;
+ min-height:42px!important;padding:8px 3px!important;font-size:11.5px!important;
+ line-height:1!important;white-space:nowrap!important;box-sizing:border-box!important
+}
+
+/* Edit/Bulk Max remains intentionally small for 2 digits */
+#equipment .max-col{width:54px!important;min-width:54px!important;max-width:54px!important;text-align:center!important}
+#equipment .equipment-max-edit{width:48px!important;min-width:48px!important;max-width:48px!important;text-align:center!important;padding:3px!important}
 </style>
 
 </head>
