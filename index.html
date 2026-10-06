@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Tool Room HQ</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#17191c;--muted:#6c737d;--line:#e3e6ea;--dark:#17191c;--red:#c53b3b;--amber:#a46b00;--green:#287a4d}
@@ -120,7 +120,66 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;col
 
 @media(max-width:800px){input,select,textarea{font-size:16px}.export-stack{display:grid;grid-template-columns:1fr;gap:9px;width:100%}.export-stack .btn,.export-stack label.btn{width:100%;text-align:center;margin:0;padding:12px 10px}}
 .export-stack{display:grid;gap:9px;max-width:430px;margin-top:12px}.export-stack .btn,.export-stack label.btn{display:block;width:100%;text-align:center;margin:0}
+
+/* Compact edit/bulk-edit controls */
+.inline-edit .hide-check,
+.inline-edit .check{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:5px 7px !important;
+  margin:0 !important;
+  min-height:34px;
+  font-size:12px !important;
+  line-height:1.05;
+  font-weight:700;
+  white-space:normal;
+}
+.inline-edit .hide-check input,
+.inline-edit .check input{
+  width:17px !important;
+  height:17px !important;
+  min-width:17px !important;
+  margin:0;
+}
+.inline-edit .cons-btn{
+  min-height:34px;
+  padding:6px 9px !important;
+  margin-top:5px !important;
+  font-size:12px !important;
+  line-height:1;
+}
+
+/* Reorder: compact headings and status highlighting */
+#newReorderList table th{
+  padding:8px 8px !important;
+  line-height:1.05;
+}
+#newReorderList table td{
+  padding:10px 8px !important;
+}
+#newReorderList tr.reorder-out td{
+  background:#fff0f0;
+}
+#newReorderList tr.reorder-low td{
+  background:#fff8d8;
+}
+#newReorderList tr.reorder-out td:first-child{
+  box-shadow:inset 4px 0 0 #d84a4a;
+}
+#newReorderList tr.reorder-low td:first-child{
+  box-shadow:inset 4px 0 0 #d6a700;
+}
+
 </style>
+
+<style id="ios-no-form-zoom">
+@media screen and (max-width: 900px) {
+  input, select, textarea, button { font-size: 16px !important; }
+}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -181,12 +240,7 @@ table{width:100%;border-collapse:collapse;margin-top:10px}th{text-align:left;col
 
 <section id="consumables" class="page">
 <h1>Consumables</h1><p class="sub">Track stock and reorder levels.</p>
-<div class="grid">
-<div class="stat"><span class="label">In Stock</span><b id="inStockStat">0</b></div>
-<div class="stat"><span class="label">Running Low</span><b id="lowStat">0</b></div>
-<div class="stat"><span class="label">Out</span><b id="outStat">0</b></div>
-<div class="stat"><span class="label">Usage Records</span><b id="usageRecordStat">0</b></div>
-</div>
+
 <div class="card">
 <div class="row inventory-controls consumable-controls">
 <input id="consName" placeholder="Item" oninput="refreshAddSuggestions('consumable')">
@@ -460,7 +514,7 @@ function clearEquipmentFilters(){equipmentSearch.value="";equipmentGroupFilter.v
 function toggleEquipmentBulk(){equipmentBulkMode=!equipmentBulkMode;equipmentBulkActions.style.display=equipmentBulkMode?"flex":"none";renderEquipment()}
 function cancelEquipmentBulk(){equipmentBulkMode=false;equipmentBulkActions.style.display="none";renderEquipment()}
 function saveEquipmentBulk(){let rows=[...document.querySelectorAll("#equipmentTable [data-eqid]")],draft=data.equipment.map(x=>({...x})),policy={...data.equipmentDuplicateVariants};for(let r of rows){let x=draft.find(v=>String(v.id)===r.dataset.eqid);if(!x)continue;let oldName=x.name;x.name=r.querySelector("[data-f=name]").value.trim()||x.name;x.variant=r.querySelector("[data-f=variant]").value.trim();x.category=r.querySelector("[data-f=category]").value.trim()||"Other";let st=r.querySelector("[data-f=status]").value;x.status=st;if(st!=="Checked Out"){x.holder=null;x.checkedOutAt=null}let hc=r.querySelector("[data-f=hidden]");if(hc)x.hidden=hc.checked;let cb=r.querySelector("[data-f=allowdup]");if(cb)policy[String(x.name).trim().toLowerCase()]=cb.checked;if(String(oldName).trim().toLowerCase()!==String(x.name).trim().toLowerCase()&&policy[String(x.name).trim().toLowerCase()]===undefined)policy[String(x.name).trim().toLowerCase()]=cb?cb.checked:true}for(let x of draft){let key=String(x.name||"").trim().toLowerCase();if(policy[key]===false&&hasDuplicateVariant("equipment",x.name,x.variant,x.id,draft)){toastMsg("Duplicate Not Allowed",false);return}}draft.forEach(nx=>captureEquipmentProblem(data.equipment.find(ox=>String(ox.id)===String(nx.id)),nx));data.equipment=draft;data.equipmentDuplicateVariants=policy;equipmentBulkMode=false;equipmentBulkActions.style.display="none";save()}
-function renderEquipment(){let items=orderInventoryRows("equipment",filteredEquipment()).sort((a,b)=>Number(!!a.hidden)-Number(!!b.hidden)),hb=document.getElementById("equipmentHiddenBtn");if(hb)hb.textContent=equipmentShowHidden?"Hide Hidden":"Show Hidden";let showCategory=equipmentBulkMode||editingEquipmentId!==null;equipmentTable.innerHTML=`<div class="table-wrap"><table><tr>${showCategory?"<th>Hide</th>":""}<th>Name</th><th>Variant</th>${showCategory?"<th>Category</th>":""}<th>Status</th><th></th></tr>${items.map(x=>{let actual=x.status==="Damaged"||x.status==="Missing"?x.status:(x.holder===null?"Available":"Checked Out");if(equipmentBulkMode||editingEquipmentId===x.id)return `<tr class="inline-edit ${x.hidden?"hidden-inventory-row":""}" data-eqid="${x.id}"><td><label class="hide-check" style="margin-top:0;justify-content:center"><input data-f="hidden" type="checkbox" ${x.hidden?"checked":""}><span>Hide</span></label></td><td><input data-f="name" value="${esc(x.name)}"></td><td><input data-f="variant" value="${esc(x.variant)}"></td><td>${categorySelectHtml(EQUIPMENT_CATEGORIES,x.category||"Other")}</td><td><select data-f="status"><option ${actual==="Available"?"selected":""}>Available</option><option ${actual==="Checked Out"?"selected":""}>Checked Out</option><option ${actual==="Damaged"?"selected":""}>Damaged</option><option ${actual==="Missing"?"selected":""}>Missing</option></select></td><td><label class="check" style="padding:7px 9px"><input data-f="allowdup" type="checkbox" style="min-width:auto;width:18px;height:18px" ${duplicateVariantsAllowed("equipment",x.name)?"checked":""}><span>Allow Duplicates</span></label><button type="button" class="btn light cons-btn" style="margin-top:6px" onclick="duplicateEquipmentFromEdit(${x.id})">Duplicate</button></td></tr>`;return `<tr class="${x.hidden?"hidden-inventory-row":""}">${showCategory?"<td></td>":""}<td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td>${showCategory?`<td>${esc(x.category||"Other")}</td>`:""}<td><span class="badge ${actual==="Available"?"ok":actual==="Checked Out"?"low":"out"}">${actual}</span></td><td><button class="btn light" onclick="editEquipment(${x.id})">Edit</button></td></tr>`}).join("")}</table></div>`;updateFloatingEditBar()}
+function renderEquipment(){let items=orderInventoryRows("equipment",filteredEquipment()).sort((a,b)=>Number(!!a.hidden)-Number(!!b.hidden)),hb=document.getElementById("equipmentHiddenBtn");if(hb)hb.textContent=equipmentShowHidden?"Hide Hidden":"Show Hidden";let showCategory=equipmentBulkMode||editingEquipmentId!==null;equipmentTable.innerHTML=`<div class="table-wrap"><table><tr>${showCategory?"<th>Hide</th>":""}<th>Name</th><th>Variant</th>${showCategory?"<th>Category</th>":""}<th>Status</th><th></th></tr>${items.map(x=>{let actual=x.status==="Damaged"||x.status==="Missing"?x.status:(x.holder===null?"Available":"Checked Out");if(equipmentBulkMode||editingEquipmentId===x.id)return `<tr class="inline-edit ${x.hidden?"hidden-inventory-row":""}" data-eqid="${x.id}"><td><label class="hide-check"><input data-f="hidden" type="checkbox" ${x.hidden?"checked":""}><span>Hide</span></label></td><td><input data-f="name" value="${esc(x.name)}"></td><td><input data-f="variant" value="${esc(x.variant)}"></td><td>${categorySelectHtml(EQUIPMENT_CATEGORIES,x.category||"Other")}</td><td><select data-f="status"><option ${actual==="Available"?"selected":""}>Available</option><option ${actual==="Checked Out"?"selected":""}>Checked Out</option><option ${actual==="Damaged"?"selected":""}>Damaged</option><option ${actual==="Missing"?"selected":""}>Missing</option></select></td><td><label class="check"><input data-f="allowdup" type="checkbox" ${duplicateVariantsAllowed("equipment",x.name)?"checked":""}><span>Allow Duplicates</span></label><button type="button" class="btn light cons-btn" onclick="duplicateEquipmentFromEdit(${x.id})">Duplicate</button></td></tr>`;return `<tr class="${x.hidden?"hidden-inventory-row":""}">${showCategory?"<td></td>":""}<td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td>${showCategory?`<td>${esc(x.category||"Other")}</td>`:""}<td><span class="badge ${actual==="Available"?"ok":actual==="Checked Out"?"low":"out"}">${actual}</span></td><td><button class="btn light" onclick="editEquipment(${x.id})">Edit</button></td></tr>`}).join("")}</table></div>`;updateFloatingEditBar()}
 function addEquipment(){let name=newEquip.value.trim(),variant=newEquipVariant.value.trim(),allow=newEquipAllowDup.checked;if(!name)return;setDuplicateVariantsAllowed("equipment",name,allow);if(!allow&&hasDuplicateVariant("equipment",name,variant)){toastMsg("Duplicate Not Allowed",false);return}data.equipment.push({id:Date.now(),name,variant,category:newEquipCategory.value.trim()||"Other",holder:null,checkedOutAt:null,status:"Available",hidden:false});newEquip.value="";newEquipVariant.value="";newEquipCategory.value="";newEquipAllowDup.checked=true;save();refreshAddSuggestions("equipment")}
 function status(c){return c.qty<=0?["OUT","out"]:c.qty<=c.min?["LOW","low"]:["IN STOCK","ok"]}
 function consumableUsageCounts(days){let cutoff=Date.now()-days*86400000,counts={};data.history.forEach(x=>{if(x.action!=="CONSUMABLE USE"||new Date(x.time).getTime()<cutoff)return;let c=data.consumables.find(c=>c.name===x.item&&String(c.variant||"")===String(x.variant||""));if(c)counts[c.id]=(counts[c.id]||0)+Math.abs(Number(x.qty)||1)});return counts}
@@ -471,7 +525,41 @@ function toggleConsumableFilters(){let p=document.getElementById("consumableFilt
 function toggleConsumableHidden(){consumableShowHidden=!consumableShowHidden;renderConsumables()}
 function clearConsumableFilters(){consumableSearch.value="";consumableCategoryFilter.value="";consumableStatusFilter.value="";consumableShowHidden=false;renderConsumables()}
 function filteredConsumables(){categoryOptions(data.consumables,"consumableCategoryFilter");let q=(document.getElementById("consumableSearch")?.value||"").toLowerCase(),cat=document.getElementById("consumableCategoryFilter")?.value||"",st=document.getElementById("consumableStatusFilter")?.value||"";return data.consumables.filter(c=>(consumableShowHidden||!c.hidden)&&(!q||(c.name+" "+c.variant+" "+(c.category||"")).toLowerCase().includes(q))&&(!cat||(c.category||"Other")===cat)&&(!st||status(c)[0]===st))}
-function renderConsumables(){let low=0,out=0,good=0;let shown=orderInventoryRows("consumable",filteredConsumables()).sort((a,b)=>Number(!!a.hidden)-Number(!!b.hidden)),hb=document.getElementById("consumableHiddenBtn");if(hb)hb.textContent=consumableShowHidden?"Hide Hidden":"Show Hidden";let showCategory=consumablesBulkMode||editingConsumableId!==null;consumablesTable.innerHTML=`<div class="table-wrap"><table><tr>${showCategory?"<th>Hide</th>":""}<th>Stock</th><th>Name</th><th>Variant</th><th>Qty</th><th>Status</th>${showCategory?"<th>Category</th>":""}<th>Count</th><th></th></tr>${shown.map(c=>{if(c.target===undefined)c.target=Math.max(c.qty,c.min*3);let s=status(c);if(c.qty<=0)out++;else if(c.qty<=c.min)low++;else good++;if(consumablesBulkMode||editingConsumableId===c.id)return `<tr class="inline-edit ${c.hidden?"hidden-inventory-row":""}" data-cid="${c.id}"><td><label class="hide-check" style="margin-top:0;justify-content:center"><input data-f="hidden" type="checkbox" ${c.hidden?"checked":""}><span>Hide</span></label></td><td></td><td><input data-f="name" value="${esc(c.name)}"></td><td><input data-f="variant" value="${esc(c.variant)}"></td><td><input data-f="qty" type="number" min="0" value="${c.qty}"></td><td><div class="small">Low at</div><input data-f="min" type="number" min="0" value="${c.min}"><div class="small">Target</div><input data-f="target" type="number" min="0" value="${c.target}"></td><td>${categorySelectHtml(CONSUMABLE_CATEGORIES,c.category||"Other")}</td><td><label class="check" style="padding:7px 9px"><input data-f="allowdup" type="checkbox" style="min-width:auto;width:18px;height:18px" ${duplicateVariantsAllowed("consumable",c.name)?"checked":""}><span>Allow Duplicates</span></label><button type="button" class="btn light cons-btn" style="margin-top:6px" onclick="duplicateConsumableFromEdit(${c.id})">Duplicate</button></td><td></td></tr>`;return `<tr class="${c.hidden?"hidden-inventory-row":""}">${showCategory?"<td></td>":""}<td><div class="use-inline"><input id="useQty-${c.id}" type="number" min="1" max="${c.qty}" value="1" inputmode="numeric" aria-label="Qty to use"><button class="btn" onclick="useInlineQty(${c.id})">Use</button></div></td><td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td><b>${c.qty}</b></td><td><span class="badge ${s[1]}">${s[0]}</span></td>${showCategory?`<td>${esc(c.category||"Other")}</td>`:""}<td><div class="cons-actions"><button class="btn light cons-btn" onclick="restock(${c.id})">+ Stock</button><button class="btn light cons-btn" onclick="quickCount(${c.id})">Set Count</button></div></td><td><button class="btn light cons-btn" onclick="editConsumable(${c.id})">Edit</button></td></tr>`}).join("")}</table></div>`;inStockStat.textContent=good;lowStat.textContent=low;outStat.textContent=out;if(usageManagerOpen)renderUsageManager();updateFloatingEditBar()}
+function renderConsumables(){
+ let low=0,out=0,good=0;
+ let shown=orderInventoryRows("consumable",filteredConsumables()).sort((a,b)=>Number(!!a.hidden)-Number(!!b.hidden)),
+ hb=document.getElementById("consumableHiddenBtn");
+ if(hb)hb.textContent=consumableShowHidden?"Hide Hidden":"Show Hidden";
+ let editMode=consumablesBulkMode||editingConsumableId!==null;
+ let head=editMode
+   ?`<tr><th>Hide</th><th>Name</th><th>Variant</th><th>Qty</th><th>Status</th><th>Category</th><th></th></tr>`
+   :`<tr><th>Stock</th><th>Name</th><th>Variant</th><th>Qty</th><th>Status</th><th>Count</th><th></th></tr>`;
+ consumablesTable.innerHTML=`<div class="table-wrap"><table>${head}${shown.map(c=>{
+   if(c.target===undefined)c.target=Math.max(c.qty,c.min*3);
+   let st=status(c);
+   if(c.qty<=0)out++;else if(c.qty<=c.min)low++;else good++;
+   if(editMode)return `<tr class="inline-edit ${c.hidden?"hidden-inventory-row":""}" data-cid="${c.id}">
+     <td><label class="hide-check"><input data-f="hidden" type="checkbox" ${c.hidden?"checked":""}><span>Hide</span></label></td>
+     <td><input data-f="name" value="${esc(c.name)}"></td>
+     <td><input data-f="variant" value="${esc(c.variant)}"></td>
+     <td><input data-f="qty" type="number" min="0" value="${c.qty}"></td>
+     <td><div class="small">Low at</div><input data-f="min" type="number" min="0" value="${c.min}"><div class="small">Target</div><input data-f="target" type="number" min="0" value="${c.target}"></td>
+     <td>${categorySelectHtml(CONSUMABLE_CATEGORIES,c.category||"Other")}</td>
+     <td><label class="check"><input data-f="allowdup" type="checkbox" ${duplicateVariantsAllowed("consumable",c.name)?"checked":""}><span>Allow Duplicates</span></label><button type="button" class="btn light cons-btn" onclick="duplicateConsumableFromEdit(${c.id})">Duplicate</button></td>
+   </tr>`;
+   return `<tr class="${c.hidden?"hidden-inventory-row":""}">
+     <td><div class="use-inline"><input id="useQty-${c.id}" type="number" min="1" max="${c.qty}" value="1" inputmode="numeric" aria-label="Qty to use"><button class="btn" onclick="useInlineQty(${c.id})">Use</button></div></td>
+     <td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td><b>${c.qty}</b></td>
+     <td><span class="badge ${st[1]}">${st[0]}</span></td>
+     <td><div class="cons-actions"><button class="btn light cons-btn" onclick="restock(${c.id})">+ Stock</button><button class="btn light cons-btn" onclick="quickCount(${c.id})">Set Count</button></div></td>
+     <td><button class="btn light cons-btn" onclick="editConsumable(${c.id})">Edit</button></td>
+   </tr>`
+ }).join("")}</table></div>`;
+ let a=document.getElementById("inStockStat"),b=document.getElementById("lowStat"),c=document.getElementById("outStat");
+ if(a)a.textContent=good;if(b)b.textContent=low;if(c)c.textContent=out;
+ if(usageManagerOpen)renderUsageManager();
+ updateFloatingEditBar()
+}
 function addConsumable(){let name=consName.value.trim(),variant=consVariant.value.trim(),allow=newConsAllowDup.checked;if(!name)return;setDuplicateVariantsAllowed("consumable",name,allow);if(!allow&&hasDuplicateVariant("consumable",name,variant)){toastMsg("Duplicate Not Allowed",false);return}data.consumables.push({id:Date.now(),name,variant,category:consCategory.value.trim()||"Other",qty:+consQty.value||0,min:+consMin.value||0,used:0,hidden:false});consName.value=consVariant.value=consQty.value=consMin.value=consCategory.value="";newConsAllowDup.checked=true;save();refreshAddSuggestions("consumable")}
 function useCons(id){let c=data.consumables.find(c=>c.id===id);if(c&&c.qty>0){if(!(data.undo&&data.undo.kind==="consumable"&&data.undo.id===id))setUndo({kind:"consumable",id,qty:c.qty,used:c.used,historyLen:data.history.length});c.qty--;c.used++;logEvent("CONSUMABLE USE",{item:c.name,variant:c.variant,qty:-1});save();toastMsg(`${c.name}: ${c.qty} left`)}}
 function useConsQty(id){let c=data.consumables.find(c=>c.id===id);if(!c||c.qty<=0){toastMsg("That item is out of stock.",false);return}let n=prompt(`How many ${c.name}${c.variant?" · "+c.variant:""} are being used?`,"2");if(n===null)return;n=Math.floor(Number(n));if(!Number.isFinite(n)||n<1)return;if(n>c.qty){toastMsg(`Only ${c.qty} in stock.`,false);return}if(!(data.undo&&data.undo.kind==="consumable"&&data.undo.id===id))setUndo({kind:"consumable",id,qty:c.qty,used:c.used,historyLen:data.history.length});c.qty-=n;c.used=(c.used||0)+n;logEvent("CONSUMABLE USE",{item:c.name,variant:c.variant,qty:-n});save();toastMsg(`Used ${n} ${c.name} · ${c.qty} left`)}
@@ -504,7 +592,7 @@ let miscBulkMode=false,editingMiscId=null;
 function toggleMiscFilters(){let p=document.getElementById("miscFilters");p.style.display=p.style.display==="block"?"none":"block"}
 function clearMiscFilters(){miscSearch.value="";miscCategoryFilter.value="";renderMisc()}
 function filteredMisc(){categoryOptions(data.miscellaneous,"miscCategoryFilter");let q=(document.getElementById("miscSearch")?.value||"").toLowerCase(),cat=document.getElementById("miscCategoryFilter")?.value||"";return data.miscellaneous.filter(x=>(!q||(x.name+" "+(x.variant||"")+" "+(x.category||"")).toLowerCase().includes(q))&&(!cat||(x.category||"Other")===cat))}
-function renderMisc(){let items=orderInventoryRows("misc",filteredMisc()),showCategory=miscBulkMode||editingMiscId!==null;miscTable.innerHTML=`<div class="table-wrap"><table><tr><th>Name</th><th>Variant</th>${showCategory?"<th>Category</th>":""}<th>Qty</th><th></th></tr>${items.map(x=>{if(miscBulkMode||editingMiscId===x.id)return `<tr class="inline-edit" data-mid="${x.id}"><td><input data-f="name" value="${esc(x.name)}"></td><td><input data-f="variant" value="${esc(x.variant||"")}"></td><td>${categorySelectHtml(MISC_CATEGORIES,x.category||"Other")}</td><td><input data-f="qty" type="number" min="0" value="${x.qty||0}"></td><td><label class="check" style="padding:7px 9px"><input data-f="allowdup" type="checkbox" style="min-width:auto;width:18px;height:18px" ${duplicateVariantsAllowed("misc",x.name)?"checked":""}><span>Allow Duplicates</span></label><button type="button" class="btn light cons-btn" style="margin-top:6px" onclick="duplicateMiscFromEdit(${x.id})">Duplicate</button></td></tr>`;return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant||"")}</td>${showCategory?`<td>${esc(x.category||"Other")}</td>`:""}<td><b>${x.qty||0}</b></td><td><button class="btn light" onclick="editMisc(${x.id})">Edit</button></td></tr>`}).join("")}</table></div>`;updateFloatingEditBar()}
+function renderMisc(){let items=orderInventoryRows("misc",filteredMisc()),showCategory=miscBulkMode||editingMiscId!==null;miscTable.innerHTML=`<div class="table-wrap"><table><tr><th>Name</th><th>Variant</th>${showCategory?"<th>Category</th>":""}<th>Qty</th><th></th></tr>${items.map(x=>{if(miscBulkMode||editingMiscId===x.id)return `<tr class="inline-edit" data-mid="${x.id}"><td><input data-f="name" value="${esc(x.name)}"></td><td><input data-f="variant" value="${esc(x.variant||"")}"></td><td>${categorySelectHtml(MISC_CATEGORIES,x.category||"Other")}</td><td><input data-f="qty" type="number" min="0" value="${x.qty||0}"></td><td><label class="check"><input data-f="allowdup" type="checkbox" ${duplicateVariantsAllowed("misc",x.name)?"checked":""}><span>Allow Duplicates</span></label><button type="button" class="btn light cons-btn" onclick="duplicateMiscFromEdit(${x.id})">Duplicate</button></td></tr>`;return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant||"")}</td>${showCategory?`<td>${esc(x.category||"Other")}</td>`:""}<td><b>${x.qty||0}</b></td><td><button class="btn light" onclick="editMisc(${x.id})">Edit</button></td></tr>`}).join("")}</table></div>`;updateFloatingEditBar()}
 function addMisc(){let name=miscName.value.trim(),variant=miscVariant.value.trim(),allow=newMiscAllowDup.checked;if(!name)return;setDuplicateVariantsAllowed("misc",name,allow);if(!allow&&hasDuplicateVariant("misc",name,variant)){toastMsg("Duplicate Not Allowed",false);return}data.miscellaneous.push({id:Date.now(),name,variant,category:miscCategory.value.trim()||"Other",qty:Math.max(0,+miscQty.value||0)});miscName.value=miscVariant.value=miscCategory.value=miscQty.value="";newMiscAllowDup.checked=true;save();refreshAddSuggestions("misc")}
 function toggleMiscBulk(){miscBulkMode=!miscBulkMode;editingMiscId=null;miscBulkActions.style.display=miscBulkMode?"flex":"none";renderMisc()}
 function cancelMiscBulk(){miscBulkMode=false;miscBulkActions.style.display="none";renderMisc()}
@@ -591,14 +679,16 @@ function returnSelectedItems(){let ids=[...returnSelected];doReturns(ids);return
 function returnAllItems(){let ids=data.equipment.filter(x=>x.holder===returnEmployee).map(x=>x.id);doReturns(ids);backReturn()}
 returnSearch.oninput=renderReturn;
 
-function renderReorderNew(){let r=data.consumables.filter(c=>!c.hidden&&c.qty<=c.min);newReorderList.innerHTML=r.length?`<table><tr><th>Item</th><th>Variant</th><th>On Hand</th><th>Suggested Order</th></tr>${r.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td>${c.qty}</td><td><b>${Math.max(0,c.target-c.qty)}</b></td></tr>`).join("")}</table>`:`<div class="empty">Nothing needs reordered.</div>`}
+function renderReorderNew(){let r=data.consumables.filter(c=>!c.hidden&&c.qty<=c.min);newReorderList.innerHTML=r.length?`<table><tr><th>Item</th><th>Variant</th><th>On Hand</th><th>Suggested Order</th></tr>${r.map(c=>`<tr class="${c.qty<=0?"reorder-out":"reorder-low"}"><td><b>${esc(c.name)}</b></td><td>${esc(c.variant)}</td><td>${c.qty}</td><td><b>${Math.max(0,c.target-c.qty)}</b></td></tr>`).join("")}</table>`:`<div class="empty">Nothing needs reordered.</div>`}
 
 function showMore(name,btn){document.querySelectorAll(".morePanel").forEach(x=>x.style.display="none");document.querySelectorAll(".pill").forEach(x=>x.classList.remove("active"));let p=document.getElementById("more-"+name);if(p)p.style.display="block";if(btn)btn.classList.add("active");renderMore()}
 function elapsed(ms){let h=Math.floor(ms/3600000),d=Math.floor(h/24);return d?`${d}d ${h%24}h`:`${h}h ${Math.floor(ms/60000)%60}m`}
 function historyDetail(h){let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;return [e?`#${e.num} ${e.name}`:"",h.equipment,h.variant,h.item].filter(Boolean).join(" · ")}
 function setAnalyticsDays(days){analyticsDays=days;renderMore()}
 function deleteHistoryEntry(i){if(!Number.isInteger(i)||i<0||i>=data.history.length)return;if(!confirm("Delete this history entry permanently? You can use Undo Last Action immediately afterward if needed."))return;data.history.splice(i,1);save();renderMore()}
-function renderMore(){let now=Date.now(),over=data.equipment.filter(x=>x.holder!==null&&x.checkedOutAt&&now-x.checkedOutAt>=86400000),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>o.x.action==="CHECK OUT"||o.x.action==="RETURN"),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Over 24 Hours (${over.length})</h3>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${elapsed(now-x.checkedOutAt)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<table><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td><button class="btn light" onclick="restoreService(${x.id})">Return to Service</button></td></tr>`).join("")}</table>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn" onclick="exportHistory()">Export Full Activity History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="row"><input id="moreEmpName" placeholder="Employee name"><input id="moreEmpNum" placeholder="Employee #"><input id="moreMonNum" placeholder="Monitor #"><button class="btn" onclick="addEmployeeFromMore()">Add Employee</button></div><div style="margin-top:12px">${data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
+function renderMore(){let now=Date.now(),over=data.equipment.filter(x=>x.holder!==null&&x.checkedOutAt&&now-x.checkedOutAt>=86400000),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>o.x.action==="CHECK OUT"||o.x.action==="RETURN"),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
+let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().reverse().map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):"");let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");return `<tr><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${who}${who&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out or return history yet.</div>`}</div>`;
+document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Over 24 Hours (${over.length})</h3>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Out For</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${elapsed(now-x.checkedOutAt)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<table><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td><button class="btn light" onclick="restoreService(${x.id})">Return to Service</button></td></tr>`).join("")}</table>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn" onclick="exportHistory()">Export Full Activity History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="row"><input id="moreEmpName" placeholder="Employee name"><input id="moreEmpNum" placeholder="Employee #"><input id="moreMonNum" placeholder="Monitor #"><button class="btn" onclick="addEmployeeFromMore()">Add Employee</button></div><div style="margin-top:12px">${data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
 function addEmployeeFromMore(){let n=document.getElementById("moreEmpName"),num=document.getElementById("moreEmpNum"),mon=document.getElementById("moreMonNum");if(!n.value.trim())return;data.employees.push({name:n.value.trim(),num:num.value.trim(),monitor:mon.value.trim()});save()}
 function restoreService(id){let x=data.equipment.find(v=>v.id===id);x.status="Available";x.holder=null;x.checkedOutAt=null;logEvent("RETURN TO SERVICE",{equipment:x.name,variant:x.variant});save()}
 function csv(v){return `"${String(v??"").replaceAll('"','""')}"`}
