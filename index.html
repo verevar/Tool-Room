@@ -545,6 +545,208 @@ body.editing-active{padding-bottom:62px!important}
 .card table td{padding:7px 5px!important}
 </style>
 
+
+<style id="targeted-four-fixes">
+/* 1) Main navigation: readable, with a clean 3-row mobile layout */
+@media(max-width:800px){
+  nav{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  nav .tab{
+    font-size:13px!important;
+    min-height:40px!important;
+    padding:9px 5px!important;
+    line-height:1!important;
+  }
+  nav .tab:nth-child(1),
+  nav .tab:nth-child(2),
+  nav .tab:nth-child(3){grid-column:span 2!important}
+  nav .tab:nth-child(4),
+  nav .tab:nth-child(5),
+  nav .tab:nth-child(6){grid-column:span 2!important}
+  nav .tab:nth-child(7){grid-column:3 / span 2!important}
+}
+
+/* 2) Checkout-history date filter: compact, proportional, no giant blank width */
+.history-filter{
+  display:flex!important;
+  align-items:flex-end!important;
+  justify-content:flex-start!important;
+  gap:5px!important;
+  margin:4px 0 8px!important;
+}
+.history-filter label{
+  flex:0 0 118px!important;
+  width:118px!important;
+  min-width:0!important;
+}
+.history-filter label span{
+  display:block!important;
+  font-size:10px!important;
+  line-height:1!important;
+  margin:0 0 3px 2px!important;
+}
+.history-filter input{
+  width:118px!important;
+  min-width:0!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:4px 6px!important;
+  font-size:12px!important;
+}
+.history-filter>.btn{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:44px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:5px 8px!important;
+  font-size:10.5px!important;
+}
+@media(max-width:430px){
+  .history-filter label{flex:1 1 0!important;width:auto!important}
+  .history-filter input{width:100%!important}
+  .history-filter>.btn{min-width:42px!important;padding:5px 6px!important}
+}
+
+/* 3) Employee edit/bulk-edit fields: same readable height as the normal rows */
+.employee-inline-edit,
+.employee-bulk-grid{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 62px 76px!important;
+  gap:6px!important;
+  align-items:center!important;
+  width:100%!important;
+  padding:7px 0!important;
+}
+.employee-inline-edit input,
+.employee-bulk-grid input{
+  width:100%!important;
+  min-width:0!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:7px 9px!important;
+  font-size:14px!important;
+  border-radius:9px!important;
+}
+
+/* 4) Reports/backup: readable without becoming oversized */
+#more-exports .card{padding:12px!important}
+#more-exports .export-stack{gap:7px!important;margin-top:7px!important}
+#more-exports .export-stack .btn,
+#more-exports .export-stack label.btn{
+  min-height:39px!important;
+  padding:9px 9px!important;
+  font-size:12.5px!important;
+  line-height:1.1!important;
+  border-radius:9px!important;
+}
+</style>
+
+
+<style id="nav-two-row-fix">
+/* Mobile nav: exactly two rows.
+   Row 1 = Check Out / Return / Equipment
+   Row 2 = Consumables / Misc. / Reorder / More */
+@media(max-width:800px){
+  nav{
+    display:grid!important;
+    grid-template-columns:repeat(12,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  nav .tab{
+    min-width:0!important;
+    min-height:40px!important;
+    padding:9px 4px!important;
+    font-size:13px!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+  }
+  nav .tab:nth-child(1),
+  nav .tab:nth-child(2),
+  nav .tab:nth-child(3){
+    grid-column:span 4!important;
+  }
+  nav .tab:nth-child(4){
+    grid-column:span 4!important;
+  }
+  nav .tab:nth-child(5){
+    grid-column:span 3!important;
+    font-size:12px!important;
+    padding-left:2px!important;
+    padding-right:2px!important;
+  }
+  nav .tab:nth-child(6){
+    grid-column:span 3!important;
+  }
+  nav .tab:nth-child(7){
+    grid-column:span 2!important;
+    font-size:12px!important;
+    padding-left:2px!important;
+    padding-right:2px!important;
+  }
+}
+</style>
+
+
+<style id="misc-more-actual-width-fix">
+@media(max-width:800px){
+  nav{
+    grid-template-columns:repeat(14,minmax(0,1fr))!important;
+  }
+  /* first row stays evenly sized */
+  nav .tab:nth-child(1),
+  nav .tab:nth-child(2),
+  nav .tab:nth-child(3){
+    grid-column:span 4!important;
+  }
+  /* second row: Consumables gets room; Misc and More are physically narrower */
+  nav .tab:nth-child(4){grid-column:span 5!important}
+  nav .tab:nth-child(5){grid-column:span 3!important}
+  nav .tab:nth-child(6){grid-column:span 4!important}
+  nav .tab:nth-child(7){grid-column:span 2!important}
+}
+</style>
+
+
+<style id="proportionate-two-row-nav">
+@media(max-width:800px){
+  nav{
+    display:grid!important;
+    grid-template-columns:repeat(16,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  nav .tab{
+    min-width:0!important;
+    min-height:40px!important;
+    height:40px!important;
+    padding:8px 4px!important;
+    font-size:12.5px!important;
+    line-height:1!important;
+    white-space:nowrap!important;
+  }
+
+  /* Row 1: balanced to label length */
+  nav .tab:nth-child(1){grid-column:span 5!important} /* Check Out */
+  nav .tab:nth-child(2){grid-column:span 5!important} /* Return */
+  nav .tab:nth-child(3){grid-column:span 6!important} /* Equipment */
+
+  /* Row 2: long labels get room; short labels match each other */
+  nav .tab:nth-child(4){grid-column:span 6!important} /* Consumables */
+  nav .tab:nth-child(5){grid-column:span 3!important} /* Misc. */
+  nav .tab:nth-child(6){grid-column:span 4!important} /* Reorder */
+  nav .tab:nth-child(7){grid-column:span 3!important} /* More */
+
+  nav .tab:nth-child(5),
+  nav .tab:nth-child(7){
+    font-size:12.5px!important;
+    padding-left:4px!important;
+    padding-right:4px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
