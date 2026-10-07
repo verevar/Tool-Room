@@ -1226,6 +1226,40 @@ html.record-modal-open,body.record-modal-open{
 .record-attachment-choice span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 
+
+<style id="move-checkout-feature-style">
+.return-action-row{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:7px!important}
+.return-action-row .btn{min-width:0!important;padding-left:7px!important;padding-right:7px!important;font-size:11px!important}
+.move-checkout-modal{display:none;position:fixed;inset:0;z-index:45000;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px}
+.move-checkout-modal.open{display:flex!important}
+.move-checkout-box{width:380px;max-width:calc(100vw - 32px);max-height:72vh;background:#fff;border-radius:15px;padding:15px;box-shadow:0 20px 55px rgba(0,0,0,.28);display:flex;flex-direction:column}
+.move-checkout-close{width:32px;height:32px;border:0;border-radius:7px;background:transparent;font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center}
+#moveCheckoutSearch{width:100%;margin-bottom:8px}
+.move-checkout-employees{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:40vh}
+.move-employee-choice{width:100%;padding:9px 10px;border:1px solid #dfe3e8;border-radius:9px;background:#fff;text-align:left;font:inherit}
+.move-employee-choice span{display:block;font-size:11px;color:#69707a;margin-top:2px}
+.move-employee-choice.selected{background:#16191d;color:#fff;border-color:#16191d}
+.move-employee-choice.selected span{color:#d8dadd}
+.move-checkout-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.move-checkout-actions .btn{width:100%!important}
+@media(max-width:600px){
+ .return-action-row{grid-template-columns:1fr 1fr!important}
+ .return-action-row .btn:last-child{grid-column:1/-1!important}
+ .move-checkout-box{width:350px}
+}
+</style>
+
+<style id="checkout-timestamps-neat-final">
+.checked-out-list{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0}
+.checked-out-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.2fr) auto auto;align-items:center;gap:7px;width:100%;min-width:0;padding:8px 9px;border:1px solid #e1e4e8;border-radius:10px;background:#fff}
+.checked-out-main,.checked-out-person{min-width:0}.checked-out-main b,.checked-out-main span,.checked-out-person,.checked-out-time{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.checked-out-main b{font-size:13px}.checked-out-main span,.checked-out-person,.checked-out-time,.checkout-card-time{font-size:10px;color:#68707b}
+.checked-out-return{width:auto!important;min-width:0!important;padding:6px 9px!important;font-size:11px!important}
+.return-employee-card,.return-search-item,.return-item-card{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:2px!important;text-align:left!important;min-width:0!important}
+.return-employee-card .small,.return-search-item .small,.return-item-card .small,.checkout-card-time{display:block!important;width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#returnItemGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}.return-item-card{padding:9px!important}.return-item-card b{font-size:13px!important}.checkout-card-time{font-size:9px!important}
+@media(max-width:600px){.checked-out-row{grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"main return" "person return" "time return"!important;gap:2px 7px!important;padding:7px 8px!important}.checked-out-main{grid-area:main}.checked-out-person{grid-area:person}.checked-out-time{grid-area:time}.checked-out-return{grid-area:return}.checked-out-main b{font-size:12px!important}.checked-out-main span,.checked-out-person,.checked-out-time{font-size:9px!important}}
+</style>
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1267,7 +1301,7 @@ html.record-modal-open,body.record-modal-open{
 <section id="returns" class="page">
 <h1>Return</h1><p class="sub">Choose an employee, then return only what they brought back—or Return All.</p>
 <div class="card"><div id="returnChooser"><input id="returnSearch" placeholder="Search employee or checked-out item…" style="width:100%"><div id="returnEmployeeGrid" class="employee-grid"></div></div>
-<div id="returnDetail" style="display:none"><button class="btn light" onclick="backReturn()">← Back to Employees</button><div id="returnPerson" style="font-weight:850;margin:12px 0"></div><div id="returnItemGrid" class="gear-grid"></div><div class="row"><button id="returnSelectedButton" class="btn" onclick="returnSelectedItems()">RETURN SELECTED</button><button class="btn light" onclick="returnAllItems()">RETURN ALL</button></div></div></div>
+<div id="returnDetail" style="display:none"><button class="btn light" onclick="backReturn()">← Back to Employees</button><div id="returnPerson" style="font-weight:850;margin:12px 0"></div><div id="returnItemGrid" class="gear-grid"></div><div class="row return-action-row"><button id="returnSelectedButton" class="btn" onclick="returnSelectedItems()">RETURN SELECTED</button><button id="moveSelectedButton" class="btn light" onclick="openMoveSelected()">MOVE SELECTED</button><button class="btn light" onclick="returnAllItems()">RETURN ALL</button></div></div></div>
 </section>
 <section id="reorder" class="page"><h1>Reorder</h1><p class="sub">Low and out-of-stock consumables with suggested reorder quantities.</p><div class="card"><div id="newReorderList"></div></div></section>
 <section id="more" class="page"><h1>More</h1><p class="sub">The supporting records and reports—kept out of your everyday checkout flow.</p>
@@ -1543,6 +1577,10 @@ function employeeFromHolder(holder){let i=employeeIndexFromHolder(holder);return
 function equipmentIsCheckedOut(x){
   return x&&x.holder!==null&&x.holder!==undefined&&x.holder!==""&&String(x.status||"").trim().toLowerCase()==="checked out";
 }
+function checkoutTimeMs(x){let n=Number(x?.checkedOutAt);return Number.isFinite(n)?n:0}
+function checkoutStamp(x){let n=checkoutTimeMs(x);if(!n)return "Time unavailable";let d=new Date(n);return `${d.toLocaleDateString("en-US",{month:"2-digit",day:"2-digit",year:"numeric"})} · ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`}
+function newestCheckoutFirst(a,b){return checkoutTimeMs(b)-checkoutTimeMs(a)}
+
 function equipmentKey(name){return String(name||"").trim().toLowerCase()}
 function equipmentMax(name){return 1}
 function employeeOutstandingFor(name,employee=selectedEmployee){let key=equipmentKey(name);return data.equipment.filter(x=>equipmentKey(x.name)===key&&String(x.status||"").trim().toLowerCase()==="checked out"&&x.holder!==null&&x.holder!==undefined&&String(x.holder)===String(employee)).length}
@@ -1580,9 +1618,9 @@ function fastCheckout(){
 }
 employeeSearch.oninput=renderFastEmployees;
 function renderCheckoutCheckedOut(){
- let allOut=data.equipment.filter(equipmentIsCheckedOut);
- let out=selectedEmployee===null?allOut:allOut.filter(x=>employeeIndexFromHolder(x.holder)===Number(selectedEmployee));
- checkedOutList.innerHTML=out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=employeeFromHolder(x.holder);return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${e?esc(e.name)+" · #"+esc(e.num):"Unknown"}</td><td><button class="btn light" onclick="returnEquip(${JSON.stringify(x.id)})">Return</button></td></tr>`}).join("")}</table>`:`<div class="empty">Nothing is checked out${selectedEmployee===null?"":" to this employee"}.</div>`;
+ let allOut=data.equipment.filter(equipmentIsCheckedOut).sort(newestCheckoutFirst);
+ let out=(selectedEmployee===null?allOut:allOut.filter(x=>employeeIndexFromHolder(x.holder)===Number(selectedEmployee))).sort(newestCheckoutFirst);
+ checkedOutList.innerHTML=out.length?`<div class="checked-out-list">${out.map(x=>{let e=employeeFromHolder(x.holder);return `<div class="checked-out-row"><div class="checked-out-main"><b>${esc(x.name)}</b><span>${esc(x.variant||"No variant")}</span></div><div class="checked-out-person">${e?`#${esc(e.num)} ${esc(e.name)}`:"Unknown"}</div><div class="checked-out-time">${esc(checkoutStamp(x))}</div><button class="btn light checked-out-return" onclick="returnEquip(${JSON.stringify(x.id)})">Return</button></div>`}).join("")}</div>`:`<div class="empty">Nothing is checked out${selectedEmployee===null?"":" to this employee"}.</div>`;
  equipOutStat.textContent=allOut.length;
 }
 function renderCheckout(){
@@ -1809,15 +1847,80 @@ function renderOverdue(){
 
 
 let returnEmployee=null,returnSelected=new Set();
-function renderReturn(){let input=document.getElementById("returnSearch"),q=(input?.value||"").trim().toLowerCase();let assigned=new Map();data.equipment.forEach(x=>{if(equipmentIsCheckedOut(x)){let idx=employeeIndexFromHolder(x.holder);if(idx>=0)assigned.set(idx,(assigned.get(idx)||0)+1)}});let rows=[...assigned.entries()].map(([i,n])=>({e:data.employees[i],i,n})).filter(x=>x.e&&(!q||(`${x.e.name} ${x.e.num} ${x.e.monitor}`).toLowerCase().includes(q))).sort((a,b)=>{let an=parseInt(a.e.num,10),bn=parseInt(b.e.num,10);if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;if(Number.isFinite(an))return -1;if(Number.isFinite(bn))return 1;return String(a.e.num||"").localeCompare(String(b.e.num||""),undefined,{numeric:true,sensitivity:"base"})});let itemRows=q?data.equipment.filter(equipmentIsCheckedOut).filter(x=>(`${x.name||""} ${x.variant||""}`).toLowerCase().includes(q)).map(x=>({x,e:employeeFromHolder(x.holder)})).filter(r=>r.e):[];let grid=document.getElementById("returnEmployeeGrid"),html="";if(rows.length)html+=rows.map(x=>`<button class="emp-card" data-employee-index="${x.i}" onclick="pickReturnEmployee(${x.i})"><b>#${esc(x.e.num)} ${esc(x.e.name)}</b><br><span class="small">${x.n} OUT</span></button>`).join("");if(itemRows.length)html+=itemRows.map(r=>`<button class="emp-card" onclick="pickReturnItem(${JSON.stringify(r.x.id)})"><b>${esc(r.x.name)}</b><br><span class="small">Variant: ${esc(r.x.variant||"—")}</span><br><span class="small">Checked out to: #${esc(r.e.num)} ${esc(r.e.name)}</span></button>`).join("");grid.innerHTML=html||`<div class="empty">${q?"No matching employees or checked-out equipment.":"Nobody currently has equipment out."}</div>`}
+function renderReturn(){let input=document.getElementById("returnSearch"),q=(input?.value||"").trim().toLowerCase();let assigned=new Map();data.equipment.forEach(x=>{if(equipmentIsCheckedOut(x)){let idx=employeeIndexFromHolder(x.holder);if(idx>=0)assigned.set(idx,(assigned.get(idx)||0)+1)}});let rows=[...assigned.entries()].map(([i,n])=>{let active=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===i).sort(newestCheckoutFirst);return {e:data.employees[i],i,n,latest:active[0]||null}}).filter(x=>x.e&&(!q||(`${x.e.name} ${x.e.num} ${x.e.monitor}`).toLowerCase().includes(q))).sort((a,b)=>checkoutTimeMs(b.latest)-checkoutTimeMs(a.latest)||String(a.e.num||"").localeCompare(String(b.e.num||""),undefined,{numeric:true,sensitivity:"base"}));let itemRows=q?data.equipment.filter(equipmentIsCheckedOut).filter(x=>(`${x.name||""} ${x.variant||""}`).toLowerCase().includes(q)).sort(newestCheckoutFirst).map(x=>({x,e:employeeFromHolder(x.holder)})).filter(r=>r.e):[];let grid=document.getElementById("returnEmployeeGrid"),html="";if(rows.length)html+=rows.map(x=>`<button class="emp-card return-employee-card" data-employee-index="${x.i}" onclick="pickReturnEmployee(${x.i})"><b>#${esc(x.e.num)} ${esc(x.e.name)}</b><span class="small">${x.n} out${x.latest?` · Latest ${esc(checkoutStamp(x.latest))}`:""}</span></button>`).join("");if(itemRows.length)html+=itemRows.map(r=>`<button class="emp-card return-search-item" onclick="pickReturnItem(${JSON.stringify(r.x.id)})"><b>${esc(r.x.name)}</b><span class="small">${esc(r.x.variant||"No variant")} · #${esc(r.e.num)} ${esc(r.e.name)}</span><span class="small">${esc(checkoutStamp(r.x))}</span></button>`).join("");grid.innerHTML=html||`<div class="empty">${q?"No matching employees or checked-out equipment.":"Nobody currently has equipment out."}</div>`}
 function pickReturnEmployee(i){returnEmployee=i;returnSelected.clear();returnChooser.style.display="none";returnDetail.style.display="block";returnPerson.textContent=`#${data.employees[i].num} ${data.employees[i].name}`;renderReturnItems()}
 function pickReturnItem(id){let x=data.equipment.find(v=>String(v.id)===String(id));if(!x||x.holder===null||x.holder===undefined)return;let i=employeeIndexFromHolder(x.holder);if(i<0)return;pickReturnEmployee(i);returnSelected.add(x.id);renderReturnItems();setTimeout(()=>{let cards=[...document.querySelectorAll("#returnItemGrid .gear-card")],card=cards.find(c=>c.getAttribute("onclick")===`toggleReturnNew(${x.id})`);if(card){card.classList.add("search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>card.classList.remove("search-highlight"),2500)}},40)}
 function backReturn(){returnEmployee=null;returnSelected.clear();returnChooser.style.display="block";returnDetail.style.display="none";returnSearch.value="";renderReturn()}
-function renderReturnItems(){if(returnEmployee===null)return;let items=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===Number(returnEmployee));returnItemGrid.innerHTML=items.map(x=>`<button class="gear-card ${returnSelected.has(x.id)?"selected":""}" onclick="toggleReturnNew(${x.id})"><b>${returnSelected.has(x.id)?"✓ ":""}${esc(x.name)}</b><br><span class="small">${esc(x.variant)}</span></button>`).join("");returnSelectedButton.textContent=`RETURN SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`}
+function renderReturnItems(){if(returnEmployee===null)return;let items=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===Number(returnEmployee)).sort(newestCheckoutFirst);returnItemGrid.innerHTML=items.map(x=>`<button class="gear-card return-item-card ${returnSelected.has(x.id)?"selected":""}" onclick="toggleReturnNew(${JSON.stringify(x.id)})"><b>${returnSelected.has(x.id)?"✓ ":""}${esc(x.name)}</b><span class="small">${esc(x.variant||"No variant")}</span><span class="checkout-card-time">${esc(checkoutStamp(x))}</span></button>`).join("");returnSelectedButton.textContent=`RETURN SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`;let mb=document.getElementById("moveSelectedButton");if(mb){mb.textContent=`MOVE SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`;mb.disabled=!returnSelected.size}}
 function toggleReturnNew(id){returnSelected.has(id)?returnSelected.delete(id):returnSelected.add(id);renderReturnItems()}
 function doReturns(ids){if(!ids.length)return;let before=[];ids.forEach(id=>{let x=data.equipment.find(v=>v.id===id);if(!x)return;before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});let ei=employeeIndexFromHolder(x.holder),emp=ei>=0?data.employees[ei]:null;logEvent("RETURN",{employee:ei>=0?ei:x.holder,employeeNum:emp?.num||"",employeeName:emp?.name||"",monitor:emp?.monitor||"",equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available"});setUndo({kind:"equipment",before});save();toastMsg(`${ids.length} item${ids.length===1?"":"s"} returned`)}
 function returnSelectedItems(){let ids=[...returnSelected];if(!ids.length)return;doReturns(ids);returnSelected.clear();backReturn()}
 function returnAllItems(){let ids=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===Number(returnEmployee)).map(x=>x.id);doReturns(ids);backReturn()}
+
+let moveCheckoutTarget=null;
+function ensureMoveCheckoutModal(){
+  let m=document.getElementById("moveCheckoutModal");
+  if(m)return m;
+  m=document.createElement("div");
+  m.id="moveCheckoutModal";
+  m.className="move-checkout-modal";
+  m.innerHTML=`<div class="move-checkout-box" role="dialog" aria-modal="true">
+    <div class="row between" style="align-items:center"><h3 style="margin:0">Move Checkout</h3><button type="button" class="move-checkout-close" onclick="closeMoveSelected()" aria-label="Close">×</button></div>
+    <div id="moveCheckoutSummary" class="small" style="margin:6px 0 10px"></div>
+    <input id="moveCheckoutSearch" placeholder="Search employee or #" autocomplete="off" oninput="renderMoveEmployees()">
+    <div id="moveCheckoutEmployees" class="move-checkout-employees"></div>
+    <div class="move-checkout-actions">
+      <button type="button" class="btn light" onclick="closeMoveSelected()">Cancel</button>
+      <button id="confirmMoveCheckoutBtn" type="button" class="btn" onclick="confirmMoveSelected()" disabled>Move Selected</button>
+    </div>
+  </div>`;
+  m.addEventListener("click",e=>{if(e.target===m)closeMoveSelected()});
+  document.body.appendChild(m);
+  return m;
+}
+function openMoveSelected(){
+  if(returnEmployee===null||!returnSelected.size){toastMsg("Select at least one checked-out item first.",false);return}
+  moveCheckoutTarget=null;
+  let m=ensureMoveCheckoutModal(),from=data.employees[returnEmployee];
+  document.getElementById("moveCheckoutSummary").textContent=`Move ${returnSelected.size} selected item${returnSelected.size===1?"":"s"} from #${from?.num||""} ${from?.name||""} to:`;
+  document.getElementById("moveCheckoutSearch").value="";
+  document.getElementById("confirmMoveCheckoutBtn").disabled=true;
+  renderMoveEmployees();
+  m.classList.add("open");
+  setTimeout(()=>document.getElementById("moveCheckoutSearch")?.focus(),50);
+}
+function closeMoveSelected(){document.getElementById("moveCheckoutModal")?.classList.remove("open");moveCheckoutTarget=null}
+function renderMoveEmployees(){
+  let q=(document.getElementById("moveCheckoutSearch")?.value||"").trim().toLowerCase(),box=document.getElementById("moveCheckoutEmployees");if(!box)return;
+  let rows=data.employees.map((e,i)=>({e,i})).filter(({e,i})=>i!==Number(returnEmployee)&&(!q||`${e.name} ${e.num} ${e.monitor}`.toLowerCase().includes(q)));
+  box.innerHTML=rows.length?rows.map(({e,i})=>`<button type="button" class="move-employee-choice ${moveCheckoutTarget===i?"selected":""}" onclick="selectMoveEmployee(${i})"><b>#${esc(e.num)} ${esc(e.name)}</b>${e.monitor?`<span>Monitor ${esc(e.monitor)}</span>`:""}</button>`).join(""):`<div class="empty">No matching employees.</div>`;
+}
+function selectMoveEmployee(i){moveCheckoutTarget=i;renderMoveEmployees();let b=document.getElementById("confirmMoveCheckoutBtn");if(b)b.disabled=false}
+function confirmMoveSelected(){
+  if(returnEmployee===null||moveCheckoutTarget===null||!returnSelected.size)return;
+  let fromIndex=Number(returnEmployee),toIndex=Number(moveCheckoutTarget),from=data.employees[fromIndex],to=data.employees[toIndex];
+  if(!to)return;
+  let ids=[...returnSelected],moved=[];
+  ids.forEach(id=>{
+    let x=data.equipment.find(v=>String(v.id)===String(id));
+    if(!x||!equipmentIsCheckedOut(x)||employeeIndexFromHolder(x.holder)!==fromIndex)return;
+    let oldHolder=x.holder;
+    x.holder=toIndex;
+    logEvent("TRANSFER",{
+      employee:toIndex,employeeNum:to.num||"",employeeName:to.name||"",monitor:to.monitor||"",
+      fromEmployee:fromIndex,fromEmployeeNum:from?.num||"",fromEmployeeName:from?.name||"",
+      equipmentId:x.id,equipment:x.name,variant:x.variant,checkedOutAt:x.checkedOutAt||null
+    });
+    moved.push(x);
+  });
+  if(!moved.length){toastMsg("Nothing was moved.",false);closeMoveSelected();return}
+  save();
+  closeMoveSelected();
+  returnSelected.clear();
+  let remaining=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===fromIndex).length;
+  if(remaining){renderReturnItems()}else{backReturn()}
+  toastMsg(`${moved.length} item${moved.length===1?"":"s"} moved to ${to.name}`,false);
+}
 returnSearch.oninput=renderReturn;
 
 let reorderSortMode="default",reorderStatusFilter="all";
@@ -1857,8 +1960,8 @@ function clearCheckoutHistoryFilter(){checkoutHistoryFrom="";checkoutHistoryTo="
 function applyCheckoutHistorySearch(){checkoutHistorySearch=(document.getElementById("checkoutHistorySearch")?.value||"").trim().toLowerCase();renderMore();setTimeout(()=>{let el=document.getElementById("checkoutHistorySearch");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)}
 function historySearchPass(h){if(!checkoutHistorySearch)return true;let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let hay=[h.action,h.employeeName,h.employeeNum,h.monitor,e?.num,e?.name,e?.monitor,h.employee,h.equipment,h.item,h.variant,new Date(h.time).toLocaleDateString()].filter(v=>v!==undefined&&v!==null).join(" ").toLowerCase();return hay.includes(checkoutHistorySearch)}
 function checkoutHistoryFilterHtml(){return `<div style="margin:8px 0"><input id="checkoutHistorySearch" value="${esc(checkoutHistorySearch)}" placeholder="Search employee, item, variant…" style="width:100%" oninput="applyCheckoutHistorySearch()"></div><div class="history-filter"><label><span>From</span><input type="date" id="checkoutHistoryFrom" value="${checkoutHistoryFrom}"></label><label><span>To</span><input type="date" id="checkoutHistoryTo" value="${checkoutHistoryTo}"></label><button class="btn history-apply" onclick="applyCheckoutHistoryFilter()">Apply</button><button class="btn light history-clear" onclick="clearCheckoutHistoryFilter()">Clear</button></div>`}
-function renderMore(){let now=Date.now(),over=data.equipment.filter(isOverdueByDate),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>(o.x.action==="CHECK OUT"||o.x.action==="RETURN")&&historyDatePass(o.x.time)&&historySearchPass(o.x)),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
-let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${checkoutHistoryFilterHtml()}${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().sort((a,b)=>new Date(b.x.time).getTime()-new Date(a.x.time).getTime()).map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=x.employeeName?`${x.employeeNum?`#${esc(x.employeeNum)} `:""}${esc(x.employeeName)}`:(e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):""));let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");return `<tr data-history-index="${i}"><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${who}${who&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out or return history yet.</div>`}</div>`;
+function renderMore(){let now=Date.now(),over=data.equipment.filter(isOverdueByDate),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>(o.x.action==="CHECK OUT"||o.x.action==="RETURN"||o.x.action==="TRANSFER")&&historyDatePass(o.x.time)&&historySearchPass(o.x)),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
+let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${checkoutHistoryFilterHtml()}${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().sort((a,b)=>new Date(b.x.time).getTime()-new Date(a.x.time).getTime()).map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=x.employeeName?`${x.employeeNum?`#${esc(x.employeeNum)} `:""}${esc(x.employeeName)}`:(e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):""));let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");let transfer=x.action==="TRANSFER"?`${x.fromEmployeeNum?`#${esc(x.fromEmployeeNum)} `:""}${esc(x.fromEmployeeName||"Unknown")} → ${who||"Unknown"}`:who;return `<tr data-history-index="${i}"><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${transfer}${transfer&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out, return, or transfer history yet.</div>`}</div>`;
 document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Overdue (${over.length})</h3><div class="small" style="margin-bottom:8px">Equipment becomes overdue when it is still checked out on the next calendar day.</div>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Overdue Since</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${overdueSinceDate(x)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<div class="damaged-table-wrap"><table class="damaged-table"><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>{let hasNotes=Array.isArray(x.notes)&&x.notes.length,idx=data.equipment.indexOf(x);return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td class="damaged-action-cell"><div class="damaged-actions"><button type="button" class="btn light damaged-mini-btn damaged-note-btn ${hasNotes?"has-note":""}" onclick="openEquipmentNoteAt(${idx})">${hasNotes?"View / Add Note":"Add Note"}</button><button type="button" class="btn light damaged-mini-btn damaged-return-btn" onclick="restoreServiceAt(${idx})">Return to Service</button></div></td></tr>`}).join("")}</table></div>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>${analyticsHistoryHtml()}`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="employee-actions"><button class="btn" onclick="openAddEmployeeModal()">Add Employee</button><button class="btn light" onclick="toggleEmployeeBulk()">${employeeBulkMode?"Cancel Bulk Edit":"Bulk Edit"}</button></div><div>${employeeBulkMode?employeeBulkRows():data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
 function addEmployeeFromMore(){openAddEmployeeModal()}
 let activeEquipmentNoteId=null;
@@ -1891,7 +1994,7 @@ function saveEquipmentNote(){
 function csv(v){return `"${String(v??"").replaceAll('"','""')}"`}
 function downloadFile(name,text,type="text/csv"){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function exportUsageHistory(){let rows=[["Date / Time","Employee #","Employee","Item","Variant","Quantity Used"]];[...usageEvents()].reverse().forEach(({x})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;rows.push([new Date(x.time).toLocaleString(),e?.num||"",e?.name||"",x.item||"",x.variant||"",Math.abs(Number(x.qty)||0)])});downloadFile("tool-room-consumable-usage-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
-function exportCheckoutHistory(){let rows=[["Time","Action","Employee #","Employee","Equipment","Variant / Label","Equipment ID"]];[...data.history].filter(h=>h.action==="CHECK OUT"||h.action==="RETURN").forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||h.employeeNum||"",e?.name||h.employee||"",h.equipment||"",h.variant||"",h.equipmentId||""])});downloadFile("tool-room-full-check-out-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
+function exportCheckoutHistory(){let rows=[["Time","Action","From Employee #","From Employee","To / Employee #","To / Employee","Equipment","Variant / Label","Equipment ID"]];[...data.history].filter(h=>h.action==="CHECK OUT"||h.action==="RETURN"||h.action==="TRANSFER").forEach(h=>{let e=h.employeeName?{num:h.employeeNum||"",name:h.employeeName||""}:(h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null);rows.push([new Date(h.time).toLocaleString(),h.action,h.fromEmployeeNum||"",h.fromEmployeeName||"",e?.num||h.employeeNum||"",e?.name||h.employee||"",h.equipment||"",h.variant||"",h.equipmentId||""])});downloadFile("tool-room-full-check-out-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
 function exportConsumablesHistory(){let rows=[["Time","Action","Employee #","Employee","Item","Variant","Quantity"]];[...data.history].filter(h=>h.action==="CONSUMABLE USE"||h.action==="RESTOCK").forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||"",e?.name||"",h.item||"",h.variant||"",Math.abs(Number(h.qty)||0)])});downloadFile("tool-room-full-consumables-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
 function exportHistory(){let rows=[["Time","Action","Employee #","Employee","Item","Variant / Label","Quantity","Category","Details"]];[...data.history].forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let item=h.equipment||h.item||"",variant=h.variant||"",cat="";let eq=data.equipment.find(x=>x.name===item&&String(x.variant||"")===String(variant));let co=data.consumables.find(x=>x.name===item&&String(x.variant||"")===String(variant));cat=(eq||co)?.category||"";rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||"",e?.name||"",item,variant,h.qty||"",cat,historyDetail(h)])});downloadFile("tool-room-full-activity-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
 function exportInventory(){let rows=[["Inventory Type","Category","Item","Variant / Label","Quantity","Status","Assigned Employee #","Assigned Employee","Low At"]];data.equipment.forEach(x=>{let e=x.holder!==null&&x.holder!==undefined?data.employees[x.holder]:null;rows.push(["Equipment",x.category||"Other",x.name,x.variant,"",x.status|| (x.holder===null?"Available":"Checked Out"),e?.num||"",e?.name||"",""])});data.consumables.forEach(c=>rows.push(["Consumable",c.category||"Other",c.name,c.variant,c.qty,status(c)[0],"","",c.min]));data.miscellaneous.forEach(x=>rows.push(["Miscellaneous",x.category||"Other",x.name,x.variant||"",x.qty||0,"In Inventory","","",""]));downloadFile("tool-room-complete-inventory.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
@@ -2099,10 +2202,21 @@ function renderAll(){[renderEmployees,renderCheckout,renderEquipment,renderConsu
 function repairCurrentCheckoutHistory(){
   let changed=false;
   data.equipment.filter(equipmentIsCheckedOut).forEach(x=>{
-    let checkoutTime=x.checkedOutAt?new Date(x.checkedOutAt).toISOString():new Date().toISOString();
-    let lastRelevant=(data.history||[]).find(h=>String(h.equipmentId)===String(x.id)&&(h.action==="CHECK OUT"||h.action==="RETURN"));
-    if(!lastRelevant||lastRelevant.action!=="CHECK OUT"){
-      let ei=employeeIndexFromHolder(x.holder),emp=ei>=0?data.employees[ei]:null;
+    let ei=employeeIndexFromHolder(x.holder),emp=ei>=0?data.employees[ei]:null;
+    let checkoutMs=Number(x.checkedOutAt)||0;
+    let relevant=(data.history||[]).map((h,i)=>({h,i})).filter(o=>String(o.h.equipmentId||"")===String(x.id)&&(o.h.action==="CHECK OUT"||o.h.action==="RETURN")).sort((a,b)=>new Date(b.h.time).getTime()-new Date(a.h.time).getTime());
+    let latest=relevant[0]?.h||null;
+    if(latest&&latest.action==="CHECK OUT"){
+      let eventMs=new Date(latest.time).getTime();
+      let sameActiveCheckout=!checkoutMs||!Number.isFinite(eventMs)||Math.abs(eventMs-checkoutMs)<=5*60*1000;
+      if(sameActiveCheckout&&emp){
+        let expectedEmployee=ei,expectedNum=String(emp.num||""),expectedName=String(emp.name||""),expectedMonitor=String(emp.monitor||"");
+        if(String(latest.employee)!==String(expectedEmployee)||String(latest.employeeNum||"")!==expectedNum||String(latest.employeeName||"")!==expectedName||String(latest.monitor||"")!==expectedMonitor){
+          latest.employee=expectedEmployee;latest.employeeNum=expectedNum;latest.employeeName=expectedName;latest.monitor=expectedMonitor;changed=true;
+        }
+      }
+    }else{
+      let checkoutTime=checkoutMs?new Date(checkoutMs).toISOString():new Date().toISOString();
       data.history.unshift({time:checkoutTime,action:"CHECK OUT",employee:ei>=0?ei:x.holder,employeeNum:emp?.num||"",employeeName:emp?.name||"",monitor:emp?.monitor||"",equipmentId:x.id,equipment:x.name,variant:x.variant,repaired:true});
       changed=true;
     }
@@ -2184,7 +2298,7 @@ window.renderReturnOutBottom=function(){let chooser=document.getElementById("ret
 const oldPick=window.pickReturnEmployee;window.pickReturnEmployee=function(i){oldPick(i);let b=document.getElementById("returnOutBottom");if(b)b.style.display="none"};const oldBack=window.backReturn;window.backReturn=function(){oldBack();let b=document.getElementById("returnOutBottom");if(b)b.style.display="block"};
 const oldReturnAll=window.returnAllItems;window.returnAllItems=function(){if(returnEmployee===null)return;let e=data.employees[returnEmployee],n=data.equipment.filter(x=>x.holder===returnEmployee).length;if(!n)return;if(confirm(`Return all ${n} item${n===1?"":"s"} for #${e?.num||""} ${e?.name||""}?`))oldReturnAll()};
 // Search Everything: checked-out equipment boosted; every result navigates/highlights.
-window.renderGlobalSearch=function(){let box=document.getElementById("globalSearchResults"),q=(document.getElementById("globalSearch")?.value||"").trim();if(!q){box.style.display="none";box.innerHTML="";return}let hits=[];data.equipment.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""} ${x.status||""}`,q);if(sc>=0){let checked=x.holder!==null&&x.holder!==undefined,holder=checked?data.employees[Number(x.holder)]:null;hits.push({score:sc+(checked?15:0),kind:checked?"Checked Out":"Equipment",title:x.name,sub:`${x.variant||"No variant"}${checked&&holder?` · #${holder.num} ${holder.name}`:` · ${x.status||"Available"}`}`,page:checked?"returns":"equipment",id:String(x.id)})}});data.employees.forEach((e,i)=>{let sc=matchScore(`${e.name} ${e.num} ${e.monitor}`,q);if(sc>=0)hits.push({score:sc+5,kind:"Employee",title:`#${e.num} ${e.name}`,sub:`Monitor ${e.monitor}`,page:"checkout",emp:String(i)})});data.consumables.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Consumable",title:x.name,sub:`${x.variant||"No variant"} · ${x.qty} in stock`,page:"consumables",id:String(x.id)})});(data.records||[]).forEach(r=>{let sc=matchScore(`${r.title||""} ${r.note||""} ${r.fileName||""} ${r.date||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Record",title:r.title||r.fileName||"Record",sub:formatRecordDate(r.date),page:"records",id:String(r.id)})});data.history.forEach((h,idx)=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null,sc=matchScore(`${h.action} ${e?.name||""} ${e?.num||""} ${h.equipment||h.item||""} ${h.variant||""} ${fmtDateTime(h.time)}`,q);if(sc>=0)hits.push({score:sc-8,kind:"History",title:h.equipment||h.item||h.action,sub:`${h.action} · ${fmtDateTime(h.time)}`,page:"more",hist:String(idx)})});hits.sort((a,b)=>b.score-a.score);let seen=new Set();hits=hits.filter(h=>{let k=[h.kind,h.page,h.id,h.emp,h.hist].join("|");if(seen.has(k))return false;seen.add(k);return true}).slice(0,30);box.innerHTML=hits.length?hits.map(h=>`<button class="search-hit" onclick='openUniversalHit(${JSON.stringify(h)})'><span class="search-kind">${esc(h.kind)}</span><br><b>${esc(h.title)}</b><br><span class="small">${esc(h.sub)}</span></button>`).join(""):`<div class="empty">No matches for “${esc(q)}”.</div>`;box.style.display="block"};
+window.renderGlobalSearch=function(){let box=document.getElementById("globalSearchResults"),q=(document.getElementById("globalSearch")?.value||"").trim();if(!q){box.style.display="none";box.innerHTML="";return}let hits=[];data.equipment.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""} ${x.status||""}`,q);if(sc>=0){let checked=equipmentIsCheckedOut(x),holder=checked?employeeFromHolder(x.holder):null;hits.push({score:sc+(checked?15:0),kind:checked?"Checked Out":"Equipment",title:x.name,sub:`${x.variant||"No variant"}${checked&&holder?` · #${holder.num} ${holder.name}`:` · ${x.status||"Available"}`}`,page:checked?"returns":"equipment",id:String(x.id)})}});data.employees.forEach((e,i)=>{let sc=matchScore(`${e.name} ${e.num} ${e.monitor}`,q);if(sc>=0)hits.push({score:sc+5,kind:"Employee",title:`#${e.num} ${e.name}`,sub:`Monitor ${e.monitor}`,page:"checkout",emp:String(i)})});data.consumables.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Consumable",title:x.name,sub:`${x.variant||"No variant"} · ${x.qty} in stock`,page:"consumables",id:String(x.id)})});(data.records||[]).forEach(r=>{let sc=matchScore(`${r.title||""} ${r.note||""} ${r.fileName||""} ${r.date||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Record",title:r.title||r.fileName||"Record",sub:formatRecordDate(r.date),page:"records",id:String(r.id)})});data.history.forEach((h,idx)=>{let e=h.employeeName?{name:h.employeeName,num:h.employeeNum||"",monitor:h.monitor||""}:(h.employee!==undefined&&h.employee!==null?data.employees[Number(h.employee)]:null),who=e?`${e.num?`#${e.num} `:""}${e.name||""}`:"",from=h.action==="TRANSFER"?`${h.fromEmployeeNum?`#${h.fromEmployeeNum} `:""}${h.fromEmployeeName||""}`:"",sc=matchScore(`${h.action} ${who} ${from} ${e?.monitor||""} ${h.equipment||h.item||""} ${h.variant||""} ${fmtDateTime(h.time)}`,q);if(sc>=0){let people=h.action==="TRANSFER"&&from?`${from} → ${who}`:who;hits.push({score:sc-8,kind:"History",title:h.equipment||h.item||h.action,sub:`${h.action}${people?` · ${people}`:""} · ${fmtDateTime(h.time)}`,page:"more",hist:String(idx)})}});hits.sort((a,b)=>b.score-a.score);let seen=new Set();hits=hits.filter(h=>{let k=[h.kind,h.page,h.id,h.emp,h.hist].join("|");if(seen.has(k))return false;seen.add(k);return true}).slice(0,30);box.innerHTML=hits.length?hits.map(h=>`<button class="search-hit" onclick='openUniversalHit(${JSON.stringify(h)})'><span class="search-kind">${esc(h.kind)}</span><br><b>${esc(h.title)}</b><br><span class="small">${esc(h.sub)}</span></button>`).join(""):`<div class="empty">No matches for “${esc(q)}”.</div>`;box.style.display="block"};
 window.openUniversalHit=function(h){document.getElementById("globalSearchResults").style.display="none";document.getElementById("globalSearch").value="";if(h.page==="returns")return activatePage("returns"),setTimeout(()=>pickReturnItem(h.id),30);if(h.page==="checkout"&&h.emp!=null){activatePage("checkout");employeeChooser.style.display="block";renderFastEmployees();return setTimeout(()=>{let c=[...employeeGrid.querySelectorAll('.emp-card')].find(x=>x.getAttribute('onclick')===`selectEmployee(${h.emp})`);flash(c)},40)}if(h.page==="more"&&h.hist!=null){activatePage("more");let exportPill=[...document.querySelectorAll('.pill')].find(b=>b.textContent.includes('Exports'));showMore("exports",exportPill);checkoutHistoryFrom="";checkoutHistoryTo="";let ev=data.history[Number(h.hist)];checkoutHistorySearch=ev?.equipment||ev?.item||ev?.action||"";renderMore();setTimeout(()=>flash(document.querySelector(`#more-exports tr[data-history-index="${CSS.escape(String(h.hist))}"]`)),60);return}activatePage(h.page);setTimeout(()=>{let root=document.getElementById(h.page),el=null;if(h.page==="equipment")el=root.querySelector(`[data-eqid="${CSS.escape(h.id)}"]`);if(h.page==="consumables")el=root.querySelector(`[data-cid="${CSS.escape(h.id)}"]`);if(h.page==="records")el=root.querySelector(`[data-record-id="${CSS.escape(h.id)}"]`);if(!el&&h.id)el=[...root.querySelectorAll('tr,.record-entry')].find(x=>x.textContent.includes(h.id));flash(el)},80)};
 function flash(el){if(!el)return;el.classList.add("search-highlight");el.scrollIntoView({behavior:"smooth",block:"center",inline:"center"});setTimeout(()=>el.classList.remove("search-highlight"),2800)}
 // Damaged/Missing: note preview and safer Return to Service.
@@ -2372,4 +2486,32 @@ html,body{touch-action:manipulation!important;-webkit-text-size-adjust:100%!impo
 })();
 </script>
 
+<script id="checked-out-search-timestamp-sort">
+(function(){
+  const priorRenderGlobalSearch=window.renderGlobalSearch;
+  if(typeof priorRenderGlobalSearch!=="function")return;
+  window.renderGlobalSearch=function(){
+    priorRenderGlobalSearch();
+    let box=document.getElementById("globalSearchResults");
+    if(!box||box.style.display==="none")return;
+    let cards=[...box.querySelectorAll(".global-result")];
+    let checked=[];
+    cards.forEach((card,order)=>{
+      let kind=card.querySelector(".global-kind")?.textContent?.trim();
+      if(kind!=="CHECKED OUT"&&kind!=="Checked Out")return;
+      let id=card.dataset.equipmentId;
+      let x=data.equipment.find(v=>String(v.id)===String(id));
+      if(!x)return;
+      let sub=card.querySelector(".global-sub");
+      if(sub&&!sub.textContent.includes(checkoutStamp(x)))sub.textContent=`${sub.textContent} · ${checkoutStamp(x)}`;
+      checked.push({card,time:checkoutTimeMs(x),order});
+    });
+    if(checked.length>1){
+      checked.sort((a,b)=>b.time-a.time||a.order-b.order);
+      let first=checked.map(x=>x.card).reduce((best,c)=>!best||[...box.children].indexOf(c)<[...box.children].indexOf(best)?c:best,null);
+      checked.forEach(x=>box.insertBefore(x.card,first));
+    }
+  };
+})();
+</script>
 </body></html>
