@@ -906,6 +906,14 @@ body.editing-active{padding-bottom:62px!important}
 .record-modal{position:fixed;inset:0;background:#0008;z-index:12000;display:flex;align-items:center;justify-content:center;padding:18px}.record-box{background:#fff;width:min(560px,100%);max-height:88vh;overflow:auto;border-radius:16px;padding:18px;box-shadow:0 20px 60px #0004}.record-box h3{margin:0 0 12px}.record-form{display:grid;gap:10px}.record-form textarea{min-height:150px;resize:vertical}.record-form input,.record-form textarea{width:100%}.record-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}.record-attachment-preview img{max-width:100%;max-height:340px;border-radius:10px;display:block;margin:10px auto}.record-attachment-preview iframe{width:100%;height:420px;border:1px solid #ddd;border-radius:10px}.record-open-file{display:inline-flex;margin-top:8px}.record-delete{margin-right:auto}
 @media(max-width:600px){.records-head{display:grid!important;grid-template-columns:auto 1fr}.records-head input{max-width:none}.record-actions{display:grid;grid-template-columns:1fr 1fr}.record-actions .record-delete{grid-column:1/-1;grid-row:2}.record-box{padding:15px}}
 </style>
+
+<style id="record-image-viewer-fix">
+.record-card-image{display:block;width:100%;max-height:260px;object-fit:contain;margin-top:10px;border-radius:10px;border:1px solid #e3e6ea;background:#f7f8fa;cursor:zoom-in}
+.record-image-viewer{display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:18px}
+.record-image-viewer img{display:block;max-width:100%;max-height:calc(100vh - 60px);object-fit:contain;border-radius:8px}
+.record-image-close{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:#111;font-size:30px;line-height:38px;font-weight:500;z-index:30001}
+.record-file{cursor:pointer}
+</style>
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1559,7 +1567,8 @@ if(!data.miscellaneous)data.miscellaneous=[];data.consumables.forEach(c=>{if(c.t
 let editingRecordId=null;
 function formatRecordDate(v){if(!v)return "";let d=new Date(v+"T12:00:00");return isNaN(d)?String(v):d.toLocaleDateString("en-US",{month:"2-digit",day:"2-digit",year:"numeric"})}
 function recordToday(){let d=new Date(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${d.getFullYear()}-${m}-${day}`}
-function renderRecords(){let box=document.getElementById("recordsList");if(!box)return;let q=(document.getElementById("recordsSearch")?.value||"").trim().toLowerCase();let rows=[...(data.records||[])].filter(r=>!q||((r.title||"")+" "+(r.note||"")+" "+(r.fileName||"")+" "+(r.date||"")).toLowerCase().includes(q)).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||(b.createdAt||0)-(a.createdAt||0));box.innerHTML=rows.length?rows.map(r=>`<div class="record-entry" data-record-id="${esc(String(r.id))}" onclick="openRecordEditor(${JSON.stringify(String(r.id))})"><div class="row between"><div class="record-title">${esc(r.title||r.fileName||"Record")}</div><div class="small">${esc(formatRecordDate(r.date))}</div></div>${r.note?`<div class="record-preview">${esc(r.note.replace(/\s+/g," "))}</div>`:""}${r.fileName?`<div class="record-file">📎 ${esc(r.fileName)}</div>`:""}</div>`).join(""):`<div class="empty">${q?"No records match your search.":"No records yet."}</div>`}
+function renderRecords(){let box=document.getElementById("recordsList");if(!box)return;let q=(document.getElementById("recordsSearch")?.value||"").trim().toLowerCase();let rows=[...(data.records||[])].filter(r=>!q||((r.title||"")+" "+(r.note||"")+" "+(r.fileName||"")+" "+(r.date||"")).toLowerCase().includes(q)).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||(b.createdAt||0)-(a.createdAt||0));box.innerHTML=rows.length?rows.map(r=>`<div class="record-entry" data-record-id="${esc(String(r.id))}" onclick="openRecordEditor(${JSON.stringify(String(r.id))})"><div class="row between"><div class="record-title">${esc(r.title||r.fileName||"Record")}</div><div class="small">${esc(formatRecordDate(r.date))}</div></div>${r.note?`<div class="record-preview">${esc(r.note.replace(/\s+/g," "))}</div>`:""}${r.fileName?`<div class="record-file">📎 ${esc(r.fileName)}</div>`:""}${r.fileData&&(r.fileType||"").startsWith("image/")?`<img class="record-card-image" src="${r.fileData}" alt="${esc(r.fileName||"Record photo")}" onclick="event.stopPropagation();openRecordImage(${JSON.stringify(String(r.id))})">`:""}</div>`).join(""):`<div class="empty">${q?"No records match your search.":"No records yet."}</div>`}
+function openRecordImage(id){let r=(data.records||[]).find(x=>String(x.id)===String(id));if(!r?.fileData||!(r.fileType||"").startsWith("image/"))return;let v=document.getElementById("recordImageViewer");if(!v){v=document.createElement("div");v.id="recordImageViewer";v.className="record-image-viewer";v.innerHTML=`<button class="record-image-close" type="button" aria-label="Close photo">×</button><img alt="Record photo">`;v.onclick=e=>{if(e.target===v||e.target.closest(".record-image-close"))v.style.display="none"};document.body.appendChild(v)}let img=v.querySelector("img");img.src=r.fileData;img.alt=r.fileName||"Record photo";v.style.display="flex"}
 function ensureRecordModal(){let m=document.getElementById("recordModal");if(m)return m;m=document.createElement("div");m.id="recordModal";m.className="record-modal";m.style.display="none";m.innerHTML=`<div class="record-box"><h3 id="recordModalTitle">Add Record</h3><div class="record-form"><label class="small">Date</label><input id="recordDate" type="date"><input id="recordTitle" placeholder="Title (example: Inventory Invoice)"><textarea id="recordNote" placeholder="Note or description"></textarea><label class="btn light" style="text-align:center">Add / Replace Photo or File<input id="recordFile" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" style="display:none" onchange="previewRecordFile(this)"></label><div id="recordFileName" class="small"></div><div id="recordAttachmentPreview" class="record-attachment-preview"></div></div><div class="record-actions"><button id="recordDeleteBtn" class="btn red record-delete" onclick="deleteRecord()">Delete</button><button class="btn light" onclick="closeRecordEditor()">Cancel</button><button class="btn" onclick="saveRecordEditor()">Save</button></div></div>`;document.body.appendChild(m);return m}
 function openRecordEditor(id=null){let m=ensureRecordModal();editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
 function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";editingRecordId=null}
@@ -1759,6 +1768,77 @@ window.applyInventoryAutoOrder=function(type,mode){
 
 // Refresh the Return bottom section using the new table renderer.
 try{renderReturnOutBottom()}catch(e){console.error(e)}
+})();
+</script>
+
+
+<style id="final-mobile-layout-audit-20261007">
+/* Final mobile spacing pass: no horizontal scrolling for the controls the user flagged. */
+@media(max-width:800px){
+  /* Reports & Backup: exports full width; Download + Restore share one neat row. */
+  #more-exports .export-stack{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+  #more-exports .export-stack > :nth-child(1),
+  #more-exports .export-stack > :nth-child(2){grid-column:1 / -1!important}
+  #more-exports .export-stack > :nth-child(3){grid-column:1!important}
+  #more-exports .export-stack > :nth-child(4){grid-column:2!important}
+  #more-exports .export-stack .btn,
+  #more-exports .export-stack label.btn{
+    width:100%!important;
+    min-width:0!important;
+    min-height:40px!important;
+    padding:9px 6px!important;
+    font-size:12px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+
+  /* History: From | To | Apply | Clear all fit the card on one proportional row. */
+  .history-filter{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) 52px 50px!important;
+    gap:5px!important;
+    align-items:end!important;
+    width:100%!important;
+    margin:6px 0 8px!important;
+  }
+  .history-filter label{width:auto!important;min-width:0!important;max-width:none!important;flex:none!important}
+  .history-filter input{width:100%!important;min-width:0!important;height:36px!important;min-height:36px!important;padding:4px 5px!important;font-size:11px!important}
+  .history-filter>.btn{width:100%!important;min-width:0!important;height:36px!important;min-height:36px!important;padding:4px 3px!important;font-size:10px!important}
+
+  /* Damaged/Missing: keep both actions visible, compact and proportional. */
+  #more-damaged .damaged-table-wrap{overflow-x:hidden!important}
+  #more-damaged .damaged-table{width:100%!important;min-width:0!important;table-layout:fixed!important}
+  #more-damaged .damaged-table th:nth-child(1){width:22%!important}
+  #more-damaged .damaged-table th:nth-child(2){width:12%!important}
+  #more-damaged .damaged-table th:nth-child(3){width:16%!important}
+  #more-damaged .damaged-table th:nth-child(4){width:50%!important}
+  #more-damaged .damaged-action-cell{width:auto!important;min-width:0!important}
+  #more-damaged .damaged-actions{display:grid!important;grid-template-columns:minmax(0,.82fr) minmax(0,1.35fr)!important;gap:4px!important;width:100%!important}
+  #more-damaged .damaged-mini-btn{width:100%!important;min-width:0!important;padding:0 3px!important;font-size:10px!important;white-space:nowrap!important}
+}
+
+/* Hard-disable browser gesture/double-tap zoom on interactive UI. */
+html,body{touch-action:manipulation!important;-webkit-text-size-adjust:100%!important}
+</style>
+<script id="final-mobile-behavior-audit-20261007">
+(()=>{
+  // Keep Safari from interpreting a rapid second tap as page zoom.
+  let lastEnd=0;
+  document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastEnd<320)e.preventDefault();lastEnd=now},{passive:false});
+  ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+
+  // Keep Return search focused and at the same scroll position while results redraw.
+  const r=document.getElementById('returnSearch');
+  if(r){r.oninput=()=>{const y=window.scrollY,a=r.selectionStart,b=r.selectionEnd;window.renderReturn();requestAnimationFrame(()=>{try{r.focus({preventScroll:true});r.setSelectionRange(a,b)}catch(e){}window.scrollTo(window.scrollX,y)})}}
 })();
 </script>
 
