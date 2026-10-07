@@ -914,6 +914,20 @@ body.editing-active{padding-bottom:62px!important}
 .record-image-close{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:#111;font-size:30px;line-height:38px;font-weight:500;z-index:30001}
 .record-file{cursor:pointer}
 </style>
+
+<style id="record-attachment-click-final">
+.record-attachment-button{
+  display:block!important;width:auto!important;max-width:100%!important;
+  margin:5px 0 0!important;padding:0!important;border:0!important;background:transparent!important;
+  color:inherit!important;font:inherit!important;font-size:12px!important;font-weight:750!important;
+  text-align:left!important;cursor:pointer!important;text-decoration:none!important;
+  -webkit-appearance:none!important;appearance:none!important;touch-action:manipulation!important;
+}
+.record-attachment-button:active{text-decoration:underline!important}
+.record-image-viewer{display:none;position:fixed;inset:0;z-index:30000;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:18px}
+.record-image-viewer img{display:block;max-width:100%;max-height:calc(100vh - 60px);object-fit:contain;border-radius:8px}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1567,8 +1581,62 @@ if(!data.miscellaneous)data.miscellaneous=[];data.consumables.forEach(c=>{if(c.t
 let editingRecordId=null;
 function formatRecordDate(v){if(!v)return "";let d=new Date(v+"T12:00:00");return isNaN(d)?String(v):d.toLocaleDateString("en-US",{month:"2-digit",day:"2-digit",year:"numeric"})}
 function recordToday(){let d=new Date(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");return `${d.getFullYear()}-${m}-${day}`}
-function renderRecords(){let box=document.getElementById("recordsList");if(!box)return;let q=(document.getElementById("recordsSearch")?.value||"").trim().toLowerCase();let rows=[...(data.records||[])].filter(r=>!q||((r.title||"")+" "+(r.note||"")+" "+(r.fileName||"")+" "+(r.date||"")).toLowerCase().includes(q)).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||(b.createdAt||0)-(a.createdAt||0));box.innerHTML=rows.length?rows.map(r=>`<div class="record-entry" data-record-id="${esc(String(r.id))}" onclick="openRecordEditor(${JSON.stringify(String(r.id))})"><div class="row between"><div class="record-title">${esc(r.title||r.fileName||"Record")}</div><div class="small">${esc(formatRecordDate(r.date))}</div></div>${r.note?`<div class="record-preview">${esc(r.note.replace(/\s+/g," "))}</div>`:""}${r.fileName?`<div class="record-file" onclick="event.stopPropagation();${r.fileData&&((r.fileType||"").startsWith("image/")||String(r.fileData||"").startsWith("data:image/")||/\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(r.fileName||""))?`openRecordImage(${JSON.stringify(String(r.id))})`:`openRecordEditor(${JSON.stringify(String(r.id))})`}">📎 ${esc(r.fileName)}</div>`:""}</div>`).join(""):`<div class="empty">${q?"No records match your search.":"No records yet."}</div>`}
-function openRecordImage(id){let r=(data.records||[]).find(x=>String(x.id)===String(id));if(!r?.fileData)return;let src=String(r.fileData||"");let type=String(r.fileType||"").toLowerCase();let name=String(r.fileName||"").toLowerCase();let isImage=type.startsWith("image/")||src.startsWith("data:image/")||/\.(jpe?g|png|gif|webp|heic|heif|bmp)$/i.test(name);if(!isImage){openRecordEditor(id);return}let v=document.getElementById("recordImageViewer");if(!v){v=document.createElement("div");v.id="recordImageViewer";v.className="record-image-viewer";v.innerHTML=`<button class="record-image-close" type="button" aria-label="Close photo">×</button><img alt="Record photo">`;v.onclick=e=>{if(e.target===v||e.target.closest(".record-image-close")){v.style.display="none";let im=v.querySelector("img");if(im)im.removeAttribute("src")}};document.body.appendChild(v)}let img=v.querySelector("img");img.onload=()=>{v.style.display="flex"};img.onerror=()=>{v.style.display="none";alert("This photo could not be opened. Try replacing the attachment and saving the record again.")};img.alt=r.fileName||"Record photo";v.style.display="flex";img.src=src}
+function recordIsImage(r){
+  if(!r||!r.fileData)return false;
+  let type=String(r.fileType||"").toLowerCase();
+  let name=String(r.fileName||"").toLowerCase();
+  let data=String(r.fileData||"").slice(0,80).toLowerCase();
+  return type.startsWith("image/")||data.startsWith("data:image/")||/\.(jpg|jpeg|png|gif|webp|heic|heif|bmp|svg)$/i.test(name);
+}
+function renderRecords(){
+  let box=document.getElementById("recordsList");if(!box)return;
+  let q=(document.getElementById("recordsSearch")?.value||"").trim().toLowerCase();
+  let rows=[...(data.records||[])].filter(r=>!q||((r.title||"")+" "+(r.note||"")+" "+(r.fileName||"")+" "+(r.date||"")).toLowerCase().includes(q))
+    .sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||(b.createdAt||0)-(a.createdAt||0));
+  box.innerHTML=rows.length?rows.map(r=>{
+    let id=esc(String(r.id));
+    return `<div class="record-entry" data-record-id="${id}">
+      <div class="row between"><div class="record-title">${esc(r.title||r.fileName||"Record")}</div><div class="small">${esc(formatRecordDate(r.date))}</div></div>
+      ${r.note?`<div class="record-preview">${esc(r.note.replace(/\s+/g," "))}</div>`:""}
+      ${r.fileName?`<button type="button" class="record-file record-attachment-button" data-record-attachment="${id}">📎 ${esc(r.fileName)}</button>`:""}
+    </div>`;
+  }).join(""):`<div class="empty">${q?"No records match your search.":"No records yet."}</div>`;
+}
+function openRecordImage(id){
+  let r=(data.records||[]).find(x=>String(x.id)===String(id));
+  if(!r||!r.fileData){toastMsg("This attachment has no saved file data.",false);return}
+  if(!recordIsImage(r)){openRecordEditor(String(id));return}
+  let v=document.getElementById("recordImageViewer");
+  if(!v){
+    v=document.createElement("div");
+    v.id="recordImageViewer";
+    v.className="record-image-viewer";
+    v.innerHTML=`<button class="record-image-close" type="button" aria-label="Close photo">×</button><img alt="Record photo">`;
+    v.addEventListener("click",e=>{if(e.target===v||e.target.closest(".record-image-close"))v.style.display="none"});
+    document.body.appendChild(v);
+  }
+  let img=v.querySelector("img");
+  img.onload=()=>{};
+  img.onerror=()=>{v.style.display="none";toastMsg("The saved photo could not be opened.",false)};
+  img.src=r.fileData;
+  img.alt=r.fileName||"Record photo";
+  v.style.display="flex";
+}
+function bindRecordAttachmentClicks(){
+  let box=document.getElementById("recordsList");
+  if(!box||box.dataset.attachmentClicksBound==="1")return;
+  box.dataset.attachmentClicksBound="1";
+  box.addEventListener("click",function(e){
+    let attachment=e.target.closest("[data-record-attachment]");
+    if(attachment){
+      e.preventDefault();e.stopPropagation();
+      openRecordImage(attachment.dataset.recordAttachment);
+      return;
+    }
+    let entry=e.target.closest(".record-entry");
+    if(entry)openRecordEditor(entry.dataset.recordId);
+  });
+}
 function ensureRecordModal(){let m=document.getElementById("recordModal");if(m)return m;m=document.createElement("div");m.id="recordModal";m.className="record-modal";m.style.display="none";m.innerHTML=`<div class="record-box"><h3 id="recordModalTitle">Add Record</h3><div class="record-form"><label class="small">Date</label><input id="recordDate" type="date"><input id="recordTitle" placeholder="Title (example: Inventory Invoice)"><textarea id="recordNote" placeholder="Note or description"></textarea><label class="btn light" style="text-align:center">Add / Replace Photo or File<input id="recordFile" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" style="display:none" onchange="previewRecordFile(this)"></label><div id="recordFileName" class="small"></div><div id="recordAttachmentPreview" class="record-attachment-preview"></div></div><div class="record-actions"><button id="recordDeleteBtn" class="btn red record-delete" onclick="deleteRecord()">Delete</button><button class="btn light" onclick="closeRecordEditor()">Cancel</button><button class="btn" onclick="saveRecordEditor()">Save</button></div></div>`;document.body.appendChild(m);return m}
 function openRecordEditor(id=null){let m=ensureRecordModal();editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
 function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";editingRecordId=null}
@@ -1579,7 +1647,7 @@ function compressRecordImage(file){return new Promise((resolve,reject)=>{let img
 async function saveRecordEditor(){let date=recordDate.value,title=recordTitle.value.trim(),note=recordNote.value.trim(),file=recordFile.files?.[0],existing=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;if(!title&&!note&&!file&&!existing?.fileData){toastMsg("Add a title, note, photo or file.",false);return}let fileData=existing?.fileData||"",fileName=existing?.fileName||"",fileType=existing?.fileType||"";if(file){try{if(file.type.startsWith("image/")){fileData=await compressRecordImage(file);fileType="image/jpeg"}else{if(file.size>2500000){toastMsg("That file is too large. Keep non-photo files under 2.5 MB.",false);return}fileData=await fileToDataURL(file);fileType=file.type||"application/octet-stream"}fileName=file.name}catch(e){toastMsg("Could not read that file.",false);return}}let rec=existing||{id:Date.now(),createdAt:Date.now()};rec.date=date||recordToday();rec.title=title;rec.note=note;rec.fileData=fileData;rec.fileName=fileName;rec.fileType=fileType;if(!existing)data.records.push(rec);try{save()}catch(e){toastMsg("Storage is full. Remove a large record file and try again.",false);return}closeRecordEditor();toastMsg(existing?"Record updated":"Record added")}
 function deleteRecord(){let r=data.records.find(x=>String(x.id)===String(editingRecordId));if(!r)return;if(!confirm(`Delete ${r.title||r.fileName||"this record"}?`))return;data.records=data.records.filter(x=>String(x.id)!==String(editingRecordId));save();closeRecordEditor();toastMsg("Record deleted")}
 function renderAll(){[renderEmployees,renderCheckout,renderEquipment,renderConsumables,renderRecords,renderAnalytics,renderReturn,renderReorderNew,renderMore].forEach(fn=>{try{fn()}catch(e){console.error(fn.name,e)}})}
-renderAll();try{activatePage(localStorage.getItem("toolroomHQ-active-page")||"checkout",false)}catch(e){}updateUndoButton();refreshAddSuggestions("equipment");refreshAddSuggestions("consumable");
+renderAll();bindRecordAttachmentClicks();try{activatePage(localStorage.getItem("toolroomHQ-active-page")||"checkout",false)}catch(e){}updateUndoButton();refreshAddSuggestions("equipment");refreshAddSuggestions("consumable");
 setInterval(()=>{if(editingEmployeeIndex===null)renderMore()},60000);
 
 bindAddAutofillFix();
