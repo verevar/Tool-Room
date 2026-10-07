@@ -1427,7 +1427,7 @@ function backReturn(){returnEmployee=null;returnSelected.clear();returnChooser.s
 function renderReturnItems(){if(returnEmployee===null)return;let items=data.equipment.filter(x=>x.holder===returnEmployee);returnItemGrid.innerHTML=items.map(x=>`<button class="gear-card ${returnSelected.has(x.id)?"selected":""}" onclick="toggleReturnNew(${x.id})"><b>${returnSelected.has(x.id)?"✓ ":""}${esc(x.name)}</b><br><span class="small">${esc(x.variant)}</span></button>`).join("");returnSelectedButton.textContent=`RETURN SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`}
 function toggleReturnNew(id){returnSelected.has(id)?returnSelected.delete(id):returnSelected.add(id);renderReturnItems()}
 function doReturns(ids){if(!ids.length)return;let before=[];ids.forEach(id=>{let x=data.equipment.find(v=>v.id===id);if(!x)return;before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});logEvent("RETURN",{employee:x.holder,equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available"});setUndo({kind:"equipment",before});save();toastMsg(`${ids.length} item${ids.length===1?"":"s"} returned`)}
-function returnSelectedItems(){let ids=[...returnSelected];doReturns(ids);returnSelected.clear();if(returnEmployee!==null&&data.equipment.some(x=>x.holder===returnEmployee))renderReturnItems();else backReturn()}
+function returnSelectedItems(){let ids=[...returnSelected];if(!ids.length)return;doReturns(ids);returnSelected.clear();backReturn()}
 function returnAllItems(){let ids=data.equipment.filter(x=>x.holder===returnEmployee).map(x=>x.id);doReturns(ids);backReturn()}
 returnSearch.oninput=renderReturn;
 
