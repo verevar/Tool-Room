@@ -986,6 +986,105 @@ body.editing-active{padding-bottom:62px!important}
 .record-delete-confirm-actions .btn{width:100%!important;margin:0!important}
 </style>
 
+
+<style id="record-modal-hard-fit-final">
+/* HARD-FIT Records editor on mobile: no modal scrolling, moving, or zooming */
+html,body{overscroll-behavior:none}
+#recordModal.record-modal{
+  position:fixed!important;inset:0!important;
+  width:100vw!important;height:100dvh!important;
+  padding:10px!important;margin:0!important;
+  display:none;align-items:center!important;justify-content:center!important;
+  overflow:hidden!important;overscroll-behavior:none!important;
+  touch-action:manipulation!important;
+}
+#recordModal.record-modal[style*="display: flex"],
+#recordModal.record-modal[style*="display:flex"]{display:flex!important}
+#recordModal .record-box{
+  box-sizing:border-box!important;
+  width:min(380px,calc(100vw - 20px))!important;
+  height:auto!important;
+  max-height:calc(100dvh - 20px)!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:12px!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#recordModal .record-box h3{font-size:17px!important;line-height:1.1!important;margin:0 0 7px!important;flex:0 0 auto}
+#recordModal .record-form{
+  display:grid!important;gap:6px!important;min-height:0!important;flex:1 1 auto!important;
+}
+#recordModal .record-form>label.small{font-size:10px!important;line-height:1!important}
+#recordModal .record-form input,
+#recordModal .record-form textarea{
+  box-sizing:border-box!important;
+  font-size:16px!important;
+  min-height:0!important;
+}
+#recordModal #recordDate{height:36px!important;padding:6px 9px!important}
+#recordModal #recordTitle{height:40px!important;padding:7px 10px!important}
+#recordModal #recordNote{
+  height:72px!important;min-height:72px!important;max-height:72px!important;
+  padding:8px 10px!important;resize:none!important;overflow:auto!important;
+}
+#recordModal label.btn{
+  min-height:40px!important;height:40px!important;padding:8px 10px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  font-size:14px!important;line-height:1.1!important;
+}
+#recordModal #recordFileName{font-size:11px!important;line-height:1.1!important;margin:0!important}
+#recordModal .record-attachment-preview{
+  min-height:0!important;max-height:170px!important;overflow:hidden!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+}
+#recordModal .record-attachment-preview img{
+  display:block!important;max-width:100%!important;width:auto!important;
+  height:auto!important;max-height:170px!important;object-fit:contain!important;
+  margin:0 auto!important;border-radius:9px!important;
+}
+#recordModal .record-attachment-preview iframe{height:160px!important;max-height:160px!important}
+#recordModal .record-actions{
+  flex:0 0 auto!important;
+  display:grid!important;grid-template-columns:1fr 1fr!important;
+  gap:7px!important;margin:8px 0 0!important;
+}
+#recordModal .record-actions .btn{
+  width:100%!important;height:40px!important;min-height:40px!important;
+  padding:7px 9px!important;margin:0!important;font-size:14px!important;
+}
+#recordModal .record-actions .record-delete{
+  grid-column:1/-1!important;grid-row:2!important;
+  width:auto!important;justify-self:start!important;
+  height:36px!important;min-height:36px!important;padding:6px 13px!important;
+}
+
+/* Short iPhone screens: compress further instead of scrolling */
+@media(max-height:760px){
+  #recordModal .record-box{padding:9px!important}
+  #recordModal .record-form{gap:4px!important}
+  #recordModal #recordDate{height:32px!important}
+  #recordModal #recordTitle{height:36px!important}
+  #recordModal #recordNote{height:58px!important;min-height:58px!important;max-height:58px!important}
+  #recordModal label.btn{height:36px!important;min-height:36px!important}
+  #recordModal .record-attachment-preview{max-height:120px!important}
+  #recordModal .record-attachment-preview img{max-height:120px!important}
+  #recordModal .record-actions{margin-top:5px!important}
+  #recordModal .record-actions .btn{height:36px!important;min-height:36px!important}
+  #recordModal .record-actions .record-delete{height:32px!important;min-height:32px!important}
+}
+</style>
+
+
+<style id="record-modal-background-lock">
+html.record-modal-open,body.record-modal-open{overflow:hidden!important;height:100%!important;touch-action:none!important}
+#recordModal,#recordModal *{touch-action:manipulation}
+#recordModal input,#recordModal textarea,#recordModal button,#recordModal label{touch-action:manipulation}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1742,8 +1841,8 @@ function confirmDeleteRecord(){
   cancelDeleteRecord();
 }
 function ensureRecordModal(){let m=document.getElementById("recordModal");if(m)return m;m=document.createElement("div");m.id="recordModal";m.className="record-modal";m.style.display="none";m.innerHTML=`<div class="record-box"><h3 id="recordModalTitle">Add Record</h3><div class="record-form"><label class="small">Date</label><input id="recordDate" type="date"><input id="recordTitle" placeholder="Title (example: Inventory Invoice)"><textarea id="recordNote" placeholder="Note or description"></textarea><label class="btn light" style="text-align:center">Add / Replace Photo or File<input id="recordFile" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" style="display:none" onchange="previewRecordFile(this)"></label><div id="recordFileName" class="small"></div><div id="recordAttachmentPreview" class="record-attachment-preview"></div></div><div class="record-actions"><button id="recordDeleteBtn" class="btn red record-delete" onclick="deleteRecord()">Delete</button><button class="btn light" onclick="closeRecordEditor()">Cancel</button><button class="btn" onclick="saveRecordEditor()">Save</button></div></div>`;document.body.appendChild(m);return m}
-function openRecordEditor(id=null){let m=ensureRecordModal();editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
-function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";editingRecordId=null}
+function openRecordEditor(id=null){let m=ensureRecordModal();document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
+function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";document.documentElement.classList.remove("record-modal-open");document.body.classList.remove("record-modal-open");editingRecordId=null}
 function previewRecordFile(inp){let f=inp.files?.[0];recordFileName.textContent=f?`Selected: ${f.name}`:"";recordAttachmentPreview.innerHTML="";if(f&&f.type.startsWith("image/")){let u=URL.createObjectURL(f);recordAttachmentPreview.innerHTML=`<img src="${u}" alt="Selected photo">`;setTimeout(()=>URL.revokeObjectURL(u),10000)}}
 function renderRecordAttachment(r){let box=document.getElementById("recordAttachmentPreview");if(!box)return;box.innerHTML="";if(!r?.fileData)return;if((r.fileType||"").startsWith("image/")){box.innerHTML=`<img src="${r.fileData}" alt="${esc(r.fileName||"Attachment")}">`}else if(r.fileType==="application/pdf"){box.innerHTML=`<iframe src="${r.fileData}" title="${esc(r.fileName||"PDF")}"></iframe><a class="btn light record-open-file" href="${r.fileData}" target="_blank" download="${esc(r.fileName||"file.pdf")}">Open File</a>`}else{box.innerHTML=`<a class="btn light record-open-file" href="${r.fileData}" target="_blank" download="${esc(r.fileName||"attachment")}">Open File</a>`}}
 function fileToDataURL(file){return new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
