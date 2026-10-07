@@ -928,6 +928,33 @@ body.editing-active{padding-bottom:62px!important}
 .record-image-viewer img{display:block;max-width:100%;max-height:calc(100vh - 60px);object-fit:contain;border-radius:8px}
 </style>
 
+
+<style id="note-popup-compact-delete">
+#equipmentNoteModal{padding:18px!important;align-items:center!important;justify-content:center!important}
+#equipmentNoteModal .equipment-note-box{
+  width:min(390px,calc(100vw - 36px))!important;
+  max-height:min(520px,calc(100vh - 72px))!important;
+  border-radius:14px!important;
+  padding:16px!important;
+  margin:auto!important;
+}
+#equipmentNoteModal .equipment-note-list{max-height:220px!important;overflow-y:auto!important}
+#equipmentNoteModal .equipment-note-entry{position:relative!important;padding:10px 38px 10px 11px!important}
+#equipmentNoteModal .equipment-note-delete{
+  position:absolute!important;right:8px!important;top:7px!important;
+  width:26px!important;height:26px!important;padding:0!important;
+  border:0!important;background:transparent!important;color:#555!important;
+  font-size:22px!important;line-height:24px!important;font-weight:500!important;
+  cursor:pointer!important;border-radius:6px!important;touch-action:manipulation!important;
+}
+#equipmentNoteModal .equipment-note-delete:active{background:#eceff2!important}
+#equipmentNoteModal .equipment-note-text{overflow-wrap:anywhere}
+#equipmentNoteModal textarea{min-height:82px!important;max-height:130px!important}
+@media(max-width:600px){
+  #equipmentNoteModal .equipment-note-box{width:min(360px,calc(100vw - 32px))!important;padding:14px!important}
+}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1541,7 +1568,7 @@ let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check 
 document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Overdue (${over.length})</h3><div class="small" style="margin-bottom:8px">Equipment becomes overdue when it is still checked out on the next calendar day.</div>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Overdue Since</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${overdueSinceDate(x)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<div class="damaged-table-wrap"><table class="damaged-table"><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>{let hasNotes=Array.isArray(x.notes)&&x.notes.length,idx=data.equipment.indexOf(x);return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td class="damaged-action-cell"><div class="damaged-actions"><button type="button" class="btn light damaged-mini-btn damaged-note-btn ${hasNotes?"has-note":""}" onclick="openEquipmentNoteAt(${idx})">${hasNotes?"View / Add Note":"Add Note"}</button><button type="button" class="btn light damaged-mini-btn damaged-return-btn" onclick="restoreServiceAt(${idx})">Return to Service</button></div></td></tr>`}).join("")}</table></div>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>${analyticsHistoryHtml()}`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="employee-actions"><button class="btn" onclick="openAddEmployeeModal()">Add Employee</button><button class="btn light" onclick="toggleEmployeeBulk()">${employeeBulkMode?"Cancel Bulk Edit":"Bulk Edit"}</button></div><div>${employeeBulkMode?employeeBulkRows():data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
 function addEmployeeFromMore(){openAddEmployeeModal()}
 let activeEquipmentNoteId=null;
-function openEquipmentNoteAt(index){let x=data.equipment[index];if(!x)return;activeEquipmentNoteIndex=index;if(!Array.isArray(x.notes))x.notes=[];document.getElementById("equipmentNoteTitle").textContent=x.notes.length?"Notes":"Add Note";document.getElementById("equipmentNoteSub").textContent=[x.name,x.variant,x.status].filter(Boolean).join(" · ");let list=document.getElementById("equipmentNoteList");list.innerHTML=x.notes.length?x.notes.slice().reverse().map(n=>`<div class="equipment-note-entry"><div class="equipment-note-time">${esc(new Date(n.time).toLocaleString())}</div><div>${esc(n.text)}</div></div>`).join(""):`<div class="empty" style="padding:8px 0">No notes yet.</div>`;document.getElementById("equipmentNoteText").value="";document.getElementById("equipmentNoteModal").classList.add("open");setTimeout(()=>document.getElementById("equipmentNoteText")?.focus(),50)}
+function openEquipmentNoteAt(index){let x=data.equipment[index];if(!x)return;activeEquipmentNoteIndex=index;if(!Array.isArray(x.notes))x.notes=[];document.getElementById("equipmentNoteTitle").textContent=x.notes.length?"Notes":"Add Note";document.getElementById("equipmentNoteSub").textContent=[x.name,x.variant,x.status].filter(Boolean).join(" · ");let list=document.getElementById("equipmentNoteList");list.innerHTML=x.notes.length?x.notes.map((n,i)=>({n,i})).reverse().map(({n,i})=>`<div class="equipment-note-entry"><button type="button" class="equipment-note-delete" onclick="event.stopPropagation();deleteEquipmentNote(${i})" aria-label="Delete note">×</button><div class="equipment-note-time">${esc(new Date(n.time).toLocaleString())}</div><div class="equipment-note-text">${esc(n.text)}</div></div>`).join(""):`<div class="empty" style="padding:8px 0">No notes yet.</div>`;document.getElementById("equipmentNoteText").value="";document.getElementById("equipmentNoteModal").classList.add("open");setTimeout(()=>document.getElementById("equipmentNoteText")?.focus(),50)}
 function restoreServiceAt(index){let x=data.equipment[index];if(!x)return;if(!confirm(`Return ${x.name}${x.variant?` · ${x.variant}`:""} to service?`))return;x.status="Available";x.holder=null;x.checkedOutAt=null;logEvent("RETURN TO SERVICE",{equipmentId:x.id??"",equipment:x.name,variant:x.variant});save();toastMsg("Returned to service",false)}
 let activeEquipmentNoteIndex=null;
 function equipmentByIdLoose(id){return data.equipment.find(v=>String(v.id)===String(id))}
@@ -1559,6 +1586,15 @@ function openEquipmentNoteModal(id){
   setTimeout(()=>document.getElementById("equipmentNoteText")?.focus(),50);
 }
 function closeEquipmentNoteModal(){document.getElementById("equipmentNoteModal")?.classList.remove("open");activeEquipmentNoteId=null;activeEquipmentNoteIndex=null}
+function deleteEquipmentNote(noteIndex){
+  let x=(activeEquipmentNoteIndex!==null?data.equipment[activeEquipmentNoteIndex]:equipmentByIdLoose(activeEquipmentNoteId));
+  if(!x||!Array.isArray(x.notes)||!x.notes[noteIndex])return;
+  if(!confirm("Are you sure you want to delete this note?"))return;
+  x.notes.splice(noteIndex,1);
+  save();
+  openEquipmentNoteModal(x.id);
+  toastMsg("Note deleted",false);
+}
 function saveEquipmentNote(){
   let x=(activeEquipmentNoteIndex!==null?data.equipment[activeEquipmentNoteIndex]:equipmentByIdLoose(activeEquipmentNoteId)),box=document.getElementById("equipmentNoteText"),note=(box?.value||"").trim();
   if(!x||!note){if(box)box.focus();return}
