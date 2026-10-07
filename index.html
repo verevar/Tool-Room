@@ -988,7 +988,7 @@ body.editing-active{padding-bottom:62px!important}
 <input id="consMin" type="number" placeholder="Low at" style="width:100px;min-width:90px">
 <select id="consCategory"><option value="">Category</option><option>Abrasives</option><option>Cutting</option><option>PPE</option><option>Welding</option><option>Batteries</option><option>Tape &amp; Marking</option><option>Cleaning</option><option>Hardware</option><option>Other</option></select>
 <label class="check" style="padding:8px 10px"><input id="newConsAllowDup" type="checkbox" checked><span>Allow Duplicates</span></label><button class="btn" onclick="addConsumable()">Add</button><div class="inventory-action-row"><button class="btn light" onclick="toggleConsumablesBulk()">Bulk Edit</button><button class="btn light" onclick="toggleConsumableFilters()">Filter ▾</button><button class="btn light" id="consOrderBtn" onclick="toggleInventoryOrder('consumable')">Edit Order</button><button class="btn light" id="manageUsageBtn" onclick="toggleUsageManager()">Usage History</button></div>
-</div><div id="consOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Consumables Order</b><button class="btn" onclick="finishInventoryOrder('consumable')">Done</button></div><div class="order-toolbar"><span class="small">Drag manually or organize automatically.</span><select onchange="applyInventoryAutoOrder('consumable',this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option></select></div><div id="consOrderGrid" class="order-grid"></div></div>
+</div><div id="consOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Consumables Order</b><button class="btn" onclick="finishInventoryOrder('consumable')">Done</button></div><div class="order-toolbar"><span class="small">Drag manually or organize automatically.</span><select onchange="applyInventoryAutoOrder('consumable',this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="consOrderGrid" class="order-grid"></div></div>
 <div id="consumableFilters" class="filter-panel sticky-filter"><div class="row"><input id="consumableSearch" placeholder="Search" oninput="renderConsumables()"><select id="consumableCategoryFilter" onchange="renderConsumables()"><option value="">All categories</option></select><select id="consumableStatusFilter" onchange="renderConsumables()"><option value="">All statuses</option><option>IN STOCK</option><option>LOW</option><option>OUT</option></select><button id="consumableHiddenBtn" class="btn light" onclick="toggleConsumableHidden()">Show Hidden</button><button class="btn light" onclick="clearConsumableFilters()">Clear</button></div></div>
 <div id="consumablesBulkActions" style="display:none"></div><div id="usageManager" class="usage-manager"></div><div id="consumablesTable"></div>
 </div>
@@ -1675,4 +1675,77 @@ const auditSaveOneConsumable=window.saveOneConsumable;window.saveOneConsumable=f
 renderAll();
 })();
 </script>
+
+<style id="mobile-ui-final-fixes">
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
+button,a,.btn,.pill,.emp-card,.gear-card,.search-hit,input,select,textarea{touch-action:manipulation}
+@media(max-width:800px){
+  main{padding:14px 10px!important}
+  .card{padding:10px!important;margin-bottom:10px!important}
+  #equipment .card,#consumables .card{padding:10px!important}
+  #more-analytics>.grid>.stat{padding:5px 7px!important;min-height:48px!important}
+  #more-analytics .card{padding:8px!important}
+  #equipment .equipment-action-row{gap:5px!important;margin-top:6px!important}
+  #equipment .equipment-action-row>.btn{height:38px!important;min-height:38px!important;padding:5px 2px!important;font-size:10.5px!important}
+  .consumable-controls .inventory-action-row{gap:4px!important}
+  .inventory-action-row .btn{height:38px!important;min-height:38px!important;padding:5px 2px!important;font-size:10px!important}
+  #equipment .equipment-entry-grid{gap:6px!important;grid-template-rows:40px 40px!important}
+  #equipment .equipment-entry-grid>input,#equipment .equipment-entry-grid>select,#equipment .equipment-entry-grid>.equipment-dup-check{height:40px!important;min-height:40px!important}
+  .damaged-actions{display:grid!important;grid-template-columns:minmax(0,.8fr) minmax(0,1.35fr)!important;gap:5px!important;width:100%!important}
+  .damaged-mini-btn{min-width:0!important;width:100%!important;padding:7px 5px!important;font-size:11px!important;white-space:nowrap!important}
+  .damaged-action-cell{width:48%!important}
+  #returnOutBottom{overflow:hidden}
+  #returnOutBottom table{width:100%!important;table-layout:fixed!important}
+  #returnOutBottom th,#returnOutBottom td{padding:8px 5px!important;font-size:12px!important;overflow-wrap:anywhere}
+  #returnOutBottom th:nth-child(1){width:27%}#returnOutBottom th:nth-child(2){width:17%}#returnOutBottom th:nth-child(3){width:36%}#returnOutBottom th:nth-child(4){width:20%}
+  #returnOutBottom .btn{padding:7px 7px!important;font-size:11px!important;white-space:nowrap!important}
+}
+</style>
+<script id="mobile-ui-final-fixes-js">
+(()=>{
+// Hard-stop double-tap zoom while leaving normal scrolling/input behavior intact.
+let lastTouchEnd=0;
+document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<=300){e.preventDefault()}lastTouchEnd=now},{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+
+// Render the Return-page Checked Out section in the exact same table style as Checkout,
+// ordered by employee number. Return opens that employee with the exact item selected.
+window.renderReturnOutBottom=function(){
+  let chooser=document.getElementById('returnChooser');if(!chooser)return;
+  let box=document.getElementById('returnOutBottom');
+  if(!box){box=document.createElement('div');box.id='returnOutBottom';box.className='card';chooser.parentElement.appendChild(box)}
+  let out=data.equipment.filter(x=>x.holder!==null&&x.holder!==undefined&&data.employees[Number(x.holder)]).sort((a,b)=>{
+    let ea=data.employees[Number(a.holder)],eb=data.employees[Number(b.holder)];
+    return String(ea?.num||'').localeCompare(String(eb?.num||''),undefined,{numeric:true,sensitivity:'base'})||String(a.name||'').localeCompare(String(b.name||''),undefined,{numeric:true,sensitivity:'base'})||String(a.variant||'').localeCompare(String(b.variant||''),undefined,{numeric:true,sensitivity:'base'});
+  });
+  box.innerHTML=`<div class="between row"><p class="section-title">Checked Out</p><span class="small">Kept separate so nothing gets unchecked by accident.</span></div>${out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[Number(x.holder)];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(e.name)} · #${esc(e.num)}</td><td><button class="btn light" onclick="pickReturnItem(${JSON.stringify(x.id)})">Return</button></td></tr>`}).join('')}</table>`:`<div class="empty">Nothing is checked out.</div>`}`;
+};
+
+// Keep focused filter inputs stable. renderAll() used to rebuild the table during typing,
+// which could make mobile Safari jump the page. Restore focus, selection and scroll exactly.
+function stableFilterRender(renderFn,input){
+  const sx=window.scrollX,sy=window.scrollY,ss=input.selectionStart,se=input.selectionEnd;
+  renderFn();
+  requestAnimationFrame(()=>{try{input.focus({preventScroll:true});input.setSelectionRange(ss,se)}catch(e){}window.scrollTo(sx,sy)});
+}
+const eqSearch=document.getElementById('equipmentSearch');if(eqSearch){eqSearch.oninput=()=>stableFilterRender(window.renderEquipment,eqSearch)}
+const conSearch=document.getElementById('consumableSearch');if(conSearch){conSearch.oninput=()=>stableFilterRender(window.renderConsumables,conSearch)}
+
+// Most/least-used ordering for consumables as requested.
+const priorApplyInventoryAutoOrder=window.applyInventoryAutoOrder;
+window.applyInventoryAutoOrder=function(type,mode){
+  if(type!=='consumable'||(mode!=='most'&&mode!=='least'))return priorApplyInventoryAutoOrder(type,mode);
+  if(!mode)return;syncInventoryNameOrder(type);
+  const counts={};
+  data.consumables.forEach(c=>counts[c.name]=(counts[c.name]||0)+(Number(c.used)||0));
+  let a=[...data.consumableOrder];
+  a.sort((x,y)=>mode==='most'?(counts[y]||0)-(counts[x]||0)||x.localeCompare(y,undefined,{numeric:true,sensitivity:'base'}):(counts[x]||0)-(counts[y]||0)||x.localeCompare(y,undefined,{numeric:true,sensitivity:'base'}));
+  data.consumableOrder=a;save();renderInventoryOrder(type);renderConsumables();toastMsg('Order updated');
+};
+
+// Refresh the Return bottom section using the new table renderer.
+try{renderReturnOutBottom()}catch(e){console.error(e)}
+})();
+</script>
+
 </body></html>
