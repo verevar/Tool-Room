@@ -1085,6 +1085,147 @@ html.record-modal-open,body.record-modal-open{overflow:hidden!important;height:1
 #recordModal input,#recordModal textarea,#recordModal button,#recordModal label{touch-action:manipulation}
 </style>
 
+
+<style id="record-modal-ios-visible-viewport-final">
+:root{--record-visible-h:100vh}
+html.record-modal-open,body.record-modal-open{
+  overflow:hidden!important;
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:var(--record-visible-h)!important;
+  overscroll-behavior:none!important;
+}
+#recordModal.record-modal{
+  position:fixed!important;
+  top:0!important;left:0!important;right:0!important;bottom:auto!important;
+  width:100vw!important;
+  height:var(--record-visible-h)!important;
+  max-height:var(--record-visible-h)!important;
+  padding:8px!important;
+  overflow:hidden!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#recordModal .record-box{
+  width:min(360px,calc(100vw - 20px))!important;
+  height:min(560px,calc(var(--record-visible-h) - 16px))!important;
+  max-height:calc(var(--record-visible-h) - 16px)!important;
+  min-height:0!important;
+  padding:10px!important;
+  margin:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  border-radius:13px!important;
+}
+#recordModal .record-box h3{font-size:16px!important;line-height:18px!important;margin:0 0 5px!important}
+#recordModal .record-form{
+  display:grid!important;
+  grid-template-rows:28px 34px 56px 36px 16px minmax(70px,1fr)!important;
+  gap:4px!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+#recordModal .record-form>label.small{display:none!important}
+#recordModal #recordDate{height:28px!important;min-height:28px!important;padding:3px 8px!important}
+#recordModal #recordTitle{height:34px!important;min-height:34px!important;padding:5px 8px!important}
+#recordModal #recordNote{
+  height:56px!important;min-height:56px!important;max-height:56px!important;
+  padding:6px 8px!important;resize:none!important;overflow:hidden!important;
+}
+#recordModal label.btn{
+  height:36px!important;min-height:36px!important;padding:5px 8px!important;
+  font-size:13px!important;
+}
+#recordModal #recordFileName{
+  height:16px!important;min-height:16px!important;
+  font-size:10px!important;line-height:16px!important;
+  white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+#recordModal .record-attachment-preview{
+  min-height:0!important;max-height:none!important;height:100%!important;
+  overflow:hidden!important;margin:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+}
+#recordModal .record-attachment-preview img{
+  width:auto!important;height:auto!important;
+  max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;margin:0!important;border-radius:8px!important;
+}
+#recordModal .record-attachment-preview iframe{width:100%!important;height:100%!important;max-height:100%!important}
+#recordModal .record-actions{
+  flex:0 0 76px!important;
+  height:76px!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  grid-template-rows:36px 34px!important;
+  gap:6px!important;
+  margin:6px 0 0!important;
+}
+#recordModal .record-actions .btn{
+  height:36px!important;min-height:36px!important;
+  padding:5px 8px!important;margin:0!important;font-size:13px!important;
+}
+#recordModal .record-actions .record-delete{
+  grid-column:1!important;grid-row:2!important;
+  width:max-content!important;height:34px!important;min-height:34px!important;
+  padding:5px 11px!important;justify-self:start!important;
+}
+</style>
+
+
+<style id="record-multiple-attachments-final">
+#recordModal .record-attachment-preview{
+  display:flex!important;flex-wrap:wrap!important;gap:5px!important;
+  align-content:center!important;justify-content:center!important;
+  overflow:hidden!important;
+}
+#recordModal .record-editor-attachment{
+  max-width:90px!important;max-height:100%!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  overflow:hidden!important;
+}
+#recordModal .record-editor-attachment img{
+  width:auto!important;height:auto!important;max-width:82px!important;max-height:88px!important;
+  object-fit:contain!important;margin:0!important;
+}
+#recordModal .record-editor-attachment .small{
+  max-width:88px!important;font-size:8px!important;white-space:nowrap!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;
+}
+#recordModal .record-editor-attachment .record-open-file{
+  height:28px!important;min-height:28px!important;padding:4px 7px!important;font-size:10px!important;
+}
+.record-attachment-button{margin-top:4px!important}
+</style>
+
+
+<style id="record-see-attachments-final">
+.record-attachments-viewer{
+  display:none;position:fixed;inset:0;z-index:35000;background:rgba(0,0,0,.55);
+  align-items:center;justify-content:center;padding:18px;
+}
+.record-attachments-viewer.open{display:flex!important}
+.record-attachments-box{
+  width:320px;max-width:calc(100vw - 36px);max-height:70vh;overflow:hidden;
+  background:#fff;border-radius:14px;padding:14px;box-shadow:0 18px 50px rgba(0,0,0,.28);
+}
+.record-attachments-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;font-size:17px}
+.record-attachments-close{
+  width:30px;height:30px;border:0;border-radius:7px;background:transparent;
+  font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;
+}
+.record-attachments-list{display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow-y:auto}
+.record-attachment-choice{
+  width:100%;border:1px solid #e1e4e8;border-radius:9px;background:#f7f8fa;
+  padding:10px;text-align:left;font:inherit;font-size:13px;font-weight:700;
+  display:flex;gap:7px;align-items:center;
+}
+.record-attachment-choice span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1756,29 +1897,41 @@ function renderRecords(){
       <button type="button" class="record-entry-delete" data-record-delete="${id}" aria-label="Delete record">×</button>
       <div class="row between record-entry-head"><div class="record-title">${esc(r.title||r.fileName||"Record")}</div><div class="small">${esc(formatRecordDate(r.date))}</div></div>
       ${r.note?`<div class="record-preview">${esc(r.note.replace(/\s+/g," "))}</div>`:""}
-      ${r.fileName?`<button type="button" class="record-file record-attachment-button" data-record-attachment="${id}">📎 ${esc(r.fileName)}</button>`:""}
+      ${normalizeRecordAttachments(r).length?`<button type="button" class="record-file record-attachment-button" data-record-attachments="${id}">📎 See Attachments${normalizeRecordAttachments(r).length>1?` (${normalizeRecordAttachments(r).length})`:""}</button>`:""}
     </div>`;
   }).join(""):`<div class="empty">${q?"No records match your search.":"No records yet."}</div>`;
 }
-function openRecordImage(id){
+function openRecordImage(id,attachmentIndex=0){
   let r=(data.records||[]).find(x=>String(x.id)===String(id));
-  if(!r||!r.fileData){toastMsg("This attachment has no saved file data.",false);return}
-  if(!recordIsImage(r)){openRecordEditor(String(id));return}
+  let a=normalizeRecordAttachments(r)[Number(attachmentIndex)||0];
+  if(!a?.fileData){toastMsg("This attachment has no saved file data.",false);return}
+  if(!recordIsImage(a)){
+    let link=document.createElement("a");link.href=a.fileData;link.target="_blank";link.rel="noopener";link.download=a.fileName||"attachment";document.body.appendChild(link);link.click();link.remove();return
+  }
   let v=document.getElementById("recordImageViewer");
   if(!v){
-    v=document.createElement("div");
-    v.id="recordImageViewer";
-    v.className="record-image-viewer";
+    v=document.createElement("div");v.id="recordImageViewer";v.className="record-image-viewer";
     v.innerHTML=`<button class="record-image-close" type="button" aria-label="Close photo">×</button><img alt="Record photo">`;
     v.addEventListener("click",e=>{if(e.target===v||e.target.closest(".record-image-close"))v.style.display="none"});
     document.body.appendChild(v);
   }
   let img=v.querySelector("img");
-  img.onload=()=>{};
   img.onerror=()=>{v.style.display="none";toastMsg("The saved photo could not be opened.",false)};
-  img.src=r.fileData;
-  img.alt=r.fileName||"Record photo";
-  v.style.display="flex";
+  img.src=a.fileData;img.alt=a.fileName||"Record photo";v.style.display="flex"
+}
+function openRecordAttachments(id){
+  let r=(data.records||[]).find(x=>String(x.id)===String(id)),items=normalizeRecordAttachments(r);
+  if(!items.length){toastMsg("This record has no attachments.",false);return}
+  if(items.length===1){openRecordImage(id,0);return}
+  let m=document.getElementById("recordAttachmentsViewer");
+  if(!m){
+    m=document.createElement("div");m.id="recordAttachmentsViewer";m.className="record-attachments-viewer";
+    m.addEventListener("click",e=>{if(e.target===m||e.target.closest(".record-attachments-close"))m.classList.remove("open")});
+    document.body.appendChild(m);
+  }
+  m.innerHTML=`<div class="record-attachments-box"><div class="record-attachments-head"><strong>Attachments</strong><button type="button" class="record-attachments-close" aria-label="Close">×</button></div><div class="record-attachments-list">${items.map((a,i)=>`<button type="button" class="record-attachment-choice" data-open-record="${esc(String(id))}" data-open-index="${i}">📎 <span>${esc(a.fileName||`Attachment ${i+1}`)}</span></button>`).join("")}</div></div>`;
+  m.querySelectorAll("[data-open-record]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();m.classList.remove("open");openRecordImage(b.dataset.openRecord,b.dataset.openIndex)}));
+  m.classList.add("open")
 }
 function bindRecordAttachmentClicks(){
   let box=document.getElementById("recordsList");
@@ -1791,10 +1944,10 @@ function bindRecordAttachmentClicks(){
       requestDeleteRecord(del.dataset.recordDelete);
       return;
     }
-    let attachment=e.target.closest("[data-record-attachment]");
+    let attachment=e.target.closest("[data-record-attachments]");
     if(attachment){
       e.preventDefault();e.stopPropagation();
-      openRecordImage(attachment.dataset.recordAttachment);
+      openRecordAttachments(attachment.dataset.recordAttachments);
       return;
     }
     let entry=e.target.closest(".record-entry");
@@ -1840,17 +1993,87 @@ function confirmDeleteRecord(){
   }
   cancelDeleteRecord();
 }
-function ensureRecordModal(){let m=document.getElementById("recordModal");if(m)return m;m=document.createElement("div");m.id="recordModal";m.className="record-modal";m.style.display="none";m.innerHTML=`<div class="record-box"><h3 id="recordModalTitle">Add Record</h3><div class="record-form"><label class="small">Date</label><input id="recordDate" type="date"><input id="recordTitle" placeholder="Title (example: Inventory Invoice)"><textarea id="recordNote" placeholder="Note or description"></textarea><label class="btn light" style="text-align:center">Add / Replace Photo or File<input id="recordFile" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" style="display:none" onchange="previewRecordFile(this)"></label><div id="recordFileName" class="small"></div><div id="recordAttachmentPreview" class="record-attachment-preview"></div></div><div class="record-actions"><button id="recordDeleteBtn" class="btn red record-delete" onclick="deleteRecord()">Delete</button><button class="btn light" onclick="closeRecordEditor()">Cancel</button><button class="btn" onclick="saveRecordEditor()">Save</button></div></div>`;document.body.appendChild(m);return m}
-function openRecordEditor(id=null){let m=ensureRecordModal();document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
+function ensureRecordModal(){let m=document.getElementById("recordModal");if(m)return m;m=document.createElement("div");m.id="recordModal";m.className="record-modal";m.style.display="none";m.innerHTML=`<div class="record-box"><h3 id="recordModalTitle">Add Record</h3><div class="record-form"><label class="small">Date</label><input id="recordDate" type="date"><input id="recordTitle" placeholder="Title (example: Inventory Invoice)"><textarea id="recordNote" placeholder="Note or description"></textarea><label class="btn light" style="text-align:center">Add / Replace Photo or File<input id="recordFile" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" style="display:none" onchange="previewRecordFile(this)"></label><div id="recordFileName" class="small"></div><div id="recordAttachmentPreview" class="record-attachment-preview"></div></div><div class="record-actions"><button id="recordDeleteBtn" class="btn red record-delete" onclick="deleteRecord()">Delete</button><button class="btn light" onclick="closeRecordEditor()">Cancel</button><button class="btn" onclick="saveRecordEditor()">Save</button></div></div>`;document.body.appendChild(m);return m}
+function syncRecordVisibleViewport(){let h=Math.round(window.visualViewport?.height||window.innerHeight||document.documentElement.clientHeight);document.documentElement.style.setProperty("--record-visible-h",h+"px")}
+function openRecordEditor(id=null){syncRecordVisibleViewport();let m=ensureRecordModal();document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
 function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";document.documentElement.classList.remove("record-modal-open");document.body.classList.remove("record-modal-open");editingRecordId=null}
-function previewRecordFile(inp){let f=inp.files?.[0];recordFileName.textContent=f?`Selected: ${f.name}`:"";recordAttachmentPreview.innerHTML="";if(f&&f.type.startsWith("image/")){let u=URL.createObjectURL(f);recordAttachmentPreview.innerHTML=`<img src="${u}" alt="Selected photo">`;setTimeout(()=>URL.revokeObjectURL(u),10000)}}
-function renderRecordAttachment(r){let box=document.getElementById("recordAttachmentPreview");if(!box)return;box.innerHTML="";if(!r?.fileData)return;if((r.fileType||"").startsWith("image/")){box.innerHTML=`<img src="${r.fileData}" alt="${esc(r.fileName||"Attachment")}">`}else if(r.fileType==="application/pdf"){box.innerHTML=`<iframe src="${r.fileData}" title="${esc(r.fileName||"PDF")}"></iframe><a class="btn light record-open-file" href="${r.fileData}" target="_blank" download="${esc(r.fileName||"file.pdf")}">Open File</a>`}else{box.innerHTML=`<a class="btn light record-open-file" href="${r.fileData}" target="_blank" download="${esc(r.fileName||"attachment")}">Open File</a>`}}
-function fileToDataURL(file){return new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
-function compressRecordImage(file){return new Promise((resolve,reject)=>{let img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{URL.revokeObjectURL(u);let max=1600,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext("2d").drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL("image/jpeg",.78))};img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("image"))};img.src=u})}
-async function saveRecordEditor(){let date=recordDate.value,title=recordTitle.value.trim(),note=recordNote.value.trim(),file=recordFile.files?.[0],existing=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;if(!title&&!note&&!file&&!existing?.fileData){toastMsg("Add a title, note, photo or file.",false);return}let fileData=existing?.fileData||"",fileName=existing?.fileName||"",fileType=existing?.fileType||"";if(file){try{if(file.type.startsWith("image/")){fileData=await compressRecordImage(file);fileType="image/jpeg"}else{if(file.size>2500000){toastMsg("That file is too large. Keep non-photo files under 2.5 MB.",false);return}fileData=await fileToDataURL(file);fileType=file.type||"application/octet-stream"}fileName=file.name}catch(e){toastMsg("Could not read that file.",false);return}}let rec=existing||{id:Date.now(),createdAt:Date.now()};rec.date=date||recordToday();rec.title=title;rec.note=note;rec.fileData=fileData;rec.fileName=fileName;rec.fileType=fileType;if(!existing)data.records.push(rec);try{save()}catch(e){toastMsg("Storage is full. Remove a large record file and try again.",false);return}closeRecordEditor();toastMsg(existing?"Record updated":"Record added")}
+function normalizeRecordAttachments(r){
+  if(!r)return [];
+  if(Array.isArray(r.attachments))return r.attachments.filter(a=>a&&a.fileData);
+  if(r.fileData)return [{fileData:r.fileData,fileName:r.fileName||"Attachment",fileType:r.fileType||""}];
+  return [];
+}
+function previewRecordFile(inp){
+  let files=[...(inp.files||[])];
+  recordFileName.textContent=files.length?`${files.length} file${files.length===1?"":"s"} selected`:"";
+  recordAttachmentPreview.innerHTML="";
+  files.filter(f=>f.type.startsWith("image/")).forEach(f=>{
+    let u=URL.createObjectURL(f),img=document.createElement("img");
+    img.src=u;img.alt=f.name;img.onload=()=>URL.revokeObjectURL(u);
+    recordAttachmentPreview.appendChild(img);
+  });
+}
+function renderRecordAttachment(r){
+  let box=document.getElementById("recordAttachmentPreview");if(!box)return;
+  box.innerHTML="";
+  let attachments=normalizeRecordAttachments(r);
+  if(!attachments.length)return;
+  attachments.forEach((a,i)=>{
+    let wrap=document.createElement("div");wrap.className="record-editor-attachment";
+    if(recordIsImage(a)){
+      wrap.innerHTML=`<img src="${a.fileData}" alt="${esc(a.fileName||"Attachment")}"><div class="small">${esc(a.fileName||`Photo ${i+1}`)}</div>`;
+    }else if(a.fileType==="application/pdf"){
+      wrap.innerHTML=`<div class="small">📎 ${esc(a.fileName||`File ${i+1}`)}</div><a class="btn light record-open-file" href="${a.fileData}" target="_blank" rel="noopener">Open File</a>`;
+    }else{
+      wrap.innerHTML=`<div class="small">📎 ${esc(a.fileName||`File ${i+1}`)}</div><a class="btn light record-open-file" href="${a.fileData}" download="${esc(a.fileName||"attachment")}">Open File</a>`;
+    }
+    box.appendChild(wrap);
+  });
+}
+function openRecordEditor(id=null){
+  syncRecordVisibleViewport();let m=ensureRecordModal();
+  document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");
+  editingRecordId=id===null?null:String(id);
+  let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;
+  recordModalTitle.textContent=r?"Record":"Add Record";
+  recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";
+  recordFile.value="";
+  let count=normalizeRecordAttachments(r).length;
+  recordFileName.textContent=count?`${count} attached file${count===1?"":"s"}`:"";
+  recordDeleteBtn.style.display=r?"inline-flex":"none";
+  renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)
+}
+function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";document.documentElement.classList.remove("record-modal-open");document.body.classList.remove("record-modal-open");editingRecordId=null}
+function fileToDataURL(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
+function compressRecordImage(file){return new Promise((resolve,reject)=>{let img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{try{let max=1600,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);resolve(c.toDataURL("image/jpeg",.78))}catch(e){URL.revokeObjectURL(u);reject(e)}};img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("image"))};img.src=u})}
+async function saveRecordEditor(){
+  let date=recordDate.value,title=recordTitle.value.trim(),note=recordNote.value.trim(),files=[...(recordFile.files||[])],
+      existing=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;
+  let attachments=normalizeRecordAttachments(existing).map(a=>({...a}));
+  if(!title&&!note&&!files.length&&!attachments.length){toastMsg("Add a title, note, photo or file.",false);return}
+  for(let file of files){
+    try{
+      let fileData,fileType;
+      if(file.type.startsWith("image/")){fileData=await compressRecordImage(file);fileType="image/jpeg"}
+      else{
+        if(file.size>2500000){toastMsg(`${file.name} is too large. Keep non-photo files under 2.5 MB.`,false);return}
+        fileData=await fileToDataURL(file);fileType=file.type||"application/octet-stream"
+      }
+      attachments.push({fileData,fileName:file.name,fileType});
+    }catch(e){toastMsg(`Could not read ${file.name}.`,false);return}
+  }
+  let rec=existing||{id:Date.now(),createdAt:Date.now()};
+  rec.date=date||recordToday();rec.title=title;rec.note=note;rec.attachments=attachments;
+  // Keep first attachment in legacy fields so old backup/search behavior stays compatible.
+  let first=attachments[0]||{};
+  rec.fileData=first.fileData||"";rec.fileName=first.fileName||"";rec.fileType=first.fileType||"";
+  if(!existing)data.records.push(rec);
+  try{save()}catch(e){toastMsg("Storage is full. Remove a large record file and try again.",false);return}
+  closeRecordEditor();toastMsg(existing?"Record updated":"Record added")
+}
 function deleteRecord(){let r=data.records.find(x=>String(x.id)===String(editingRecordId));if(!r)return;if(!confirm(`Delete ${r.title||r.fileName||"this record"}?`))return;data.records=data.records.filter(x=>String(x.id)!==String(editingRecordId));save();closeRecordEditor();toastMsg("Record deleted")}
 function renderAll(){[renderEmployees,renderCheckout,renderEquipment,renderConsumables,renderRecords,renderAnalytics,renderReturn,renderReorderNew,renderMore].forEach(fn=>{try{fn()}catch(e){console.error(fn.name,e)}})}
-renderAll();bindRecordAttachmentClicks();try{activatePage(localStorage.getItem("toolroomHQ-active-page")||"checkout",false)}catch(e){}updateUndoButton();refreshAddSuggestions("equipment");refreshAddSuggestions("consumable");
+window.visualViewport?.addEventListener("resize",()=>{if(document.body.classList.contains("record-modal-open"))syncRecordVisibleViewport()});window.addEventListener("orientationchange",()=>setTimeout(syncRecordVisibleViewport,50));renderAll();bindRecordAttachmentClicks();try{activatePage(localStorage.getItem("toolroomHQ-active-page")||"checkout",false)}catch(e){}updateUndoButton();refreshAddSuggestions("equipment");refreshAddSuggestions("consumable");
 setInterval(()=>{if(editingEmployeeIndex===null)renderMore()},60000);
 
 bindAddAutofillFix();
