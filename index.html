@@ -1201,6 +1201,79 @@ html.record-modal-open,body.record-modal-open{
 .record-attachment-button{margin-top:4px!important}
 </style>
 
+
+<style id="record-see-attachments-final">
+.record-attachments-viewer{
+  display:none;position:fixed;inset:0;z-index:35000;background:rgba(0,0,0,.55);
+  align-items:center;justify-content:center;padding:18px;
+}
+.record-attachments-viewer.open{display:flex!important}
+.record-attachments-box{
+  width:320px;max-width:calc(100vw - 36px);max-height:70vh;overflow:hidden;
+  background:#fff;border-radius:14px;padding:14px;box-shadow:0 18px 50px rgba(0,0,0,.28);
+}
+.record-attachments-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;font-size:17px}
+.record-attachments-close{
+  width:30px;height:30px;border:0;border-radius:7px;background:transparent;
+  font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;
+}
+.record-attachments-list{display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow-y:auto}
+.record-attachment-choice{
+  width:100%;border:1px solid #e1e4e8;border-radius:9px;background:#f7f8fa;
+  padding:10px;text-align:left;font:inherit;font-size:13px;font-weight:700;
+  display:flex;gap:7px;align-items:center;
+}
+.record-attachment-choice span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+</style>
+
+
+<style id="move-checkout-feature-style">
+.return-action-row{display:grid!important;grid-template-columns:1fr 1fr 1fr!important;gap:7px!important}
+.return-action-row .btn{min-width:0!important;padding-left:7px!important;padding-right:7px!important;font-size:11px!important}
+.move-checkout-modal{display:none;position:fixed;inset:0;z-index:45000;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:16px}
+.move-checkout-modal.open{display:flex!important}
+.move-checkout-box{width:380px;max-width:calc(100vw - 32px);max-height:72vh;background:#fff;border-radius:15px;padding:15px;box-shadow:0 20px 55px rgba(0,0,0,.28);display:flex;flex-direction:column}
+.move-checkout-close{width:32px;height:32px;border:0;border-radius:7px;background:transparent;font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center}
+#moveCheckoutSearch{width:100%;margin-bottom:8px}
+.move-checkout-employees{display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:40vh}
+.move-employee-choice{width:100%;padding:9px 10px;border:1px solid #dfe3e8;border-radius:9px;background:#fff;text-align:left;font:inherit}
+.move-employee-choice span{display:block;font-size:11px;color:#69707a;margin-top:2px}
+.move-employee-choice.selected{background:#16191d;color:#fff;border-color:#16191d}
+.move-employee-choice.selected span{color:#d8dadd}
+.move-checkout-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.move-checkout-actions .btn{width:100%!important}
+@media(max-width:600px){
+ .return-action-row{grid-template-columns:1fr 1fr!important}
+ .return-action-row .btn:last-child{grid-column:1/-1!important}
+ .move-checkout-box{width:350px}
+}
+</style>
+
+<style id="checkout-timestamps-neat-final">
+.checked-out-list{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0}
+.checked-out-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.2fr) auto auto;align-items:center;gap:7px;width:100%;min-width:0;padding:8px 9px;border:1px solid #e1e4e8;border-radius:10px;background:#fff}
+.checked-out-main,.checked-out-person{min-width:0}.checked-out-main b,.checked-out-main span,.checked-out-person,.checked-out-time{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.checked-out-main b{font-size:13px}.checked-out-main span,.checked-out-person,.checked-out-time,.checkout-card-time{font-size:10px;color:#68707b}
+.checked-out-return{width:auto!important;min-width:0!important;padding:6px 9px!important;font-size:11px!important}
+.return-employee-card,.return-search-item,.return-item-card{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:2px!important;text-align:left!important;min-width:0!important}
+.return-employee-card .small,.return-search-item .small,.return-item-card .small,.checkout-card-time{display:block!important;width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#returnItemGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}.return-item-card{padding:9px!important}.return-item-card b{font-size:13px!important}.checkout-card-time{font-size:9px!important}
+@media(max-width:600px){.checked-out-row{grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"main return" "person return" "time return"!important;gap:2px 7px!important;padding:7px 8px!important}.checked-out-main{grid-area:main}.checked-out-person{grid-area:person}.checked-out-time{grid-area:time}.checked-out-return{grid-area:return}.checked-out-main b{font-size:12px!important}.checked-out-main span,.checked-out-person,.checked-out-time{font-size:9px!important}}
+</style>
+<style id="return-checked-out-label-nowrap-fix">
+/* Keep Return's Checked Out headings intact on narrow phones. */
+#returnOutBottom table{width:100%!important;min-width:0!important;table-layout:fixed!important;border-collapse:collapse!important}
+#returnOutBottom th{overflow-wrap:normal!important;word-break:normal!important;white-space:nowrap!important;font-size:10px!important;letter-spacing:0!important;padding:7px 3px!important;text-align:left!important}
+#returnOutBottom td{overflow-wrap:break-word!important;word-break:normal!important;padding:7px 3px!important;font-size:11px!important;vertical-align:middle!important}
+#returnOutBottom th:nth-child(1){width:25%!important}
+#returnOutBottom th:nth-child(2){width:19%!important}
+#returnOutBottom th:nth-child(3){width:37%!important}
+#returnOutBottom th:nth-child(4){width:19%!important}
+#returnOutBottom td:nth-child(2){overflow-wrap:break-word!important}
+#returnOutBottom td:nth-child(3){font-size:10px!important}
+#returnOutBottom td:nth-child(3) .small{font-size:9px!important}
+#returnOutBottom td:last-child .btn{width:100%!important;min-width:0!important;padding:7px 2px!important;font-size:10px!important;white-space:nowrap!important}
+</style>
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1216,7 +1289,7 @@ html.record-modal-open,body.record-modal-open{
 
 <main>
 <section id="checkout" class="page active">
-<h1>Checkout</h1><p class="sub">Pick an employee, check what they need, and issue it.</p>
+<h1>Checkout</h1>
 <div class="card">
 <div id="employeeChooser">
 <input id="employeeSearch" placeholder="Search by name or employee #" style="width:100%">
@@ -1228,29 +1301,29 @@ html.record-modal-open,body.record-modal-open{
   <div class="fast-head" id="mostUsedTitle">Most Used</div>
   <div id="mostUsedGear" class="gear-grid"></div>
   <div class="fast-head">All Available Equipment</div><div id="selectedGearStrip" class="selected-strip"></div><div id="allGear" class="gear-grid"></div>
-  <div class="fast-head" style="margin-top:18px">Consumables</div><div class="small" style="margin-bottom:8px">Use what they take. Consumables reduce stock and are never overdue.</div><div id="checkoutConsumables"></div>
+  <div class="fast-head" style="margin-top:18px">Consumables</div><div id="checkoutConsumables"></div>
   <button id="fastCheckoutBtn" class="btn checkout-big" onclick="fastCheckout()">Check Out</button>
 </div>
 </div>
 <div class="card">
-<div class="between row"><p class="section-title">Checked Out</p><span class="small">Kept separate so nothing gets unchecked by accident.</span></div>
+<div class="between row"><p class="section-title">Checked Out</p></div>
 <div id="checkedOutList"></div>
 </div>
 </section>
 
 
 <section id="returns" class="page">
-<h1>Return</h1><p class="sub">Choose an employee, then return only what they brought back—or Return All.</p>
+<h1>Return</h1>
 <div class="card"><div id="returnChooser"><input id="returnSearch" placeholder="Search employee or checked-out item…" style="width:100%"><div id="returnEmployeeGrid" class="employee-grid"></div></div>
-<div id="returnDetail" style="display:none"><button class="btn light" onclick="backReturn()">← Back to Employees</button><div id="returnPerson" style="font-weight:850;margin:12px 0"></div><div id="returnItemGrid" class="gear-grid"></div><div class="row"><button id="returnSelectedButton" class="btn" onclick="returnSelectedItems()">RETURN SELECTED</button><button class="btn light" onclick="returnAllItems()">RETURN ALL</button></div></div></div>
+<div id="returnDetail" style="display:none"><button class="btn light" onclick="backReturn()">← Back to Employees</button><div id="returnPerson" style="font-weight:850;margin:12px 0"></div><div id="returnItemGrid" class="gear-grid"></div><div class="row return-action-row"><button id="returnSelectedButton" class="btn" onclick="returnSelectedItems()">RETURN SELECTED</button><button id="moveSelectedButton" class="btn light" onclick="openMoveSelected()">MOVE SELECTED</button><button class="btn light" onclick="returnAllItems()">RETURN ALL</button></div></div></div>
 </section>
-<section id="reorder" class="page"><h1>Reorder</h1><p class="sub">Low and out-of-stock consumables with suggested reorder quantities.</p><div class="card"><div id="newReorderList"></div></div></section>
-<section id="more" class="page"><h1>More</h1><p class="sub">The supporting records and reports—kept out of your everyday checkout flow.</p>
+<section id="reorder" class="page"><h1>Reorder</h1><div class="card"><div id="newReorderList"></div></div></section>
+<section id="more" class="page"><h1>More</h1>
 <div class="pillbar"><button class="pill active" onclick="showMore('overdue',this)">Overdue</button><button class="pill" onclick="showMore('damaged',this)">Damaged / Missing</button><button class="pill" onclick="showMore('analytics',this)">Analytics</button><button class="pill" onclick="showMore('exports',this)">Exports & Backup</button><button class="pill" onclick="showMore('employees',this)">Employees</button></div>
 <div id="more-overdue" class="morePanel"></div><div id="more-damaged" class="morePanel" style="display:none"></div><div id="more-history" class="morePanel" style="display:none"></div><div id="more-analytics" class="morePanel" style="display:none"></div><div id="more-exports" class="morePanel" style="display:none"></div><div id="more-employees" class="morePanel" style="display:none"></div>
 </section>
 <section id="equipment" class="page">
-<h1>Equipment</h1><p class="sub">Add or edit equipment.</p>
+<h1>Equipment</h1>
 <div class="card">
 <div class="inventory-controls equipment-controls">
   <div class="equipment-entry-grid">
@@ -1265,7 +1338,7 @@ html.record-modal-open,body.record-modal-open{
     <button class="btn light" onclick="toggleEquipmentFilters()">Filter ▾</button>
     <button class="btn light" id="editOrderBtn" onclick="toggleEquipmentOrder()">Edit Order</button>
   </div>
-</div><div id="equipmentOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Checkout Equipment Order</b><button class="btn" onclick="finishEquipmentOrder()">Done</button></div><div class="order-toolbar"><span class="small">Drag manually or organize automatically.</span><select id="equipmentAutoOrder" onchange="applyEquipmentAutoOrder(this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="equipmentOrderGrid" class="order-grid"></div></div>
+</div><div id="equipmentOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Checkout Equipment Order</b><button class="btn" onclick="finishEquipmentOrder()">Done</button></div><div class="order-toolbar"><select id="equipmentAutoOrder" onchange="applyEquipmentAutoOrder(this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="equipmentOrderGrid" class="order-grid"></div></div>
 <div id="equipmentFilters" class="filter-panel sticky-filter"><div class="row"><input id="equipmentSearch" placeholder="Search" oninput="renderEquipment()"><select id="equipmentGroupFilter" onchange="renderEquipment()"><option value="">All categories</option></select><select id="equipmentStatusFilter" onchange="renderEquipment()"><option value="">All statuses</option><option>Available</option><option>Checked Out</option><option>Damaged</option><option>Missing</option></select><button id="equipmentHiddenBtn" class="btn light" onclick="toggleEquipmentHidden()">Show Hidden</button><button class="btn light" onclick="clearEquipmentFilters()">Clear</button></div></div>
 <div id="equipmentBulkActions" style="display:none"></div>
 <div id="equipmentTable"></div>
@@ -1273,7 +1346,7 @@ html.record-modal-open,body.record-modal-open{
 </section>
 
 <section id="consumables" class="page">
-<h1>Consumables</h1><p class="sub">Track stock and reorder levels.</p>
+<h1>Consumables</h1>
 
 <div class="card">
 <div class="row inventory-controls consumable-controls">
@@ -1283,7 +1356,7 @@ html.record-modal-open,body.record-modal-open{
 <input id="consMin" type="number" placeholder="Low at" style="width:100px;min-width:90px">
 <select id="consCategory"><option value="">Category</option><option>Abrasives</option><option>Cutting</option><option>PPE</option><option>Welding</option><option>Batteries</option><option>Tape &amp; Marking</option><option>Cleaning</option><option>Hardware</option><option>Other</option></select>
 <label class="check" style="padding:8px 10px"><input id="newConsAllowDup" type="checkbox" checked><span>Allow Duplicates</span></label><button class="btn" onclick="addConsumable()">Add</button><div class="inventory-action-row"><button class="btn light" onclick="toggleConsumablesBulk()">Bulk Edit</button><button class="btn light" onclick="toggleConsumableFilters()">Filter ▾</button><button class="btn light" id="consOrderBtn" onclick="toggleInventoryOrder('consumable')">Edit Order</button><button class="btn light" id="manageUsageBtn" onclick="toggleUsageManager()">Usage History</button></div>
-</div><div id="consOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Consumables Order</b><button class="btn" onclick="finishInventoryOrder('consumable')">Done</button></div><div class="order-toolbar"><span class="small">Drag manually or organize automatically.</span><select onchange="applyInventoryAutoOrder('consumable',this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="consOrderGrid" class="order-grid"></div></div>
+</div><div id="consOrderPanel" style="display:none;margin-top:12px"><div class="row between"><b>Consumables Order</b><button class="btn" onclick="finishInventoryOrder('consumable')">Done</button></div><div class="order-toolbar"><select onchange="applyInventoryAutoOrder('consumable',this.value);this.value=''"><option value="">Organize…</option><option value="az">A–Z</option><option value="za">Z–A</option><option value="most">Most Used</option><option value="least">Least Used</option></select></div><div id="consOrderGrid" class="order-grid"></div></div>
 <div id="consumableFilters" class="filter-panel sticky-filter"><div class="row"><input id="consumableSearch" placeholder="Search" oninput="renderConsumables()"><select id="consumableCategoryFilter" onchange="renderConsumables()"><option value="">All categories</option></select><select id="consumableStatusFilter" onchange="renderConsumables()"><option value="">All statuses</option><option>IN STOCK</option><option>LOW</option><option>OUT</option></select><button id="consumableHiddenBtn" class="btn light" onclick="toggleConsumableHidden()">Show Hidden</button><button class="btn light" onclick="clearConsumableFilters()">Clear</button></div></div>
 <div id="consumablesBulkActions" style="display:none"></div><div id="usageManager" class="usage-manager"></div><div id="consumablesTable"></div>
 </div>
@@ -1291,7 +1364,7 @@ html.record-modal-open,body.record-modal-open{
 
 
 <section id="records" class="page">
-<h1>Records</h1><p class="sub">Dated notes, inventory invoices, photos and files.</p>
+<h1>Records</h1>
 <div class="card">
 <div class="row between records-head"><button class="btn" onclick="openRecordEditor()">+ Add Record</button><input id="recordsSearch" placeholder="Search records" oninput="renderRecords()" autocomplete="off"></div>
 <div id="recordsList"></div>
@@ -1299,7 +1372,7 @@ html.record-modal-open,body.record-modal-open{
 </section>
 
 <section id="employees" class="page">
-<h1>Employees</h1><p class="sub">Add or edit employees.</p>
+<h1>Employees</h1>
 <div class="card">
 <div class="row"><input id="empName" placeholder="Employee name"><input id="empNum" placeholder="Employee #"><input id="monNum" placeholder="Monitor #"><button class="btn" onclick="addEmployee()">Add Employee</button><button class="btn light" onclick="openBulkEditEmployees()">Bulk Edit</button></div>
 <div id="employeesTable"></div>
@@ -1307,7 +1380,7 @@ html.record-modal-open,body.record-modal-open{
 </section>
 
 <section id="analytics" class="page">
-<h1>Analytics</h1><p class="sub">See what is disappearing fastest and what needs reordered.</p>
+<h1>Analytics</h1>
 <div class="grid">
 <div class="stat"><span class="label">Consumables Used / Week</span><b id="weeklyTotal">0</b></div>
 <div class="stat"><span class="label">Low / Out Items</span><b id="reorderCount">0</b></div>
@@ -1439,8 +1512,8 @@ window.addEventListener("resize",updateStickyHeaderHeight);requestAnimationFrame
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>activatePage(b.dataset.page));
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function openPage(page){let b=document.querySelector(`.tab[data-page="${page}"]`);if(b)b.click()}
-function renderGlobalSearch(){let box=document.getElementById("globalSearchResults"),q=(document.getElementById("globalSearch")?.value||"").trim().toLowerCase();if(!q){box.style.display="none";box.innerHTML="";return}let hits=[];data.employees.forEach((e,i)=>{if((e.name+" "+e.num+" "+e.monitor).toLowerCase().includes(q))hits.push({kind:"Employee",title:`#${e.num} ${e.name}`,sub:`Monitor ${e.monitor}`,page:"checkout"})});data.equipment.forEach(x=>{if((x.name+" "+x.variant+" "+(x.category||"")+" "+(x.status||"")).toLowerCase().includes(q)){let checked=x.holder!==null&&x.holder!==undefined,holder=checked?data.employees[Number(x.holder)]:null;hits.push({kind:"Equipment",title:x.name,sub:`${x.variant||"No variant"} · ${checked?`Checked Out${holder?` to #${holder.num} ${holder.name}`:""}`:(x.status||"Available")}`,page:checked?"returns":"equipment",equipmentId:String(x.id)})}});data.consumables.forEach(x=>{if((x.name+" "+x.variant+" "+(x.category||"")).toLowerCase().includes(q))hits.push({kind:"Consumable",title:x.name,sub:`${x.variant||"No variant"} · ${x.qty} in stock`,page:"consumables"})});data.records.forEach(r=>{if(((r.title||"")+" "+(r.note||"")+" "+(r.fileName||"")+" "+(r.date||"")).toLowerCase().includes(q))hits.push({kind:"Record",title:r.title||r.fileName||"Record",sub:`${formatRecordDate(r.date)}${r.fileName?` · ${r.fileName}`:""}`,page:"records",recordId:String(r.id)})});hits=hits.slice(0,30);box.innerHTML=hits.length?hits.map(h=>`<button class="search-hit" data-page="${h.page}" data-eqid="${esc(h.equipmentId||"")}" data-rid="${esc(h.recordId||"")}" onclick="openSearchHit(this.dataset.page,this.dataset.eqid,this.dataset.rid)"><span class="search-kind">${h.kind}</span><br><b>${esc(h.title)}</b><br><span class="small">${esc(h.sub)}</span></button>`).join(""):`<div class="empty">No matches.</div>`;box.style.display="block"}
-function openSearchHit(page,equipmentId="",recordId=""){document.getElementById("globalSearchResults").style.display="none";document.getElementById("globalSearch").value="";if(page==="returns"&&equipmentId){let x=data.equipment.find(v=>String(v.id)===String(equipmentId));if(x&&x.holder!==null&&x.holder!==undefined){activatePage("returns");returnEmployee=null;returnSelected.clear();returnChooser.style.display="block";returnDetail.style.display="none";returnSearch.value="";renderReturn();setTimeout(()=>{let card=document.querySelector(`#returnEmployeeGrid .emp-card[data-employee-index="${Number(x.holder)}"]`);if(card){card.classList.add("search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>card.classList.remove("search-highlight"),3500)}},60);return}}if(page==="records"&&recordId){activatePage("records");setTimeout(()=>{let el=document.querySelector(`[data-record-id="${CSS.escape(String(recordId))}"]`);if(el){el.classList.add("search-highlight");el.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>el.classList.remove("search-highlight"),3000)}},60);return}openPage(page)}
+function renderGlobalSearch(){let box=document.getElementById("globalSearchResults"),q=(document.getElementById("globalSearch")?.value||"").trim().toLowerCase();if(!q){box.style.display="none";box.innerHTML="";return}let hits=[];data.employees.forEach((e,i)=>{if((e.name+" "+e.num+" "+e.monitor).toLowerCase().includes(q))hits.push({kind:"Employee",title:`#${e.num} ${e.name}`,sub:`Monitor ${e.monitor}`,page:"checkout"})});data.equipment.forEach(x=>{if((x.name+" "+x.variant+" "+(x.category||"")+" "+(x.status||"")).toLowerCase().includes(q)){let checked=x.holder!==null&&x.holder!==undefined,holder=checked?employeeFromHolder(x.holder):null;hits.push({kind:"Equipment",title:x.name,sub:`${x.variant||"No variant"} · ${checked?`Checked Out${holder?` to #${holder.num} ${holder.name}`:""}`:(x.status||"Available")}`,page:checked?"returns":"equipment",equipmentId:String(x.id)})}});data.consumables.forEach(x=>{if((x.name+" "+x.variant+" "+(x.category||"")).toLowerCase().includes(q))hits.push({kind:"Consumable",title:x.name,sub:`${x.variant||"No variant"} · ${x.qty} in stock`,page:"consumables"})});data.records.forEach(r=>{if(((r.title||"")+" "+(r.note||"")+" "+(r.fileName||"")+" "+(r.date||"")).toLowerCase().includes(q))hits.push({kind:"Record",title:r.title||r.fileName||"Record",sub:`${formatRecordDate(r.date)}${r.fileName?` · ${r.fileName}`:""}`,page:"records",recordId:String(r.id)})});hits=hits.slice(0,30);box.innerHTML=hits.length?hits.map(h=>`<button class="search-hit" data-page="${h.page}" data-eqid="${esc(h.equipmentId||"")}" data-rid="${esc(h.recordId||"")}" onclick="openSearchHit(this.dataset.page,this.dataset.eqid,this.dataset.rid)"><span class="search-kind">${h.kind}</span><br><b>${esc(h.title)}</b><br><span class="small">${esc(h.sub)}</span></button>`).join(""):`<div class="empty">No matches.</div>`;box.style.display="block"}
+function openSearchHit(page,equipmentId="",recordId=""){document.getElementById("globalSearchResults").style.display="none";document.getElementById("globalSearch").value="";if(page==="returns"&&equipmentId){let x=data.equipment.find(v=>String(v.id)===String(equipmentId));if(x&&x.holder!==null&&x.holder!==undefined){activatePage("returns");returnEmployee=null;returnSelected.clear();returnChooser.style.display="block";returnDetail.style.display="none";returnSearch.value="";renderReturn();setTimeout(()=>{let card=document.querySelector(`#returnEmployeeGrid .emp-card[data-employee-index="${employeeIndexFromHolder(x.holder)}"]`);if(card){card.classList.add("search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>card.classList.remove("search-highlight"),3500)}},60);return}}if(page==="records"&&recordId){activatePage("records");setTimeout(()=>{let el=document.querySelector(`[data-record-id="${CSS.escape(String(recordId))}"]`);if(el){el.classList.add("search-highlight");el.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>el.classList.remove("search-highlight"),3000)}},60);return}openPage(page)}
 document.addEventListener("click",e=>{if(!e.target.closest("#globalSearch")&&!e.target.closest("#globalSearchResults")){let b=document.getElementById("globalSearchResults");if(b)b.style.display="none"}});
 let editingEmployeeIndex=null;
 
@@ -1505,6 +1578,23 @@ function backToEmployees(){
  employeeSearch.value="";
  renderFastEmployees();
 }
+function employeeIndexFromHolder(holder){
+  if(holder===null||holder===undefined||holder==="")return -1;
+  let direct=Number(holder);
+  if(Number.isInteger(direct)&&direct>=0&&direct<data.employees.length)return direct;
+  let byId=data.employees.findIndex(e=>e&&e.id!==undefined&&String(e.id)===String(holder));
+  if(byId>=0)return byId;
+  let byNum=data.employees.findIndex(e=>e&&String(e.num||"")===String(holder));
+  return byNum;
+}
+function employeeFromHolder(holder){let i=employeeIndexFromHolder(holder);return i>=0?data.employees[i]:null}
+function equipmentIsCheckedOut(x){
+  return x&&x.holder!==null&&x.holder!==undefined&&x.holder!==""&&String(x.status||"").trim().toLowerCase()==="checked out";
+}
+function checkoutTimeMs(x){let n=Number(x?.checkedOutAt);return Number.isFinite(n)?n:0}
+function checkoutStamp(x){let n=checkoutTimeMs(x);if(!n)return "Time unavailable";let d=new Date(n);return `${d.toLocaleDateString("en-US",{month:"2-digit",day:"2-digit",year:"numeric"})} · ${d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`}
+function newestCheckoutFirst(a,b){return checkoutTimeMs(b)-checkoutTimeMs(a)}
+
 function equipmentKey(name){return String(name||"").trim().toLowerCase()}
 function equipmentMax(name){return 1}
 function employeeOutstandingFor(name,employee=selectedEmployee){let key=equipmentKey(name);return data.equipment.filter(x=>equipmentKey(x.name)===key&&String(x.status||"").trim().toLowerCase()==="checked out"&&x.holder!==null&&x.holder!==undefined&&String(x.holder)===String(employee)).length}
@@ -1526,22 +1616,32 @@ function useCheckoutConsumable(id){if(selectedEmployee===null)return;let c=data.
 function fastCheckout(){
  if(selectedEmployee===null||!selectedGear.size)return;
  if(!data.usage[selectedEmployee])data.usage[selectedEmployee]={};
- let before=[];data.equipment.forEach(x=>{if(selectedGear.has(x.id)){before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});x.holder=selectedEmployee;x.checkedOutAt=Date.now();x.status="Checked Out";data.usage[selectedEmployee][x.id]=(data.usage[selectedEmployee][x.id]||0)+1;logEvent("CHECK OUT",{employee:selectedEmployee,equipmentId:x.id,equipment:x.name,variant:x.variant})}});
- let who=data.employees[selectedEmployee]?.name||"employee",count=selectedGear.size;setUndo({kind:"equipment",before});
- selectedEmployee=null;selectedGear.clear();selectedEmployeeInfo.textContent="";gearArea.style.display="none";employeeChooser.style.display="block";employeeSearch.value="";save();toastMsg(`${count} item${count===1?"":"s"} checked out to ${who}`);
+ let before=[],emp=data.employees[selectedEmployee],checked=[];
+ data.equipment.forEach(x=>{
+   if(!selectedGear.has(x.id))return;
+   before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});
+   x.holder=selectedEmployee;x.checkedOutAt=Date.now();x.status="Checked Out";
+   data.usage[selectedEmployee][x.id]=(data.usage[selectedEmployee][x.id]||0)+1;
+   logEvent("CHECK OUT",{employee:selectedEmployee,employeeNum:emp?.num||"",employeeName:emp?.name||"",monitor:emp?.monitor||"",equipmentId:x.id,equipment:x.name,variant:x.variant});
+   checked.push(x.id);
+ });
+ if(!checked.length){selectedGear.clear();renderFastGear();toastMsg("No equipment was checked out.",false);return}
+ let who=emp?.name||"employee",count=checked.length;setUndo({kind:"equipment",before});
+ selectedEmployee=null;selectedGear.clear();selectedEmployeeInfo.textContent="";gearArea.style.display="none";employeeChooser.style.display="block";employeeSearch.value="";
+ save();toastMsg(`${count} item${count===1?"":"s"} checked out to ${who}`);
 }
 employeeSearch.oninput=renderFastEmployees;
 function renderCheckoutCheckedOut(){
- let allOut=data.equipment.filter(x=>String(x.status||"").trim().toLowerCase()==="checked out"&&x.holder!==null&&x.holder!==undefined);
- let out=selectedEmployee===null?allOut:allOut.filter(x=>String(x.holder)===String(selectedEmployee));
- checkedOutList.innerHTML=out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[Number(x.holder)];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${e?esc(e.name)+" · #"+esc(e.num):"Unknown"}</td><td><button class="btn light" onclick="returnEquip(${x.id})">Return</button></td></tr>`}).join("")}</table>`:`<div class="empty">Nothing is checked out${selectedEmployee===null?"":" to this employee"}.</div>`;
+ let allOut=data.equipment.filter(equipmentIsCheckedOut).sort(newestCheckoutFirst);
+ let out=(selectedEmployee===null?allOut:allOut.filter(x=>employeeIndexFromHolder(x.holder)===Number(selectedEmployee))).sort(newestCheckoutFirst);
+ checkedOutList.innerHTML=out.length?`<div class="checked-out-list">${out.map(x=>{let e=employeeFromHolder(x.holder);return `<div class="checked-out-row"><div class="checked-out-main"><b>${esc(x.name)}</b><span>${esc(x.variant||"No variant")}</span></div><div class="checked-out-person">${e?`#${esc(e.num)} ${esc(e.name)}`:"Unknown"}</div><div class="checked-out-time">${esc(checkoutStamp(x))}</div><button class="btn light checked-out-return" onclick="returnEquip(${JSON.stringify(x.id)})">Return</button></div>`}).join("")}</div>`:`<div class="empty">Nothing is checked out${selectedEmployee===null?"":" to this employee"}.</div>`;
  equipOutStat.textContent=allOut.length;
 }
 function renderCheckout(){
  renderFastEmployees();
  renderCheckoutCheckedOut();
 }
-function returnEquip(id){let x=data.equipment.find(x=>x.id===id);if(!x)return;let before=[{id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status}];logEvent("RETURN",{employee:x.holder,equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available";setUndo({kind:"equipment",before});save();toastMsg(`${x.name} returned`)}
+function returnEquip(id){let x=data.equipment.find(x=>String(x.id)===String(id));if(!x)return;let before=[{id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status}],ei=employeeIndexFromHolder(x.holder),emp=ei>=0?data.employees[ei]:null;logEvent("RETURN",{employee:ei>=0?ei:x.holder,employeeNum:emp?.num||"",employeeName:emp?.name||"",monitor:emp?.monitor||"",equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available";setUndo({kind:"equipment",before});save();toastMsg(`${x.name} returned`)}
 let equipmentBulkMode=false, consumablesBulkMode=false, editingConsumableId=null, analyticsDays=7, equipmentShowHidden=false, consumableShowHidden=false;
 let editingEquipmentId=null;
 function equipmentGroup(name){let n=String(name||"").toLowerCase();if(/grinder|impact|sawzall|band saw|mag drill|bevel|die grinder|needle scaler/.test(n))return "Power Tools";if(/chain fall|come-along|lever hoist|beam clamp/.test(n))return "Rigging";if(/pipe jack|tri-stand|flange|hi-lo|wrap-a-round|level|porta power|bottle jack/.test(n))return "Pipe Fit-Up";if(/pipe wrench|sledge|spud|wrench set|torque wrench/.test(n))return "Hand Tools";if(/extension cord|spider box/.test(n))return "Electrical";if(/harness|monitor|tripod|retrieval|blower|lock/.test(n))return "Safety / Confined Space";return "Other"}
@@ -1761,15 +1861,80 @@ function renderOverdue(){
 
 
 let returnEmployee=null,returnSelected=new Set();
-function renderReturn(){let input=document.getElementById("returnSearch"),q=(input?.value||"").trim().toLowerCase();let assigned=new Map();data.equipment.forEach(x=>{if(x.holder!==null&&x.holder!==undefined)assigned.set(Number(x.holder),(assigned.get(Number(x.holder))||0)+1)});let rows=[...assigned.entries()].map(([i,n])=>({e:data.employees[i],i,n})).filter(x=>x.e&&(!q||(`${x.e.name} ${x.e.num} ${x.e.monitor}`).toLowerCase().includes(q))).sort((a,b)=>{let an=parseInt(a.e.num,10),bn=parseInt(b.e.num,10);if(Number.isFinite(an)&&Number.isFinite(bn))return an-bn;if(Number.isFinite(an))return -1;if(Number.isFinite(bn))return 1;return String(a.e.num||"").localeCompare(String(b.e.num||""),undefined,{numeric:true,sensitivity:"base"})});let itemRows=q?data.equipment.filter(x=>x.holder!==null&&x.holder!==undefined&&(`${x.name||""} ${x.variant||""}`).toLowerCase().includes(q)).map(x=>({x,e:data.employees[Number(x.holder)]})).filter(r=>r.e):[];let grid=document.getElementById("returnEmployeeGrid"),html="";if(rows.length)html+=rows.map(x=>`<button class="emp-card" data-employee-index="${x.i}" onclick="pickReturnEmployee(${x.i})"><b>#${esc(x.e.num)} ${esc(x.e.name)}</b><br><span class="small">${x.n} OUT</span></button>`).join("");if(itemRows.length)html+=itemRows.map(r=>`<button class="emp-card" onclick="pickReturnItem(${r.x.id})"><b>${esc(r.x.name)}</b><br><span class="small">Variant: ${esc(r.x.variant||"—")}</span><br><span class="small">Checked out to: #${esc(r.e.num)} ${esc(r.e.name)}</span></button>`).join("");grid.innerHTML=html||`<div class="empty">${q?"No matching employees or checked-out equipment.":"Nobody currently has equipment out."}</div>`}
+function renderReturn(){let input=document.getElementById("returnSearch"),q=(input?.value||"").trim().toLowerCase();let assigned=new Map();data.equipment.forEach(x=>{if(equipmentIsCheckedOut(x)){let idx=employeeIndexFromHolder(x.holder);if(idx>=0)assigned.set(idx,(assigned.get(idx)||0)+1)}});let rows=[...assigned.entries()].map(([i,n])=>{let active=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===i).sort(newestCheckoutFirst);return {e:data.employees[i],i,n,latest:active[0]||null}}).filter(x=>x.e&&(!q||(`${x.e.name} ${x.e.num} ${x.e.monitor}`).toLowerCase().includes(q))).sort((a,b)=>checkoutTimeMs(b.latest)-checkoutTimeMs(a.latest)||String(a.e.num||"").localeCompare(String(b.e.num||""),undefined,{numeric:true,sensitivity:"base"}));let itemRows=q?data.equipment.filter(equipmentIsCheckedOut).filter(x=>(`${x.name||""} ${x.variant||""}`).toLowerCase().includes(q)).sort(newestCheckoutFirst).map(x=>({x,e:employeeFromHolder(x.holder)})).filter(r=>r.e):[];let grid=document.getElementById("returnEmployeeGrid"),html="";if(rows.length)html+=rows.map(x=>`<button class="emp-card return-employee-card" data-employee-index="${x.i}" onclick="pickReturnEmployee(${x.i})"><b>#${esc(x.e.num)} ${esc(x.e.name)}</b><span class="small">${x.n} out${x.latest?` · Latest ${esc(checkoutStamp(x.latest))}`:""}</span></button>`).join("");if(itemRows.length)html+=itemRows.map(r=>`<button class="emp-card return-search-item" onclick="pickReturnItem(${JSON.stringify(r.x.id)})"><b>${esc(r.x.name)}</b><span class="small">${esc(r.x.variant||"No variant")} · #${esc(r.e.num)} ${esc(r.e.name)}</span><span class="small">${esc(checkoutStamp(r.x))}</span></button>`).join("");grid.innerHTML=html||`<div class="empty">${q?"No matching employees or checked-out equipment.":"Nobody currently has equipment out."}</div>`}
 function pickReturnEmployee(i){returnEmployee=i;returnSelected.clear();returnChooser.style.display="none";returnDetail.style.display="block";returnPerson.textContent=`#${data.employees[i].num} ${data.employees[i].name}`;renderReturnItems()}
-function pickReturnItem(id){let x=data.equipment.find(v=>String(v.id)===String(id));if(!x||x.holder===null||x.holder===undefined)return;let i=Number(x.holder);pickReturnEmployee(i);returnSelected.add(x.id);renderReturnItems();setTimeout(()=>{let cards=[...document.querySelectorAll("#returnItemGrid .gear-card")],card=cards.find(c=>c.getAttribute("onclick")===`toggleReturnNew(${x.id})`);if(card){card.classList.add("search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>card.classList.remove("search-highlight"),2500)}},40)}
+function pickReturnItem(id){let x=data.equipment.find(v=>String(v.id)===String(id));if(!x||x.holder===null||x.holder===undefined)return;let i=employeeIndexFromHolder(x.holder);if(i<0)return;pickReturnEmployee(i);returnSelected.add(x.id);renderReturnItems();setTimeout(()=>{let cards=[...document.querySelectorAll("#returnItemGrid .gear-card")],card=cards.find(c=>c.getAttribute("onclick")===`toggleReturnNew(${x.id})`);if(card){card.classList.add("search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>card.classList.remove("search-highlight"),2500)}},40)}
 function backReturn(){returnEmployee=null;returnSelected.clear();returnChooser.style.display="block";returnDetail.style.display="none";returnSearch.value="";renderReturn()}
-function renderReturnItems(){if(returnEmployee===null)return;let items=data.equipment.filter(x=>x.holder===returnEmployee);returnItemGrid.innerHTML=items.map(x=>`<button class="gear-card ${returnSelected.has(x.id)?"selected":""}" onclick="toggleReturnNew(${x.id})"><b>${returnSelected.has(x.id)?"✓ ":""}${esc(x.name)}</b><br><span class="small">${esc(x.variant)}</span></button>`).join("");returnSelectedButton.textContent=`RETURN SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`}
+function renderReturnItems(){if(returnEmployee===null)return;let items=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===Number(returnEmployee)).sort(newestCheckoutFirst);returnItemGrid.innerHTML=items.map(x=>`<button class="gear-card return-item-card ${returnSelected.has(x.id)?"selected":""}" onclick="toggleReturnNew(${JSON.stringify(x.id)})"><b>${returnSelected.has(x.id)?"✓ ":""}${esc(x.name)}</b><span class="small">${esc(x.variant||"No variant")}</span><span class="checkout-card-time">${esc(checkoutStamp(x))}</span></button>`).join("");returnSelectedButton.textContent=`RETURN SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`;returnSelectedButton.disabled=!returnSelected.size;let mb=document.getElementById("moveSelectedButton");if(mb){mb.textContent=`MOVE SELECTED${returnSelected.size?` (${returnSelected.size})`:""}`;mb.disabled=!returnSelected.size}}
 function toggleReturnNew(id){returnSelected.has(id)?returnSelected.delete(id):returnSelected.add(id);renderReturnItems()}
-function doReturns(ids){if(!ids.length)return;let before=[];ids.forEach(id=>{let x=data.equipment.find(v=>v.id===id);if(!x)return;before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});logEvent("RETURN",{employee:x.holder,equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available"});setUndo({kind:"equipment",before});save();toastMsg(`${ids.length} item${ids.length===1?"":"s"} returned`)}
-function returnSelectedItems(){let ids=[...returnSelected];if(!ids.length)return;doReturns(ids);returnSelected.clear();backReturn()}
-function returnAllItems(){let ids=data.equipment.filter(x=>x.holder===returnEmployee).map(x=>x.id);doReturns(ids);backReturn()}
+function doReturns(ids){if(!ids.length)return;let before=[];ids.forEach(id=>{let x=data.equipment.find(v=>v.id===id);if(!x)return;before.push({id:x.id,holder:x.holder,checkedOutAt:x.checkedOutAt,status:x.status});let ei=employeeIndexFromHolder(x.holder),emp=ei>=0?data.employees[ei]:null;logEvent("RETURN",{employee:ei>=0?ei:x.holder,employeeNum:emp?.num||"",employeeName:emp?.name||"",monitor:emp?.monitor||"",equipmentId:x.id,equipment:x.name,variant:x.variant});x.holder=null;x.checkedOutAt=null;x.status="Available"});setUndo({kind:"equipment",before});save();toastMsg(`${ids.length} item${ids.length===1?"":"s"} returned`)}
+function returnSelectedItems(){let ids=[...returnSelected];if(!ids.length)return;doReturns(ids);returnSelected.clear();renderReturnItems()}
+function returnAllItems(){let ids=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===Number(returnEmployee)).map(x=>x.id);doReturns(ids);returnSelected.clear();renderReturnItems()}
+
+let moveCheckoutTarget=null;
+function ensureMoveCheckoutModal(){
+  let m=document.getElementById("moveCheckoutModal");
+  if(m)return m;
+  m=document.createElement("div");
+  m.id="moveCheckoutModal";
+  m.className="move-checkout-modal";
+  m.innerHTML=`<div class="move-checkout-box" role="dialog" aria-modal="true">
+    <div class="row between" style="align-items:center"><h3 style="margin:0">Move Checkout</h3><button type="button" class="move-checkout-close" onclick="closeMoveSelected()" aria-label="Close">×</button></div>
+    <div id="moveCheckoutSummary" class="small" style="margin:6px 0 10px"></div>
+    <input id="moveCheckoutSearch" placeholder="Search employee or #" autocomplete="off" oninput="renderMoveEmployees()">
+    <div id="moveCheckoutEmployees" class="move-checkout-employees"></div>
+    <div class="move-checkout-actions">
+      <button type="button" class="btn light" onclick="closeMoveSelected()">Cancel</button>
+      <button id="confirmMoveCheckoutBtn" type="button" class="btn" onclick="confirmMoveSelected()" disabled>Move Selected</button>
+    </div>
+  </div>`;
+  m.addEventListener("click",e=>{if(e.target===m)closeMoveSelected()});
+  document.body.appendChild(m);
+  return m;
+}
+function openMoveSelected(){
+  if(returnEmployee===null||!returnSelected.size){toastMsg("Select at least one checked-out item first.",false);return}
+  moveCheckoutTarget=null;
+  let m=ensureMoveCheckoutModal(),from=data.employees[returnEmployee];
+  document.getElementById("moveCheckoutSummary").textContent=`Move ${returnSelected.size} selected item${returnSelected.size===1?"":"s"} from #${from?.num||""} ${from?.name||""} to:`;
+  document.getElementById("moveCheckoutSearch").value="";
+  document.getElementById("confirmMoveCheckoutBtn").disabled=true;
+  renderMoveEmployees();
+  m.classList.add("open");
+  setTimeout(()=>document.getElementById("moveCheckoutSearch")?.focus(),50);
+}
+function closeMoveSelected(){document.getElementById("moveCheckoutModal")?.classList.remove("open");moveCheckoutTarget=null}
+function renderMoveEmployees(){
+  let q=(document.getElementById("moveCheckoutSearch")?.value||"").trim().toLowerCase(),box=document.getElementById("moveCheckoutEmployees");if(!box)return;
+  let rows=data.employees.map((e,i)=>({e,i})).filter(({e,i})=>i!==Number(returnEmployee)&&(!q||`${e.name} ${e.num} ${e.monitor}`.toLowerCase().includes(q)));
+  box.innerHTML=rows.length?rows.map(({e,i})=>`<button type="button" class="move-employee-choice ${moveCheckoutTarget===i?"selected":""}" onclick="selectMoveEmployee(${i})"><b>#${esc(e.num)} ${esc(e.name)}</b>${e.monitor?`<span>Monitor ${esc(e.monitor)}</span>`:""}</button>`).join(""):`<div class="empty">No matching employees.</div>`;
+}
+function selectMoveEmployee(i){moveCheckoutTarget=i;renderMoveEmployees();let b=document.getElementById("confirmMoveCheckoutBtn");if(b)b.disabled=false}
+function confirmMoveSelected(){
+  if(returnEmployee===null||moveCheckoutTarget===null||!returnSelected.size)return;
+  let fromIndex=Number(returnEmployee),toIndex=Number(moveCheckoutTarget),from=data.employees[fromIndex],to=data.employees[toIndex];
+  if(!to)return;
+  let ids=[...returnSelected],moved=[];
+  ids.forEach(id=>{
+    let x=data.equipment.find(v=>String(v.id)===String(id));
+    if(!x||!equipmentIsCheckedOut(x)||employeeIndexFromHolder(x.holder)!==fromIndex)return;
+    let oldHolder=x.holder;
+    x.holder=toIndex;
+    logEvent("TRANSFER",{
+      employee:toIndex,employeeNum:to.num||"",employeeName:to.name||"",monitor:to.monitor||"",
+      fromEmployee:fromIndex,fromEmployeeNum:from?.num||"",fromEmployeeName:from?.name||"",
+      equipmentId:x.id,equipment:x.name,variant:x.variant,checkedOutAt:x.checkedOutAt||null
+    });
+    moved.push(x);
+  });
+  if(!moved.length){toastMsg("Nothing was moved.",false);closeMoveSelected();return}
+  save();
+  closeMoveSelected();
+  returnSelected.clear();
+  let remaining=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeIndexFromHolder(x.holder)===fromIndex).length;
+  if(remaining){renderReturnItems()}else{backReturn()}
+  toastMsg(`${moved.length} item${moved.length===1?"":"s"} moved to ${to.name}`,false);
+}
 returnSearch.oninput=renderReturn;
 
 let reorderSortMode="default",reorderStatusFilter="all";
@@ -1779,7 +1944,7 @@ function renderReorderNew(){let r=data.consumables.filter(c=>!c.hidden&&c.qty<=c
 
 function showMore(name,btn){document.querySelectorAll(".morePanel").forEach(x=>x.style.display="none");document.querySelectorAll(".pill").forEach(x=>x.classList.remove("active"));let p=document.getElementById("more-"+name);if(p)p.style.display="block";if(btn)btn.classList.add("active");renderMore()}
 function elapsed(ms){let h=Math.floor(ms/3600000),d=Math.floor(h/24);return d?`${d}d ${h%24}h`:`${h}h ${Math.floor(ms/60000)%60}m`}
-function historyDetail(h){let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;return [e?`#${e.num} ${e.name}`:"",h.equipment,h.variant,h.item].filter(Boolean).join(" · ")}
+function historyDetail(h){let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let who=h.employeeName?`${h.employeeNum?`#${h.employeeNum} `:""}${h.employeeName}`:(e?`#${e.num} ${e.name}`:"");return [who,h.equipment,h.variant,h.item].filter(Boolean).join(" · ")}
 function setAnalyticsDays(days){analyticsDays=days;renderMore()}
 function deleteHistoryEntry(i){if(!Number.isInteger(i)||i<0||i>=data.history.length)return;if(!confirm("Delete this history entry permanently? You can use Undo Last Action immediately afterward if needed."))return;data.history.splice(i,1);save();renderMore()}
 
@@ -1807,10 +1972,10 @@ function historyDatePass(t){let d=new Date(t);if(Number.isNaN(d.getTime()))retur
 function applyCheckoutHistoryFilter(){checkoutHistoryFrom=document.getElementById("checkoutHistoryFrom")?.value||"";checkoutHistoryTo=document.getElementById("checkoutHistoryTo")?.value||"";renderMore()}
 function clearCheckoutHistoryFilter(){checkoutHistoryFrom="";checkoutHistoryTo="";checkoutHistorySearch="";renderMore()}
 function applyCheckoutHistorySearch(){checkoutHistorySearch=(document.getElementById("checkoutHistorySearch")?.value||"").trim().toLowerCase();renderMore();setTimeout(()=>{let el=document.getElementById("checkoutHistorySearch");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},0)}
-function historySearchPass(h){if(!checkoutHistorySearch)return true;let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let hay=[h.action,e?.num,e?.name,e?.monitor,h.employee,h.employeeNum,h.equipment,h.item,h.variant,new Date(h.time).toLocaleDateString()].filter(v=>v!==undefined&&v!==null).join(" ").toLowerCase();return hay.includes(checkoutHistorySearch)}
+function historySearchPass(h){if(!checkoutHistorySearch)return true;let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let hay=[h.action,h.employeeName,h.employeeNum,h.monitor,e?.num,e?.name,e?.monitor,h.employee,h.equipment,h.item,h.variant,new Date(h.time).toLocaleDateString()].filter(v=>v!==undefined&&v!==null).join(" ").toLowerCase();return hay.includes(checkoutHistorySearch)}
 function checkoutHistoryFilterHtml(){return `<div style="margin:8px 0"><input id="checkoutHistorySearch" value="${esc(checkoutHistorySearch)}" placeholder="Search employee, item, variant…" style="width:100%" oninput="applyCheckoutHistorySearch()"></div><div class="history-filter"><label><span>From</span><input type="date" id="checkoutHistoryFrom" value="${checkoutHistoryFrom}"></label><label><span>To</span><input type="date" id="checkoutHistoryTo" value="${checkoutHistoryTo}"></label><button class="btn history-apply" onclick="applyCheckoutHistoryFilter()">Apply</button><button class="btn light history-clear" onclick="clearCheckoutHistoryFilter()">Clear</button></div>`}
-function renderMore(){let now=Date.now(),over=data.equipment.filter(isOverdueByDate),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>(o.x.action==="CHECK OUT"||o.x.action==="RETURN")&&historyDatePass(o.x.time)&&historySearchPass(o.x)),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
-let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${checkoutHistoryFilterHtml()}${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().sort((a,b)=>new Date(b.x.time).getTime()-new Date(a.x.time).getTime()).map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):"");let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");return `<tr data-history-index="${i}"><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${who}${who&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out or return history yet.</div>`}</div>`;
+function renderMore(){let now=Date.now(),over=data.equipment.filter(isOverdueByDate),bad=data.equipment.filter(x=>x.status==="Damaged"||x.status==="Missing"),visible=data.history.map((x,i)=>({x,i})).filter(o=>(o.x.action==="CHECK OUT"||o.x.action==="RETURN"||o.x.action==="TRANSFER")&&historyDatePass(o.x.time)&&historySearchPass(o.x)),since=now-7*86400000,w=data.history.filter(x=>new Date(x.time).getTime()>=since),co=w.filter(x=>x.action==="CHECK OUT").length,rt=w.filter(x=>x.action==="RETURN").length,usage=consumableUsageCounts(analyticsDays),cu=Object.values(usage).reduce((a,b)=>a+b,0),period=analyticsDays===7?"7 Days":"1 Month";
+let hist=`<div class="card"><div class="row between"><h3 style="margin:0">Check Out History</h3></div>${checkoutHistoryFilterHtml()}${visible.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Action</th><th>Details</th><th></th></tr>${visible.slice().sort((a,b)=>new Date(b.x.time).getTime()-new Date(a.x.time).getTime()).map(({x,i})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;let who=x.employeeName?`${x.employeeNum?`#${esc(x.employeeNum)} `:""}${esc(x.employeeName)}`:(e?`${e.num?`#${esc(e.num)} `:""}${esc(e.name||"")}`:(typeof x.employee==="string"?esc(x.employee):""));let item=[x.equipment||x.item||"",x.variant||""].filter(Boolean).map(esc).join(" · ");let transfer=x.action==="TRANSFER"?`${x.fromEmployeeNum?`#${esc(x.fromEmployeeNum)} `:""}${esc(x.fromEmployeeName||"Unknown")} → ${who||"Unknown"}`:who;return `<tr data-history-index="${i}"><td>${new Date(x.time).toLocaleString()}</td><td><b>${esc(x.action)}</b></td><td>${transfer}${transfer&&item?" · ":""}${item}</td><td><button class="history-delete" onclick="deleteHistoryEntry(${i})" aria-label="Delete history entry">×</button></td></tr>`}).join("")}</table></div>`:`<div class="empty">No check out, return, or transfer history yet.</div>`}</div>`;
 document.getElementById("more-overdue").innerHTML=`<div class="card"><h3>Overdue (${over.length})</h3><div class="small" style="margin-bottom:8px">Equipment becomes overdue when it is still checked out on the next calendar day.</div>${over.length?`<table><tr><th>Employee</th><th>Equipment</th><th>Overdue Since</th></tr>${over.map(x=>`<tr><td>${esc(data.employees[x.holder]?.name||"Unknown")}</td><td><b>${esc(x.name)}</b> · ${esc(x.variant)}</td><td>${overdueSinceDate(x)}</td></tr>`).join("")}</table>`:`<div class="empty">Nothing overdue.</div>`}</div>`;document.getElementById("more-damaged").innerHTML=`<div class="card"><h3>Damaged / Missing (${bad.length})</h3>${bad.length?`<div class="damaged-table-wrap"><table class="damaged-table"><tr><th>Equipment</th><th>ID</th><th>Status</th><th></th></tr>${bad.map(x=>{let hasNotes=Array.isArray(x.notes)&&x.notes.length,idx=data.equipment.indexOf(x);return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(x.status)}</td><td class="damaged-action-cell"><div class="damaged-actions"><button type="button" class="btn light damaged-mini-btn damaged-note-btn ${hasNotes?"has-note":""}" onclick="openEquipmentNoteAt(${idx})">${hasNotes?"View / Add Note":"Add Note"}</button><button type="button" class="btn light damaged-mini-btn damaged-return-btn" onclick="restoreServiceAt(${idx})">Return to Service</button></div></td></tr>`}).join("")}</table></div>`:`<div class="empty">Nothing damaged or missing.</div>`}</div>`;document.getElementById("more-history").innerHTML="";document.getElementById("more-analytics").innerHTML=`<div class="grid"><div class="stat"><span class="label">Checkouts / 7 Days</span><b>${co}</b></div><div class="stat"><span class="label">Returns / 7 Days</span><b>${rt}</b></div><div class="stat"><span class="label">Consumables Used / ${period}</span><b>${cu}</b></div><div class="stat"><span class="label">Overdue Now</span><b>${over.length}</b></div></div><div class="card"><div class="row between"><p class="section-title">Consumable Usage</p><div class="row"><button class="btn ${analyticsDays===7?"":"light"}" onclick="setAnalyticsDays(7)">7 DAYS</button><button class="btn ${analyticsDays===30?"":"light"}" onclick="setAnalyticsDays(30)">1 MONTH</button></div></div>${data.consumables.map(c=>`<div class="row between" style="margin:10px 0"><b>${esc(c.name)} · ${esc(c.variant)}</b><span>${usage[c.id]||0}</span></div>`).join("")}</div>${analyticsHistoryHtml()}`;document.getElementById("more-exports").innerHTML=`<div class="card"><h3>Reports & Backup</h3><div class="export-stack"><button class="btn" onclick="exportCheckoutHistory()">Export Full Check Out History</button><button class="btn" onclick="exportConsumablesHistory()">Export Full Consumables History</button><button class="btn light" onclick="exportBackup()">Download Backup</button><label class="btn light">Restore Backup<input type="file" accept=".json" onchange="restoreBackup(event)" style="display:none"></label></div></div>${hist}`;document.getElementById("more-employees").innerHTML=`<div class="card"><div class="employee-actions"><button class="btn" onclick="openAddEmployeeModal()">Add Employee</button><button class="btn light" onclick="toggleEmployeeBulk()">${employeeBulkMode?"Cancel Bulk Edit":"Bulk Edit"}</button></div><div>${employeeBulkMode?employeeBulkRows():data.employees.map((e,i)=>employeeRowHtml(e,i,true)).join("")}</div></div>`;updateFloatingEditBar()}
 function addEmployeeFromMore(){openAddEmployeeModal()}
 let activeEquipmentNoteId=null;
@@ -1843,7 +2008,7 @@ function saveEquipmentNote(){
 function csv(v){return `"${String(v??"").replaceAll('"','""')}"`}
 function downloadFile(name,text,type="text/csv"){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function exportUsageHistory(){let rows=[["Date / Time","Employee #","Employee","Item","Variant","Quantity Used"]];[...usageEvents()].reverse().forEach(({x})=>{let e=x.employee!==undefined&&x.employee!==null?data.employees[x.employee]:null;rows.push([new Date(x.time).toLocaleString(),e?.num||"",e?.name||"",x.item||"",x.variant||"",Math.abs(Number(x.qty)||0)])});downloadFile("tool-room-consumable-usage-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
-function exportCheckoutHistory(){let rows=[["Time","Action","Employee #","Employee","Equipment","Variant / Label","Equipment ID"]];[...data.history].filter(h=>h.action==="CHECK OUT"||h.action==="RETURN").forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||h.employeeNum||"",e?.name||h.employee||"",h.equipment||"",h.variant||"",h.equipmentId||""])});downloadFile("tool-room-full-check-out-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
+function exportCheckoutHistory(){let rows=[["Time","Action","From Employee #","From Employee","To / Employee #","To / Employee","Equipment","Variant / Label","Equipment ID"]];[...data.history].filter(h=>h.action==="CHECK OUT"||h.action==="RETURN"||h.action==="TRANSFER").forEach(h=>{let e=h.employeeName?{num:h.employeeNum||"",name:h.employeeName||""}:(h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null);rows.push([new Date(h.time).toLocaleString(),h.action,h.fromEmployeeNum||"",h.fromEmployeeName||"",e?.num||h.employeeNum||"",e?.name||h.employee||"",h.equipment||"",h.variant||"",h.equipmentId||""])});downloadFile("tool-room-full-check-out-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
 function exportConsumablesHistory(){let rows=[["Time","Action","Employee #","Employee","Item","Variant","Quantity"]];[...data.history].filter(h=>h.action==="CONSUMABLE USE"||h.action==="RESTOCK").forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||"",e?.name||"",h.item||"",h.variant||"",Math.abs(Number(h.qty)||0)])});downloadFile("tool-room-full-consumables-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
 function exportHistory(){let rows=[["Time","Action","Employee #","Employee","Item","Variant / Label","Quantity","Category","Details"]];[...data.history].forEach(h=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null;let item=h.equipment||h.item||"",variant=h.variant||"",cat="";let eq=data.equipment.find(x=>x.name===item&&String(x.variant||"")===String(variant));let co=data.consumables.find(x=>x.name===item&&String(x.variant||"")===String(variant));cat=(eq||co)?.category||"";rows.push([new Date(h.time).toLocaleString(),h.action,e?.num||"",e?.name||"",item,variant,h.qty||"",cat,historyDetail(h)])});downloadFile("tool-room-full-activity-history.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
 function exportInventory(){let rows=[["Inventory Type","Category","Item","Variant / Label","Quantity","Status","Assigned Employee #","Assigned Employee","Low At"]];data.equipment.forEach(x=>{let e=x.holder!==null&&x.holder!==undefined?data.employees[x.holder]:null;rows.push(["Equipment",x.category||"Other",x.name,x.variant,"",x.status|| (x.holder===null?"Available":"Checked Out"),e?.num||"",e?.name||"",""])});data.consumables.forEach(c=>rows.push(["Consumable",c.category||"Other",c.name,c.variant,c.qty,status(c)[0],"","",c.min]));data.miscellaneous.forEach(x=>rows.push(["Miscellaneous",x.category||"Other",x.name,x.variant||"",x.qty||0,"In Inventory","","",""]));downloadFile("tool-room-complete-inventory.csv",rows.map(r=>r.map(csv).join(",")).join("\n"))}
@@ -1872,7 +2037,7 @@ function renderRecords(){
       <button type="button" class="record-entry-delete" data-record-delete="${id}" aria-label="Delete record">×</button>
       <div class="row between record-entry-head"><div class="record-title">${esc(r.title||r.fileName||"Record")}</div><div class="small">${esc(formatRecordDate(r.date))}</div></div>
       ${r.note?`<div class="record-preview">${esc(r.note.replace(/\s+/g," "))}</div>`:""}
-      ${normalizeRecordAttachments(r).map((a,i)=>`<button type="button" class="record-file record-attachment-button" data-record-attachment="${id}" data-attachment-index="${i}">📎 ${esc(a.fileName||`Attachment ${i+1}`)}</button>`).join("")}
+      ${recordAttachmentCount(r)?`<button type="button" class="record-file record-attachment-button" data-record-attachments="${id}">📎 See Attachments${recordAttachmentCount(r)>1?` (${recordAttachmentCount(r)})`:""}</button>`:""}
     </div>`;
   }).join(""):`<div class="empty">${q?"No records match your search.":"No records yet."}</div>`;
 }
@@ -1894,6 +2059,20 @@ function openRecordImage(id,attachmentIndex=0){
   img.onerror=()=>{v.style.display="none";toastMsg("The saved photo could not be opened.",false)};
   img.src=a.fileData;img.alt=a.fileName||"Record photo";v.style.display="flex"
 }
+function openRecordAttachments(id){
+  let r=(data.records||[]).find(x=>String(x.id)===String(id)),items=normalizeRecordAttachments(r);
+  if(!items.length){toastMsg("This record has no attachments.",false);return}
+  if(items.length===1){openRecordImage(id,0);return}
+  let m=document.getElementById("recordAttachmentsViewer");
+  if(!m){
+    m=document.createElement("div");m.id="recordAttachmentsViewer";m.className="record-attachments-viewer";
+    m.addEventListener("click",e=>{if(e.target===m||e.target.closest(".record-attachments-close"))m.classList.remove("open")});
+    document.body.appendChild(m);
+  }
+  m.innerHTML=`<div class="record-attachments-box"><div class="record-attachments-head"><strong>Attachments</strong><button type="button" class="record-attachments-close" aria-label="Close">×</button></div><div class="record-attachments-list">${items.map((a,i)=>`<button type="button" class="record-attachment-choice" data-open-record="${esc(String(id))}" data-open-index="${i}">📎 <span>${esc(a.fileName||`Attachment ${i+1}`)}</span></button>`).join("")}</div></div>`;
+  m.querySelectorAll("[data-open-record]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();m.classList.remove("open");openRecordImage(b.dataset.openRecord,b.dataset.openIndex)}));
+  m.classList.add("open")
+}
 function bindRecordAttachmentClicks(){
   let box=document.getElementById("recordsList");
   if(!box||box.dataset.attachmentClicksBound==="1")return;
@@ -1905,10 +2084,10 @@ function bindRecordAttachmentClicks(){
       requestDeleteRecord(del.dataset.recordDelete);
       return;
     }
-    let attachment=e.target.closest("[data-record-attachment]");
+    let attachment=e.target.closest("[data-record-attachments]");
     if(attachment){
       e.preventDefault();e.stopPropagation();
-      openRecordImage(attachment.dataset.recordAttachment,attachment.dataset.attachmentIndex||0);
+      openRecordAttachments(attachment.dataset.recordAttachments);
       return;
     }
     let entry=e.target.closest(".record-entry");
@@ -1942,99 +2121,157 @@ function cancelDeleteRecord(){
   pendingRecordDeleteId=null;
   document.getElementById("recordDeleteConfirm")?.classList.remove("open");
 }
-function confirmDeleteRecord(){
+async function confirmDeleteRecord(){
   if(pendingRecordDeleteId===null)return cancelDeleteRecord();
-  let id=String(pendingRecordDeleteId);
-  let before=(data.records||[]).length;
+  let id=String(pendingRecordDeleteId),before=(data.records||[]).length;
   data.records=(data.records||[]).filter(r=>String(r.id)!==id);
-  if(data.records.length!==before){
-    save();
-    renderRecords();
-    toastMsg("Record deleted",false);
-  }
+  if(data.records.length!==before){try{await deleteAttachmentsForRecord(id)}catch(e){}save();renderRecords();toastMsg("Record deleted",false)}
   cancelDeleteRecord();
 }
 function ensureRecordModal(){let m=document.getElementById("recordModal");if(m)return m;m=document.createElement("div");m.id="recordModal";m.className="record-modal";m.style.display="none";m.innerHTML=`<div class="record-box"><h3 id="recordModalTitle">Add Record</h3><div class="record-form"><label class="small">Date</label><input id="recordDate" type="date"><input id="recordTitle" placeholder="Title (example: Inventory Invoice)"><textarea id="recordNote" placeholder="Note or description"></textarea><label class="btn light" style="text-align:center">Add / Replace Photo or File<input id="recordFile" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" style="display:none" onchange="previewRecordFile(this)"></label><div id="recordFileName" class="small"></div><div id="recordAttachmentPreview" class="record-attachment-preview"></div></div><div class="record-actions"><button id="recordDeleteBtn" class="btn red record-delete" onclick="deleteRecord()">Delete</button><button class="btn light" onclick="closeRecordEditor()">Cancel</button><button class="btn" onclick="saveRecordEditor()">Save</button></div></div>`;document.body.appendChild(m);return m}
 function syncRecordVisibleViewport(){let h=Math.round(window.visualViewport?.height||window.innerHeight||document.documentElement.clientHeight);document.documentElement.style.setProperty("--record-visible-h",h+"px")}
 function openRecordEditor(id=null){syncRecordVisibleViewport();let m=ensureRecordModal();document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";recordFileName.textContent=r?.fileName?`Current file: ${r.fileName}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)}
 function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";document.documentElement.classList.remove("record-modal-open");document.body.classList.remove("record-modal-open");editingRecordId=null}
-function normalizeRecordAttachments(r){
-  if(!r)return [];
-  if(Array.isArray(r.attachments))return r.attachments.filter(a=>a&&a.fileData);
-  if(r.fileData)return [{fileData:r.fileData,fileName:r.fileName||"Attachment",fileType:r.fileType||""}];
-  return [];
+
+const RECORD_ATTACHMENT_DB="toolRoomHQAttachments";
+const RECORD_ATTACHMENT_STORE="recordAttachments";
+function openAttachmentDB(){
+  return new Promise((resolve,reject)=>{
+    let req=indexedDB.open(RECORD_ATTACHMENT_DB,1);
+    req.onupgradeneeded=()=>{let db=req.result;if(!db.objectStoreNames.contains(RECORD_ATTACHMENT_STORE)){let st=db.createObjectStore(RECORD_ATTACHMENT_STORE,{keyPath:"id"});st.createIndex("recordId","recordId",{unique:false})}};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
 }
+async function attachmentPut(a){let db=await openAttachmentDB();return new Promise((res,rej)=>{let tx=db.transaction(RECORD_ATTACHMENT_STORE,"readwrite");tx.objectStore(RECORD_ATTACHMENT_STORE).put(a);tx.oncomplete=()=>{db.close();res(a)};tx.onerror=()=>{db.close();rej(tx.error)}})}
+async function attachmentGet(id){let db=await openAttachmentDB();return new Promise((res,rej)=>{let q=db.transaction(RECORD_ATTACHMENT_STORE).objectStore(RECORD_ATTACHMENT_STORE).get(id);q.onsuccess=()=>{db.close();res(q.result||null)};q.onerror=()=>{db.close();rej(q.error)}})}
+async function attachmentsForRecord(recordId){let db=await openAttachmentDB();return new Promise((res,rej)=>{let q=db.transaction(RECORD_ATTACHMENT_STORE).objectStore(RECORD_ATTACHMENT_STORE).index("recordId").getAll(String(recordId));q.onsuccess=()=>{db.close();res((q.result||[]).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)))};q.onerror=()=>{db.close();rej(q.error)}})}
+async function deleteAttachment(id){let db=await openAttachmentDB();return new Promise((res,rej)=>{let tx=db.transaction(RECORD_ATTACHMENT_STORE,"readwrite");tx.objectStore(RECORD_ATTACHMENT_STORE).delete(id);tx.oncomplete=()=>{db.close();res()};tx.onerror=()=>{db.close();rej(tx.error)}})}
+async function deleteAttachmentsForRecord(recordId){let list=await attachmentsForRecord(recordId);for(let a of list)await deleteAttachment(a.id)}
+function recordAttachmentCount(r){return Number(r?.attachmentCount||0)||(Array.isArray(r?.attachments)?r.attachments.length:(r?.fileData?1:0))}
+function recordIsImage(a){return String(a?.fileType||a?.type||"").startsWith("image/")}
 function previewRecordFile(inp){
   let files=[...(inp.files||[])];
   recordFileName.textContent=files.length?`${files.length} file${files.length===1?"":"s"} selected`:"";
   recordAttachmentPreview.innerHTML="";
-  files.filter(f=>f.type.startsWith("image/")).forEach(f=>{
-    let u=URL.createObjectURL(f),img=document.createElement("img");
-    img.src=u;img.alt=f.name;img.onload=()=>URL.revokeObjectURL(u);
-    recordAttachmentPreview.appendChild(img);
-  });
+  files.filter(f=>f.type.startsWith("image/")).slice(0,8).forEach(f=>{let u=URL.createObjectURL(f),img=document.createElement("img");img.src=u;img.alt=f.name;img.onload=()=>URL.revokeObjectURL(u);recordAttachmentPreview.appendChild(img)});
 }
-function renderRecordAttachment(r){
-  let box=document.getElementById("recordAttachmentPreview");if(!box)return;
-  box.innerHTML="";
-  let attachments=normalizeRecordAttachments(r);
+async function renderRecordAttachment(r){
+  let box=document.getElementById("recordAttachmentPreview");if(!box)return;box.innerHTML="";
+  if(!r)return;
+  let attachments=[];
+  try{attachments=await attachmentsForRecord(r.id)}catch(e){}
   if(!attachments.length)return;
-  attachments.forEach((a,i)=>{
+  attachments.slice(0,8).forEach((a,i)=>{
     let wrap=document.createElement("div");wrap.className="record-editor-attachment";
-    if(recordIsImage(a)){
-      wrap.innerHTML=`<img src="${a.fileData}" alt="${esc(a.fileName||"Attachment")}"><div class="small">${esc(a.fileName||`Photo ${i+1}`)}</div>`;
-    }else if(a.fileType==="application/pdf"){
-      wrap.innerHTML=`<div class="small">📎 ${esc(a.fileName||`File ${i+1}`)}</div><a class="btn light record-open-file" href="${a.fileData}" target="_blank" rel="noopener">Open File</a>`;
-    }else{
-      wrap.innerHTML=`<div class="small">📎 ${esc(a.fileName||`File ${i+1}`)}</div><a class="btn light record-open-file" href="${a.fileData}" download="${esc(a.fileName||"attachment")}">Open File</a>`;
-    }
+    if(recordIsImage(a)){let url=URL.createObjectURL(a.blob);wrap.innerHTML=`<img alt="${esc(a.fileName||"Attachment")}"><div class="small">${esc(a.fileName||`Photo ${i+1}`)}</div>`;let img=wrap.querySelector("img");img.src=url;img.onload=()=>URL.revokeObjectURL(url)}
+    else wrap.innerHTML=`<div class="small">📎 ${esc(a.fileName||`File ${i+1}`)}</div>`;
     box.appendChild(wrap);
   });
 }
 function openRecordEditor(id=null){
-  syncRecordVisibleViewport();let m=ensureRecordModal();
-  document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");
-  editingRecordId=id===null?null:String(id);
-  let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;
-  recordModalTitle.textContent=r?"Record":"Add Record";
-  recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";
-  recordFile.value="";
-  let count=normalizeRecordAttachments(r).length;
-  recordFileName.textContent=count?`${count} attached file${count===1?"":"s"}`:"";
-  recordDeleteBtn.style.display=r?"inline-flex":"none";
+  syncRecordVisibleViewport();let m=ensureRecordModal();document.documentElement.classList.add("record-modal-open");document.body.classList.add("record-modal-open");
+  editingRecordId=id===null?null:String(id);let r=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;
+  recordModalTitle.textContent=r?"Record":"Add Record";recordDate.value=r?.date||recordToday();recordTitle.value=r?.title||"";recordNote.value=r?.note||"";recordFile.value="";
+  let count=recordAttachmentCount(r);recordFileName.textContent=count?`${count} attached file${count===1?"":"s"}`:"";recordDeleteBtn.style.display=r?"inline-flex":"none";
   renderRecordAttachment(r);m.style.display="flex";setTimeout(()=>recordTitle.focus(),80)
 }
 function closeRecordEditor(){let m=document.getElementById("recordModal");if(m)m.style.display="none";document.documentElement.classList.remove("record-modal-open");document.body.classList.remove("record-modal-open");editingRecordId=null}
-function fileToDataURL(f){return new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
-function compressRecordImage(file){return new Promise((resolve,reject)=>{let img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{try{let max=1600,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);resolve(c.toDataURL("image/jpeg",.78))}catch(e){URL.revokeObjectURL(u);reject(e)}};img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("image"))};img.src=u})}
+function compressRecordImageBlob(file){return new Promise((resolve,reject)=>{let img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{try{let max=1800,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?resolve(b):reject(new Error("image")),"image/jpeg",.78)}catch(e){URL.revokeObjectURL(u);reject(e)}};img.onerror=()=>{URL.revokeObjectURL(u);reject(new Error("image"))};img.src=u})}
 async function saveRecordEditor(){
-  let date=recordDate.value,title=recordTitle.value.trim(),note=recordNote.value.trim(),files=[...(recordFile.files||[])],
-      existing=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;
-  let attachments=normalizeRecordAttachments(existing).map(a=>({...a}));
-  if(!title&&!note&&!files.length&&!attachments.length){toastMsg("Add a title, note, photo or file.",false);return}
+  let date=recordDate.value,title=recordTitle.value.trim(),note=recordNote.value.trim(),files=[...(recordFile.files||[])],existing=editingRecordId?data.records.find(x=>String(x.id)===editingRecordId):null;
+  if(!title&&!note&&!files.length&&!recordAttachmentCount(existing)){toastMsg("Add a title, note, photo or file.",false);return}
+  let rec=existing||{id:Date.now(),createdAt:Date.now(),attachmentCount:0};
+  rec.date=date||recordToday();rec.title=title;rec.note=note;
+  // Save small record metadata first; attachments never go into localStorage.
+  delete rec.fileData;delete rec.fileName;delete rec.fileType;delete rec.attachments;
+  if(!existing)data.records.push(rec);
+  try{save()}catch(e){if(!existing)data.records=data.records.filter(x=>x!==rec);toastMsg("Could not save the record.",false);return}
+  let saved=0;
   for(let file of files){
     try{
-      let fileData,fileType;
-      if(file.type.startsWith("image/")){fileData=await compressRecordImage(file);fileType="image/jpeg"}
-      else{
-        if(file.size>2500000){toastMsg(`${file.name} is too large. Keep non-photo files under 2.5 MB.`,false);return}
-        fileData=await fileToDataURL(file);fileType=file.type||"application/octet-stream"
-      }
-      attachments.push({fileData,fileName:file.name,fileType});
-    }catch(e){toastMsg(`Could not read ${file.name}.`,false);return}
+      let blob=file.type.startsWith("image/")?await compressRecordImageBlob(file):file;
+      let id=`${rec.id}-${Date.now()}-${saved}-${Math.random().toString(36).slice(2,8)}`;
+      await attachmentPut({id,recordId:String(rec.id),fileName:file.name,fileType:file.type.startsWith("image/")?"image/jpeg":(file.type||"application/octet-stream"),blob,createdAt:Date.now()+saved});
+      saved++;
+    }catch(e){toastMsg(`Could not save ${file.name}.`,false)}
   }
-  let rec=existing||{id:Date.now(),createdAt:Date.now()};
-  rec.date=date||recordToday();rec.title=title;rec.note=note;rec.attachments=attachments;
-  // Keep first attachment in legacy fields so old backup/search behavior stays compatible.
-  let first=attachments[0]||{};
-  rec.fileData=first.fileData||"";rec.fileName=first.fileName||"";rec.fileType=first.fileType||"";
-  if(!existing)data.records.push(rec);
-  try{save()}catch(e){toastMsg("Storage is full. Remove a large record file and try again.",false);return}
-  closeRecordEditor();toastMsg(existing?"Record updated":"Record added")
+  try{rec.attachmentCount=(await attachmentsForRecord(rec.id)).length;save()}catch(e){}
+  closeRecordEditor();renderRecords();toastMsg(existing?"Record updated":"Record added")
+}
+async function openRecordAttachments(id){
+  let r=(data.records||[]).find(x=>String(x.id)===String(id)),items=[];
+  try{items=await attachmentsForRecord(id)}catch(e){}
+  if(!items.length){toastMsg("This record has no attachments.",false);return}
+  if(items.length===1){openRecordImage(id,0);return}
+  let m=document.getElementById("recordAttachmentsViewer");
+  if(!m){m=document.createElement("div");m.id="recordAttachmentsViewer";m.className="record-attachments-viewer";m.addEventListener("click",e=>{if(e.target===m||e.target.closest(".record-attachments-close"))m.classList.remove("open")});document.body.appendChild(m)}
+  m.innerHTML=`<div class="record-attachments-box"><div class="record-attachments-head"><strong>Attachments</strong><button type="button" class="record-attachments-close" aria-label="Close">×</button></div><div class="record-attachments-list">${items.map((a,i)=>`<button type="button" class="record-attachment-choice" data-open-record="${esc(String(id))}" data-open-index="${i}">📎 <span>${esc(a.fileName||`Attachment ${i+1}`)}</span></button>`).join("")}</div></div>`;
+  m.querySelectorAll("[data-open-record]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();m.classList.remove("open");openRecordImage(b.dataset.openRecord,b.dataset.openIndex)}));m.classList.add("open")
+}
+async function openRecordImage(id,attachmentIndex=0){
+  let items=[];try{items=await attachmentsForRecord(id)}catch(e){}
+  let a=items[Number(attachmentIndex)||0];if(!a?.blob){toastMsg("This attachment could not be opened.",false);return}
+  let url=URL.createObjectURL(a.blob);
+  if(!recordIsImage(a)){let link=document.createElement("a");link.href=url;link.target="_blank";link.rel="noopener";link.download=a.fileName||"attachment";document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);return}
+  let v=document.getElementById("recordImageViewer");
+  if(!v){v=document.createElement("div");v.id="recordImageViewer";v.className="record-image-viewer";v.innerHTML=`<button class="record-image-close" type="button" aria-label="Close photo">×</button><img alt="Record photo">`;v.addEventListener("click",e=>{if(e.target===v||e.target.closest(".record-image-close")){v.style.display="none";let im=v.querySelector("img");if(im.dataset.objectUrl)URL.revokeObjectURL(im.dataset.objectUrl);im.removeAttribute("src");im.dataset.objectUrl=""}});document.body.appendChild(v)}
+  let img=v.querySelector("img");if(img.dataset.objectUrl)URL.revokeObjectURL(img.dataset.objectUrl);img.src=url;img.dataset.objectUrl=url;img.alt=a.fileName||"Record photo";v.style.display="flex"
+}
+function bindRecordAttachmentClicks(){
+  let box=document.getElementById("recordsList");if(!box||box.dataset.bound)return;box.dataset.bound="1";
+  box.addEventListener("click",function(e){
+    let del=e.target.closest("[data-record-delete]");if(del){e.preventDefault();e.stopPropagation();requestDeleteRecord(del.dataset.recordDelete);return}
+    let attachment=e.target.closest("[data-record-attachments]");if(attachment){e.preventDefault();e.stopPropagation();openRecordAttachments(attachment.dataset.recordAttachments);return}
+    let entry=e.target.closest(".record-entry");if(entry)openRecordEditor(entry.dataset.recordId);
+  });
 }
 function deleteRecord(){let r=data.records.find(x=>String(x.id)===String(editingRecordId));if(!r)return;if(!confirm(`Delete ${r.title||r.fileName||"this record"}?`))return;data.records=data.records.filter(x=>String(x.id)!==String(editingRecordId));save();closeRecordEditor();toastMsg("Record deleted")}
 function renderAll(){[renderEmployees,renderCheckout,renderEquipment,renderConsumables,renderRecords,renderAnalytics,renderReturn,renderReorderNew,renderMore].forEach(fn=>{try{fn()}catch(e){console.error(fn.name,e)}})}
-window.visualViewport?.addEventListener("resize",()=>{if(document.body.classList.contains("record-modal-open"))syncRecordVisibleViewport()});window.addEventListener("orientationchange",()=>setTimeout(syncRecordVisibleViewport,50));renderAll();bindRecordAttachmentClicks();try{activatePage(localStorage.getItem("toolroomHQ-active-page")||"checkout",false)}catch(e){}updateUndoButton();refreshAddSuggestions("equipment");refreshAddSuggestions("consumable");
+function repairCurrentCheckoutHistory(){
+  let changed=false;
+  data.equipment.filter(equipmentIsCheckedOut).forEach(x=>{
+    let ei=employeeIndexFromHolder(x.holder),emp=ei>=0?data.employees[ei]:null;
+    let checkoutMs=Number(x.checkedOutAt)||0;
+    let relevant=(data.history||[]).map((h,i)=>({h,i})).filter(o=>String(o.h.equipmentId||"")===String(x.id)&&(o.h.action==="CHECK OUT"||o.h.action==="RETURN")).sort((a,b)=>new Date(b.h.time).getTime()-new Date(a.h.time).getTime());
+    let latest=relevant[0]?.h||null;
+    if(latest&&latest.action==="CHECK OUT"){
+      let eventMs=new Date(latest.time).getTime();
+      let sameActiveCheckout=!checkoutMs||!Number.isFinite(eventMs)||Math.abs(eventMs-checkoutMs)<=5*60*1000;
+      if(sameActiveCheckout&&emp){
+        let expectedEmployee=ei,expectedNum=String(emp.num||""),expectedName=String(emp.name||""),expectedMonitor=String(emp.monitor||"");
+        if(String(latest.employee)!==String(expectedEmployee)||String(latest.employeeNum||"")!==expectedNum||String(latest.employeeName||"")!==expectedName||String(latest.monitor||"")!==expectedMonitor){
+          latest.employee=expectedEmployee;latest.employeeNum=expectedNum;latest.employeeName=expectedName;latest.monitor=expectedMonitor;changed=true;
+        }
+      }
+    }else{
+      let checkoutTime=checkoutMs?new Date(checkoutMs).toISOString():new Date().toISOString();
+      data.history.unshift({time:checkoutTime,action:"CHECK OUT",employee:ei>=0?ei:x.holder,employeeNum:emp?.num||"",employeeName:emp?.name||"",monitor:emp?.monitor||"",equipmentId:x.id,equipment:x.name,variant:x.variant,repaired:true});
+      changed=true;
+    }
+  });
+  if(changed){try{localStorage.setItem("toolroomHQ-v4",JSON.stringify(data))}catch(e){}}
+}
+window.visualViewport?.addEventListener("resize",()=>{if(document.body.classList.contains("record-modal-open"))syncRecordVisibleViewport()});window.addEventListener("orientationchange",()=>setTimeout(syncRecordVisibleViewport,50));
+async function migrateLegacyRecordAttachments(){
+  let changed=false;
+  for(let r of (data.records||[])){
+    let legacy=[];
+    if(Array.isArray(r.attachments))legacy=r.attachments.filter(a=>a?.fileData);
+    else if(r.fileData)legacy=[{fileData:r.fileData,fileName:r.fileName||"Attachment",fileType:r.fileType||""}];
+    if(!legacy.length)continue;
+    let existing=[];try{existing=await attachmentsForRecord(r.id)}catch(e){continue}
+    if(!existing.length){
+      for(let i=0;i<legacy.length;i++){
+        let a=legacy[i];try{let resp=await fetch(a.fileData),blob=await resp.blob();await attachmentPut({id:`legacy-${r.id}-${i}`,recordId:String(r.id),fileName:a.fileName||`Attachment ${i+1}`,fileType:a.fileType||blob.type||"application/octet-stream",blob,createdAt:(r.createdAt||Date.now())+i})}catch(e){}
+      }
+    }
+    try{r.attachmentCount=(await attachmentsForRecord(r.id)).length}catch(e){}
+    delete r.fileData;delete r.fileName;delete r.fileType;delete r.attachments;changed=true;
+  }
+  if(changed){try{save();renderRecords()}catch(e){}}
+}
+
+repairCurrentCheckoutHistory();renderAll();bindRecordAttachmentClicks();migrateLegacyRecordAttachments();try{activatePage(localStorage.getItem("toolroomHQ-active-page")||"checkout",false)}catch(e){}updateUndoButton();refreshAddSuggestions("equipment");refreshAddSuggestions("consumable");
 setInterval(()=>{if(editingEmployeeIndex===null)renderMore()},60000);
 
 bindAddAutofillFix();
@@ -2109,7 +2346,7 @@ window.renderReturnOutBottom=function(){let chooser=document.getElementById("ret
 const oldPick=window.pickReturnEmployee;window.pickReturnEmployee=function(i){oldPick(i);let b=document.getElementById("returnOutBottom");if(b)b.style.display="none"};const oldBack=window.backReturn;window.backReturn=function(){oldBack();let b=document.getElementById("returnOutBottom");if(b)b.style.display="block"};
 const oldReturnAll=window.returnAllItems;window.returnAllItems=function(){if(returnEmployee===null)return;let e=data.employees[returnEmployee],n=data.equipment.filter(x=>x.holder===returnEmployee).length;if(!n)return;if(confirm(`Return all ${n} item${n===1?"":"s"} for #${e?.num||""} ${e?.name||""}?`))oldReturnAll()};
 // Search Everything: checked-out equipment boosted; every result navigates/highlights.
-window.renderGlobalSearch=function(){let box=document.getElementById("globalSearchResults"),q=(document.getElementById("globalSearch")?.value||"").trim();if(!q){box.style.display="none";box.innerHTML="";return}let hits=[];data.equipment.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""} ${x.status||""}`,q);if(sc>=0){let checked=x.holder!==null&&x.holder!==undefined,holder=checked?data.employees[Number(x.holder)]:null;hits.push({score:sc+(checked?15:0),kind:checked?"Checked Out":"Equipment",title:x.name,sub:`${x.variant||"No variant"}${checked&&holder?` · #${holder.num} ${holder.name}`:` · ${x.status||"Available"}`}`,page:checked?"returns":"equipment",id:String(x.id)})}});data.employees.forEach((e,i)=>{let sc=matchScore(`${e.name} ${e.num} ${e.monitor}`,q);if(sc>=0)hits.push({score:sc+5,kind:"Employee",title:`#${e.num} ${e.name}`,sub:`Monitor ${e.monitor}`,page:"checkout",emp:String(i)})});data.consumables.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Consumable",title:x.name,sub:`${x.variant||"No variant"} · ${x.qty} in stock`,page:"consumables",id:String(x.id)})});(data.records||[]).forEach(r=>{let sc=matchScore(`${r.title||""} ${r.note||""} ${r.fileName||""} ${r.date||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Record",title:r.title||r.fileName||"Record",sub:formatRecordDate(r.date),page:"records",id:String(r.id)})});data.history.forEach((h,idx)=>{let e=h.employee!==undefined&&h.employee!==null?data.employees[h.employee]:null,sc=matchScore(`${h.action} ${e?.name||""} ${e?.num||""} ${h.equipment||h.item||""} ${h.variant||""} ${fmtDateTime(h.time)}`,q);if(sc>=0)hits.push({score:sc-8,kind:"History",title:h.equipment||h.item||h.action,sub:`${h.action} · ${fmtDateTime(h.time)}`,page:"more",hist:String(idx)})});hits.sort((a,b)=>b.score-a.score);let seen=new Set();hits=hits.filter(h=>{let k=[h.kind,h.page,h.id,h.emp,h.hist].join("|");if(seen.has(k))return false;seen.add(k);return true}).slice(0,30);box.innerHTML=hits.length?hits.map(h=>`<button class="search-hit" onclick='openUniversalHit(${JSON.stringify(h)})'><span class="search-kind">${esc(h.kind)}</span><br><b>${esc(h.title)}</b><br><span class="small">${esc(h.sub)}</span></button>`).join(""):`<div class="empty">No matches for “${esc(q)}”.</div>`;box.style.display="block"};
+window.renderGlobalSearch=function(){let box=document.getElementById("globalSearchResults"),q=(document.getElementById("globalSearch")?.value||"").trim();if(!q){box.style.display="none";box.innerHTML="";return}let hits=[];data.equipment.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""} ${x.status||""}`,q);if(sc>=0){let checked=equipmentIsCheckedOut(x),holder=checked?employeeFromHolder(x.holder):null;hits.push({score:sc+(checked?15:0),kind:checked?"Checked Out":"Equipment",title:x.name,sub:`${x.variant||"No variant"}${checked&&holder?` · #${holder.num} ${holder.name}`:` · ${x.status||"Available"}`}`,page:checked?"returns":"equipment",id:String(x.id)})}});data.employees.forEach((e,i)=>{let sc=matchScore(`${e.name} ${e.num} ${e.monitor}`,q);if(sc>=0)hits.push({score:sc+5,kind:"Employee",title:`#${e.num} ${e.name}`,sub:`Monitor ${e.monitor}`,page:"checkout",emp:String(i)})});data.consumables.forEach(x=>{let sc=matchScore(`${x.name} ${x.variant} ${x.id} ${x.category||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Consumable",title:x.name,sub:`${x.variant||"No variant"} · ${x.qty} in stock`,page:"consumables",id:String(x.id)})});(data.records||[]).forEach(r=>{let sc=matchScore(`${r.title||""} ${r.note||""} ${r.fileName||""} ${r.date||""}`,q);if(sc>=0)hits.push({score:sc,kind:"Record",title:r.title||r.fileName||"Record",sub:formatRecordDate(r.date),page:"records",id:String(r.id)})});data.history.forEach((h,idx)=>{let e=h.employeeName?{name:h.employeeName,num:h.employeeNum||"",monitor:h.monitor||""}:(h.employee!==undefined&&h.employee!==null?data.employees[Number(h.employee)]:null),who=e?`${e.num?`#${e.num} `:""}${e.name||""}`:"",from=h.action==="TRANSFER"?`${h.fromEmployeeNum?`#${h.fromEmployeeNum} `:""}${h.fromEmployeeName||""}`:"",sc=matchScore(`${h.action} ${who} ${from} ${e?.monitor||""} ${h.equipment||h.item||""} ${h.variant||""} ${fmtDateTime(h.time)}`,q);if(sc>=0){let people=h.action==="TRANSFER"&&from?`${from} → ${who}`:who;hits.push({score:sc-8,kind:"History",title:h.equipment||h.item||h.action,sub:`${h.action}${people?` · ${people}`:""} · ${fmtDateTime(h.time)}`,page:"more",hist:String(idx)})}});hits.sort((a,b)=>b.score-a.score);let seen=new Set();hits=hits.filter(h=>{let k=[h.kind,h.page,h.id,h.emp,h.hist].join("|");if(seen.has(k))return false;seen.add(k);return true}).slice(0,30);box.innerHTML=hits.length?hits.map(h=>`<button class="search-hit" onclick='openUniversalHit(${JSON.stringify(h)})'><span class="search-kind">${esc(h.kind)}</span><br><b>${esc(h.title)}</b><br><span class="small">${esc(h.sub)}</span></button>`).join(""):`<div class="empty">No matches for “${esc(q)}”.</div>`;box.style.display="block"};
 window.openUniversalHit=function(h){document.getElementById("globalSearchResults").style.display="none";document.getElementById("globalSearch").value="";if(h.page==="returns")return activatePage("returns"),setTimeout(()=>pickReturnItem(h.id),30);if(h.page==="checkout"&&h.emp!=null){activatePage("checkout");employeeChooser.style.display="block";renderFastEmployees();return setTimeout(()=>{let c=[...employeeGrid.querySelectorAll('.emp-card')].find(x=>x.getAttribute('onclick')===`selectEmployee(${h.emp})`);flash(c)},40)}if(h.page==="more"&&h.hist!=null){activatePage("more");let exportPill=[...document.querySelectorAll('.pill')].find(b=>b.textContent.includes('Exports'));showMore("exports",exportPill);checkoutHistoryFrom="";checkoutHistoryTo="";let ev=data.history[Number(h.hist)];checkoutHistorySearch=ev?.equipment||ev?.item||ev?.action||"";renderMore();setTimeout(()=>flash(document.querySelector(`#more-exports tr[data-history-index="${CSS.escape(String(h.hist))}"]`)),60);return}activatePage(h.page);setTimeout(()=>{let root=document.getElementById(h.page),el=null;if(h.page==="equipment")el=root.querySelector(`[data-eqid="${CSS.escape(h.id)}"]`);if(h.page==="consumables")el=root.querySelector(`[data-cid="${CSS.escape(h.id)}"]`);if(h.page==="records")el=root.querySelector(`[data-record-id="${CSS.escape(h.id)}"]`);if(!el&&h.id)el=[...root.querySelectorAll('tr,.record-entry')].find(x=>x.textContent.includes(h.id));flash(el)},80)};
 function flash(el){if(!el)return;el.classList.add("search-highlight");el.scrollIntoView({behavior:"smooth",block:"center",inline:"center"});setTimeout(()=>el.classList.remove("search-highlight"),2800)}
 // Damaged/Missing: note preview and safer Return to Service.
@@ -2192,11 +2429,8 @@ window.renderReturnOutBottom=function(){
   let chooser=document.getElementById('returnChooser');if(!chooser)return;
   let box=document.getElementById('returnOutBottom');
   if(!box){box=document.createElement('div');box.id='returnOutBottom';box.className='card';chooser.parentElement.appendChild(box)}
-  let out=data.equipment.filter(x=>x.holder!==null&&x.holder!==undefined&&data.employees[Number(x.holder)]).sort((a,b)=>{
-    let ea=data.employees[Number(a.holder)],eb=data.employees[Number(b.holder)];
-    return String(ea?.num||'').localeCompare(String(eb?.num||''),undefined,{numeric:true,sensitivity:'base'})||String(a.name||'').localeCompare(String(b.name||''),undefined,{numeric:true,sensitivity:'base'})||String(a.variant||'').localeCompare(String(b.variant||''),undefined,{numeric:true,sensitivity:'base'});
-  });
-  box.innerHTML=`<div class="between row"><p class="section-title">Checked Out</p><span class="small">Kept separate so nothing gets unchecked by accident.</span></div>${out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[Number(x.holder)];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(e.name)} · #${esc(e.num)}</td><td><button class="btn light" onclick="pickReturnItem(${JSON.stringify(x.id)})">Return</button></td></tr>`}).join('')}</table>`:`<div class="empty">Nothing is checked out.</div>`}`;
+  let out=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeFromHolder(x.holder)).sort((a,b)=>checkoutTimeMs(b)-checkoutTimeMs(a));
+  box.innerHTML=`<div class="between row"><p class="section-title">Checked Out</p></div>${out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[Number(x.holder)];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(e.name)} · #${esc(e.num)}<div class="small">${esc(checkoutStamp(x))}</div></td><td><button class="btn light" onclick="pickReturnItem(${JSON.stringify(x.id)})">Return</button></td></tr>`}).join('')}</table>`:`<div class="empty">Nothing is checked out.</div>`}`;
 };
 
 // Keep focused filter inputs stable. renderAll() used to rebuild the table during typing,
@@ -2297,4 +2531,32 @@ html,body{touch-action:manipulation!important;-webkit-text-size-adjust:100%!impo
 })();
 </script>
 
+<script id="checked-out-search-timestamp-sort">
+(function(){
+  const priorRenderGlobalSearch=window.renderGlobalSearch;
+  if(typeof priorRenderGlobalSearch!=="function")return;
+  window.renderGlobalSearch=function(){
+    priorRenderGlobalSearch();
+    let box=document.getElementById("globalSearchResults");
+    if(!box||box.style.display==="none")return;
+    let cards=[...box.querySelectorAll(".global-result")];
+    let checked=[];
+    cards.forEach((card,order)=>{
+      let kind=card.querySelector(".global-kind")?.textContent?.trim();
+      if(kind!=="CHECKED OUT"&&kind!=="Checked Out")return;
+      let id=card.dataset.equipmentId;
+      let x=data.equipment.find(v=>String(v.id)===String(id));
+      if(!x)return;
+      let sub=card.querySelector(".global-sub");
+      if(sub&&!sub.textContent.includes(checkoutStamp(x)))sub.textContent=`${sub.textContent} · ${checkoutStamp(x)}`;
+      checked.push({card,time:checkoutTimeMs(x),order});
+    });
+    if(checked.length>1){
+      checked.sort((a,b)=>b.time-a.time||a.order-b.order);
+      let first=checked.map(x=>x.card).reduce((best,c)=>!best||[...box.children].indexOf(c)<[...box.children].indexOf(best)?c:best,null);
+      checked.forEach(x=>box.insertBefore(x.card,first));
+    }
+  };
+})();
+</script>
 </body></html>
