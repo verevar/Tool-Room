@@ -1274,6 +1274,15 @@ html.record-modal-open,body.record-modal-open{
 #returnOutBottom td:nth-child(3) .small{font-size:9px!important}
 #returnOutBottom td:last-child .btn{width:100%!important;min-width:0!important;padding:7px 2px!important;font-size:10px!important;white-space:nowrap!important}
 </style>
+<style id="checked-out-consistent-repair">
+.checkout-heading-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;margin-bottom:12px}
+.checkout-heading-row h1{margin:0;flex:0 0 auto}
+#checkoutPageSearch{width:min(52%,260px);min-width:0;font-size:14px;padding:9px 10px}
+#returnOutBottom .checked-out-list{width:100%;min-width:0}
+#returnOutBottom .checked-out-row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.2fr) auto auto;align-items:center;gap:7px;min-width:0;padding:8px 9px}
+#returnOutBottom .checked-out-main,#returnOutBottom .checked-out-person{min-width:0}
+@media(max-width:600px){#returnOutBottom .checked-out-row{grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"main return" "person return" "time return"!important;gap:2px 7px!important}#returnOutBottom .checked-out-main{grid-area:main}#returnOutBottom .checked-out-person{grid-area:person}#returnOutBottom .checked-out-time{grid-area:time}#returnOutBottom .checked-out-return{grid-area:return}#checkoutPageSearch{width:52%}}
+</style>
 </head>
 <body>
 <header><div class="brand">TOOL ROOM HQ <span>Inventory</span></div>
@@ -1289,7 +1298,7 @@ html.record-modal-open,body.record-modal-open{
 
 <main>
 <section id="checkout" class="page active">
-<h1>Checkout</h1>
+<div class="checkout-heading-row"><h1>Checkout</h1><input id="checkoutPageSearch" type="search" placeholder="Search checked out…" aria-label="Search checked out equipment" oninput="renderCheckoutCheckedOut()"></div>
 <div class="card">
 <div id="employeeChooser">
 <input id="employeeSearch" placeholder="Search by name or employee #" style="width:100%">
@@ -1634,6 +1643,8 @@ employeeSearch.oninput=renderFastEmployees;
 function renderCheckoutCheckedOut(){
  let allOut=data.equipment.filter(equipmentIsCheckedOut).sort(newestCheckoutFirst);
  let out=(selectedEmployee===null?allOut:allOut.filter(x=>employeeIndexFromHolder(x.holder)===Number(selectedEmployee))).sort(newestCheckoutFirst);
+ const checkoutQuery=(document.getElementById('checkoutPageSearch')?.value||'').trim().toLowerCase();
+ if(checkoutQuery)out=out.filter(x=>{const e=employeeFromHolder(x.holder);return [x.name,x.variant,e?.name,e?.num,checkoutStamp(x)].join(' ').toLowerCase().includes(checkoutQuery)});
  checkedOutList.innerHTML=out.length?`<div class="checked-out-list">${out.map(x=>{let e=employeeFromHolder(x.holder);return `<div class="checked-out-row"><div class="checked-out-main"><b>${esc(x.name)}</b><span>${esc(x.variant||"No variant")}</span></div><div class="checked-out-person">${e?`#${esc(e.num)} ${esc(e.name)}`:"Unknown"}</div><div class="checked-out-time">${esc(checkoutStamp(x))}</div><button class="btn light checked-out-return" onclick="returnEquip(${JSON.stringify(x.id)})">Return</button></div>`}).join("")}</div>`:`<div class="empty">Nothing is checked out${selectedEmployee===null?"":" to this employee"}.</div>`;
  equipOutStat.textContent=allOut.length;
 }
@@ -2426,11 +2437,11 @@ document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 // Render the Return-page Checked Out section in the exact same table style as Checkout,
 // ordered by employee number. Return opens that employee with the exact item selected.
 window.renderReturnOutBottom=function(){
-  let chooser=document.getElementById('returnChooser');if(!chooser)return;
+  const chooser=document.getElementById('returnChooser');if(!chooser)return;
   let box=document.getElementById('returnOutBottom');
   if(!box){box=document.createElement('div');box.id='returnOutBottom';box.className='card';chooser.parentElement.appendChild(box)}
-  let out=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeFromHolder(x.holder)).sort((a,b)=>checkoutTimeMs(b)-checkoutTimeMs(a));
-  box.innerHTML=`<div class="between row"><p class="section-title">Checked Out</p></div>${out.length?`<table><tr><th>Name</th><th>Variant</th><th>Assigned To</th><th></th></tr>${out.map(x=>{let e=data.employees[Number(x.holder)];return `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.variant)}</td><td>${esc(e.name)} · #${esc(e.num)}<div class="small">${esc(checkoutStamp(x))}</div></td><td><button class="btn light" onclick="pickReturnItem(${JSON.stringify(x.id)})">Return</button></td></tr>`}).join('')}</table>`:`<div class="empty">Nothing is checked out.</div>`}`;
+  const out=data.equipment.filter(x=>equipmentIsCheckedOut(x)&&employeeFromHolder(x.holder)).sort(newestCheckoutFirst);
+  box.innerHTML=`<div class="between row"><p class="section-title">Checked Out</p></div>${out.length?`<div class="checked-out-list">${out.map(x=>{const e=employeeFromHolder(x.holder);return `<div class="checked-out-row"><div class="checked-out-main"><b>${esc(x.name)}</b><span>${esc(x.variant||'No variant')}</span></div><div class="checked-out-person">#${esc(e.num)} ${esc(e.name)}</div><div class="checked-out-time">${esc(checkoutStamp(x))}</div><button class="btn light checked-out-return" onclick='pickReturnItem(${JSON.stringify(x.id)})'>Return</button></div>`}).join('')}</div>`:`<div class="empty">Nothing is checked out.</div>`}`;
 };
 
 // Keep focused filter inputs stable. renderAll() used to rebuild the table during typing,
